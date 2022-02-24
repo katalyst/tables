@@ -5,7 +5,15 @@ RSpec.describe Katalyst::Tables do
     expect(Katalyst::Tables::VERSION).not_to be nil
   end
 
-  it "does something useful" do
-    expect(false).to eq(true)
+  context "when backend is loaded" do
+    include Katalyst::Tables::Backend
+
+    it { expect(self).to respond_to(:table_sort) }
+  end
+
+  context "when frontend is loaded" do
+    include Katalyst::Tables::Frontend
+
+    it { expect(self).to respond_to(:table_with) }
   end
 end

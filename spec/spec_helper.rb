@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "katalyst/tables"
+require "support/backend_examples"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
