@@ -6,6 +6,12 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
+    actionview (7.0.2.2)
+      activesupport (= 7.0.2.2)
+      builder (~> 3.1)
+      erubi (~> 1.4)
+      rails-dom-testing (~> 2.0)
+      rails-html-sanitizer (~> 1.1, >= 1.2.0)
     activemodel (7.0.2.2)
       activesupport (= 7.0.2.2)
     activerecord (7.0.2.2)
@@ -17,14 +23,30 @@ GEM
       minitest (>= 5.1)
       tzinfo (~> 2.0)
     ast (2.4.2)
+    builder (3.2.4)
+    compare-xml (0.66)
+      nokogiri (~> 1.8)
     concurrent-ruby (1.1.9)
+    crass (1.0.6)
     diff-lcs (1.5.0)
+    erubi (1.10.0)
     i18n (1.10.0)
       concurrent-ruby (~> 1.0)
+    loofah (2.14.0)
+      crass (~> 1.0.2)
+      nokogiri (>= 1.5.9)
     minitest (5.15.0)
+    nokogiri (1.13.3-arm64-darwin)
+      racc (~> 1.4)
     parallel (1.21.0)
     parser (3.1.0.0)
       ast (~> 2.4.1)
+    racc (1.6.0)
+    rails-dom-testing (2.0.3)
+      activesupport (>= 4.2.0)
+      nokogiri (>= 1.6)
+    rails-html-sanitizer (1.4.2)
+      loofah (~> 2.3)
     rainbow (3.1.1)
     rake (13.0.6)
     regexp_parser (2.2.1)
@@ -62,9 +84,12 @@ PLATFORMS
   arm64-darwin-21
 
 DEPENDENCIES
+  actionview (~> 7.0)
   activerecord (~> 7.0)
   activesupport (~> 7.0)
+  compare-xml
   katalyst-tables!
+  nokogiri
   rake (~> 13.0)
   rspec (~> 3.0)
   rubocop (~> 1.21)

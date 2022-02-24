@@ -1,5 +1,3 @@
-# rubocop:disable Rails/ContentTag
-
 require_relative "helper"
 
 module Katalyst::Tables
@@ -24,11 +22,11 @@ module Katalyst::Tables
 
       private
 
-      def header
+      def header(&block)
         return "".html_safe unless @header
 
         @template.content_tag("thead") do
-          yield Header::Row.new(self)
+          Header::Row.new(self).build(&block)
         end
       end
 
@@ -157,7 +155,7 @@ module Katalyst::Tables
           end
 
           def translation(key = "activerecord.attributes.#{@table.object_name}.#{method}")
-            @table.template.t(key, default: default_value)
+            @table.template.translate(key, default: default_value)
           end
 
           def default_value
@@ -175,5 +173,3 @@ module Katalyst::Tables
     end
   end
 end
-
-# rubocop:enable Rails/ContentTag

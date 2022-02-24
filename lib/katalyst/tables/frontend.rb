@@ -6,7 +6,7 @@ module Katalyst::Tables
     include Helper
 
     def table_with(collection:, **options, &block)
-      table_options = options.slice(:header, :sort)
+      table_options = options.slice(:header, :object_name, :sort)
 
       table_options[:object_name] ||= collection.try(:model_name)&.param_key
 
