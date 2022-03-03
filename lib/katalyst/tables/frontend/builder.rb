@@ -109,7 +109,7 @@ module Katalyst::Tables
           end
 
           def build
-            tag(@type) { block_given? ? yield(self) : value.to_s }
+            tag(@type) { block_given? ? yield(self).to_s : value.to_s }
           end
 
           def value

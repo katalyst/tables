@@ -3,6 +3,7 @@
 require "katalyst/tables"
 
 require "support/backend_examples"
+require "support/frontend_examples"
 require "support/match_html"
 
 RSpec.configure do |config|
