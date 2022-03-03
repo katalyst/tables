@@ -47,14 +47,14 @@ Add `include Katalyst::Tables::Frontend` to your `ApplicationHelper` or similar.
     </thead>
     <tbody>
     <tr>
-        <th>Alice</th>
-        <th>alice@acme.org</th>
-        <th><a href="/people/1/edit">Edit</a></th>
+        <td>Alice</td>
+        <td>alice@acme.org</td>
+        <td><a href="/people/1/edit">Edit</a></td>
     </tr>
     <tr>
-        <th>Bob</th>
-        <th>bob@acme.org</th>
-        <th><a href="/people/2/edit">Edit</a></th>
+        <td>Bob</td>
+        <td>bob@acme.org</td>
+        <td><a href="/people/2/edit">Edit</a></td>
     </tr>
     </tbody>
 </table>
@@ -89,17 +89,15 @@ generation.
 ```
 
 Note: because the row builder gets called to generate the header row, you may need to guard calls that access the
-collection instance directly as shown in the previous example. You could also check whether `person` is present.
+`person` directly as shown in the previous example. You could also check whether `person` is present.
 
 #### Headers
 
 `table_builder` will automatically generate a header row for you by calling your block with no object. During this
-iteration, `row.header?` is true,
-`row.body?` is false, and the object is nil.
+iteration, `row.header?` is true, `row.body?` is false, and the object (`person`) is nil.
 
 All cells generated in the table header iteration will automatically be header cells, but you can also make header cells
-in your body rows by passing
-`heading: true` when you generate the cell.
+in your body rows by passing `heading: true` when you generate the cell.
 
 ```erb
 <%= row.cell :id, heading: true %>
@@ -116,7 +114,7 @@ The table header cells default to showing the titleized column name, but you can
     # en.yml
     activerecord:
       attributes:
-        people:
+        person:
           id: "ID"
     ```
   
@@ -126,9 +124,9 @@ header. We suggest you set `label` instead.
 
 #### Cell values
 
-If you do not provide a value when you call the cell builder, the column id you
-provide will be sent to the current object and the result will be added to the
-table cell. This is often all you need to do, but if you do want to customise
+If you do not provide a value when you call the cell builder, the attribute you
+provide will be retrieved from the current item and the result will be rendered in
+the table cell. This is often all you need to do, but if you do want to customise
 the value you can pass a block instead:
 
 ```erb
@@ -198,12 +196,15 @@ You can also add sorting to non-attribute columns by defining a scope in your
 model:
 
 ```
-scope :sort_by_actions, ->(direction) { ... }
+scope :order_by_status, ->(direction) { ... }
 ```
 
 Finally, you can use sort with a collection that is already ordered, but please
-note that it will call `reorder` if the user provides a sort option. You may
-also want to whitelist the `sort` param if you encounter strong param warnings.
+note that the backend will call `reorder` if the user provides a sort option. If
+you want to provide a tie-breaker default ordering, the best way to do so is after
+calling `table_sort`.
+
+You may also want to whitelist the `sort` param if you encounter strong param warnings.
 
 ### Pagination
 
