@@ -1,38 +1,244 @@
 # Katalyst::Tables
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/katalyst/tables`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Tools for building HTML tables from ActiveRecord collections.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'katalyst-tables'
+gem "katalyst-tables", git: "https://github.com/katalyst/katalyst-tables", branch: "main" 
 ```
 
 And then execute:
 
     $ bundle install
 
-Or install it yourself as:
-
-    $ gem install katalyst-tables
-
 ## Usage
 
-TODO: Write usage instructions here
+This gem provides two entry points: Frontend for use in your views, and Backend for use in your controllers. The backend
+is option, it's only required if you want to support sorting by column headers.
+
+### Frontend
+
+Add `include Katalyst::Tables::Frontend` to your `ApplicationHelper` or similar.
+
+```erb
+<%= table_with collection: @people do |row, person|
+  <%= row.cell :name %>
+  <%= row.cell :email %>
+  <%= row.cell :actions do %>
+   <%= link_to "Edit", person %>
+  <% end %>
+<% end %>
+```
+
+`table_builder` will call your block once per row and accumulate the cells you generate into rows:
+
+```html
+
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th>Alice</th>
+        <th>alice@acme.org</th>
+        <th><a href="/people/1/edit">Edit</a></th>
+    </tr>
+    <tr>
+        <th>Bob</th>
+        <th>bob@acme.org</th>
+        <th><a href="/people/2/edit">Edit</a></th>
+    </tr>
+    </tbody>
+</table>
+```
+
+### Options
+
+You can customise the options passed to the table, rows, and cells.
+
+Tables support options via the call to `table_with`, similar to `form_with`.
+
+```erb
+<%= table_with collection: @people, id: "people-table" do |row, person|
+  ...
+<% end %>
+```
+
+Cells support the same approach:
+
+```erb
+<%= row.cell :name, class: "name" %>
+```
+
+Rows do not get called directly, so instead you can call `options` on the row builder to customize the row tag
+generation.
+
+```erb
+<%= table_with collection: @people, id: "people-table" do |row, person|
+  <% row.options data: { id: person.id } if row.body? %>
+  ...
+<% end %>
+```
+
+Note: because the row builder gets called to generate the header row, you may need to guard calls that access the
+collection instance directly as shown in the previous example. You could also check whether `person` is present.
+
+#### Headers
+
+`table_builder` will automatically generate a header row for you by calling your block with no object. During this
+iteration, `row.header?` is true,
+`row.body?` is false, and the object is nil.
+
+All cells generated in the table header iteration will automatically be header cells, but you can also make header cells
+in your body rows by passing
+`heading: true` when you generate the cell.
+
+```erb
+<%= row.cell :id, heading: true %>
+```
+
+The table header cells default to showing the titleized column name, but you can customize this in one of two ways:
+
+* Set the value inline
+    ```erb
+    <%= row.cell :id, label: "ID" %>
+    ```
+* Define a translation for the attribute
+    ```yml
+    # en.yml
+    activerecord:
+      attributes:
+        people:
+          id: "ID"
+    ```
+  
+Note: if the cell is given a block, it is not called during the header pass. This
+is because the block is assumed to be for generating data for the body, not the
+header. We suggest you set `label` instead.
+
+#### Cell values
+
+If you do not provide a value when you call the cell builder, the column id you
+provide will be sent to the current object and the result will be added to the
+table cell. This is often all you need to do, but if you do want to customise
+the value you can pass a block instead:
+
+```erb
+<%= row.cell :status do %>
+ <%= person.password.present? ? "Active" : "Invited" %>
+<% end %>
+```
+
+In the context of the block you have access the cell builder if you simply
+want to extend the default behaviour:
+
+```erb
+<%= row.cell :status do |cell| %>
+ <%= link_to cell.value, person %>
+<% end %>
+```
+
+You can also call `options` on the cell builder, similar to the row builder, but
+please note that this will replace any options passed to the cell as arguments.
+
+### Sort
+
+The major reason why you should use this gem, apart the convenience of the
+builder, is for adding efficient and simple column sorting to your tables.
+
+Start by including the backend in your controller(s):
+
+```ruby
+include Katalyst::Tables::Backend
+```
+
+Now, in your controller index actions, you can sort your active record
+collections based on the `sort` param which is appended to the current URL as a
+get parameter when a user clicks on a column header.
+
+Building on our example from earlier:
+
+```ruby
+class PeopleController < ApplicationController
+  include Katalyst::Tables::Backend
+  
+  def index
+    @people = People.all
+
+    @sort, @people = table_sort(@people) # sort
+  end
+end
+```
+
+You then add the sort form object to your view so that it can add column header
+links and show the current sort state:
+
+```erb
+<%= table_with collection: @people, sort: @sort do |row, person|
+  <%= row.cell :name %>
+  <%= row.cell :email %>
+  <%= row.cell :actions do %>
+   <%= link_to "Edit", person %>
+  <% end %>
+<% end %>
+```
+
+That's it! Any column that corresponds to an ActiveRecord attribute will now be
+automatically sortable in the frontend.
+
+You can also add sorting to non-attribute columns by defining a scope in your
+model:
+
+```
+scope :sort_by_actions, ->(direction) { ... }
+```
+
+Finally, you can use sort with a collection that is already ordered, but please
+note that it will call `reorder` if the user provides a sort option. You may
+also want to whitelist the `sort` param if you encounter strong param warnings.
+
+### Pagination
+
+This gem designed to work with [pagy](https://github.com/ddnexus/pagy/).
+
+```ruby
+
+def index
+  @people = People.all
+
+  @sort, @people = table_sort(@people) # sort
+  @pagy, @people = pagy(@people) # then paginate
+end
+```
+
+```erb
+<%= table_with collection: @people, sort: @sort do |row, person|
+  <%= row.cell :name %>
+  <%= row.cell :email %>
+  <%= row.cell :actions do %>
+   <%= link_to "Edit", person %>
+  <% end %>
+<% end %>
+<%== pagy_nav(@pagy) %>
+```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `bundle exec rspec` to run the tests.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle exec rake install`.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/katalyst-tables.
+Bug reports and pull requests are welcome on GitHub at https://github.com/katalyst/katalyst-tables.
 
 ## License
 
