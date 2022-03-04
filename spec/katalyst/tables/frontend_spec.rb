@@ -12,6 +12,7 @@ RSpec.describe Katalyst::Tables::Frontend, type: :view do
   include_context "with collection"
 
   attr_accessor :output_buffer
+  attr_reader :controller
 
   let(:html_options) do
     {
@@ -238,6 +239,91 @@ RSpec.describe Katalyst::Tables::Frontend, type: :view do
           <tbody>
             <tr>
               <td id="ID" class="CLASS" style="style" data-foo="bar">value</td>
+            </tr>
+          </tbody>
+        </table>
+      HTML
+    end
+  end
+
+  context "with a custom table builder" do
+    subject(:table) do
+      table_with(collection: collection, builder: Test::CustomTable) do |row|
+        row.cell :col
+      end
+    end
+
+    include_context "with collection data", ["value"]
+
+    it "adds custom classes to all tags" do
+      expect(table).to match_html(<<~HTML)
+        <table class="custom-table">
+          <thead>
+            <tr class="custom-header-row">
+              <th class="custom-header-cell">Col</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="custom-body-row">
+              <td class="custom-body-cell">value</td>
+            </tr>
+          </tbody>
+        </table>
+      HTML
+    end
+  end
+
+  context "with a custom table builder from the controller" do
+    subject(:table) do
+      table_with(collection: collection) { nil }
+    end
+
+    let(:controller) { double }
+
+    it "adds custom classes to all tags" do
+      allow(controller).to receive(:default_table_builder).and_return(Test::CustomTable)
+      expect(table).to match_html(<<~HTML)
+        <table class="custom-table">
+          <thead>
+            <tr class="custom-header-row">
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      HTML
+    end
+  end
+
+  context "with a custom builder that adds methods" do
+    subject(:table) do
+      table_with(collection: collection, builder: Test::ActionTable) do |row|
+        row.cell(:col) +
+          row.actions do |cell|
+            cell.action("Edit", :edit) +
+              cell.action("Delete", :delete, method: :delete)
+          end
+      end
+    end
+
+    include_context "with collection data", ["value"]
+
+    it "generates actions column" do
+      expect(table).to match_html(<<~HTML)
+        <table class="action-table">
+          <thead>
+            <tr>
+              <th>Col</th>
+              <th class="actions"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>value</td>
+              <td class="actions">
+                <a href="edit">Edit</a>
+                <a href="delete" method="delete">Delete</a>
+              </td>
             </tr>
           </tbody>
         </table>

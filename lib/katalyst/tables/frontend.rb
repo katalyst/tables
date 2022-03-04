@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
+require_relative "frontend/builder/base"
+require_relative "frontend/builder/body_cell"
+require_relative "frontend/builder/body_row"
+require_relative "frontend/builder/header_cell"
+require_relative "frontend/builder/header_row"
 require_relative "frontend/helper"
-require_relative "frontend/builder"
+require_relative "frontend/table_builder"
 
 module Katalyst
   module Tables
@@ -16,7 +21,31 @@ module Katalyst
 
         html_options = html_options_for_table_with(**options)
 
-        Builder.new(self, collection, table_options, html_options).build(&block)
+        builder = options.fetch(:builder) { default_table_builder_class }
+        builder.new(self, collection, table_options, html_options).build(&block)
+      end
+
+      def table_header_row(table, builder, &block)
+        builder.new(table).build(&block)
+      end
+
+      def table_header_cell(table, method, builder, **options)
+        builder.new(table, method, **options).build
+      end
+
+      def table_body_row(table, object, builder, &block)
+        builder.new(table, object).build(&block)
+      end
+
+      def table_body_cell(table, object, method, builder, **options, &block)
+        builder.new(table, object, method, **options).build(&block)
+      end
+
+      private
+
+      def default_table_builder_class
+        builder = controller.try(:default_table_builder) || TableBuilder
+        builder.respond_to?(:constantize) ? builder.constantize : builder
       end
     end
   end

@@ -80,4 +80,11 @@ RSpec.describe Katalyst::Tables::Backend do
       end
     end
   end
+
+  describe ".default_table_builder" do
+    it "changes the default table builder" do
+      expect { self.class.default_table_builder Test::CustomTable }
+        .to change(self, :default_table_builder).from(nil).to(Test::CustomTable)
+    end
+  end
 end

@@ -233,6 +233,99 @@ end
 <%== pagy_nav(@pagy) %>
 ```
 
+### Customization
+
+A common pattern we use is to have a cell at the end of the table for actions. For example:
+
+```html
+<table class="action-table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th class="actions"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Alice</td>
+      <td class="actions">
+        <a href="/people/1/edit">Edit</a>
+        <a href="/people/1" method="delete">Delete</a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+```
+
+You can write a custom builder that helps generate this type of table by adding the required classes and adding helpers
+for generating the actions. This allows for a declarative table syntax, something like this:
+
+```erb
+<%= table_with(collection: collection, builder: Test::ActionTable) do |row| %>
+  <%= row.cell :name %>
+  <%= row.actions do |cell| %>
+    <%= cell.action "Edit", :edit %>
+    <%= cell.action "Delete", :delete, method: :delete %>
+  <% end %>
+<% end %>
+```
+
+And the custom builder:
+
+```ruby
+class ActionTable < Katalyst::Tables::Frontend::TableBuilder
+  def build(&block)
+    (@html_options[:class] ||= []) << "action-table"
+    super
+  end
+
+  def table_header_row(builder = ActionHeaderRow, &block)
+    super
+  end
+
+  def table_header_cell(method, builder = ActionHeaderCell, **options)
+    super
+  end
+
+  def table_body_row(object, builder = ActionBodyRow, &block)
+    super
+  end
+
+  def table_body_cell(object, method, builder = ActionBodyCell, **options, &block)
+    super
+  end
+
+  class ActionHeaderRow < Katalyst::Tables::Frontend::Builder::HeaderRow
+    def actions(&block)
+      cell(:actions, class: "actions", label: "")
+    end
+  end
+
+  class ActionHeaderCell < Katalyst::Tables::Frontend::Builder::HeaderCell
+  end
+
+  class ActionBodyRow < Katalyst::Tables::Frontend::Builder::BodyRow
+    def actions(&block)
+      cell(:actions, class: "actions", &block)
+    end
+  end
+
+  class ActionBodyCell < Katalyst::Tables::Frontend::Builder::BodyCell
+    def action(label, href, **opts)
+      content_tag :a, label, { href: href }.merge(opts)
+    end
+  end
+end
+```
+
+If you have a table builder you want to reuse, you can set it as a default for some or all of your controllers:
+
+```html
+class ApplicationController < ActiveController::Base
+  default_table_builder ActionTableBuilder
+end
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bundle exec rspec` to run the tests.
