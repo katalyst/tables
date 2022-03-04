@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "action_view/buffers"
 require "action_view/helpers/tag_helper"
 require "action_view/helpers/url_helper"

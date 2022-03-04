@@ -80,7 +80,7 @@ RSpec.describe Katalyst::Tables::Backend::SortForm do
       end
     end
 
-    context "when model has scope" do
+    context "with model scope" do
       include_context "with collection scope"
 
       it "sorts with scope" do
@@ -91,18 +91,20 @@ RSpec.describe Katalyst::Tables::Backend::SortForm do
       it "returns sorted" do
         expect(sorted).to be collection
       end
+    end
 
-      context "with desc" do
-        let(:order) { { column: "col", direction: "desc" } }
+    context "with model scope and direction" do
+      let(:order) { { column: "col", direction: "desc" } }
 
-        it "sorts by desc" do
-          sort
-          expect(collection).to have_received(:order_by_col).with(:desc)
-        end
+      include_context "with collection scope"
+
+      it "sorts by desc" do
+        sort
+        expect(collection).to have_received(:order_by_col).with(:desc)
       end
     end
 
-    context "when model has attribute" do
+    context "with model attribute" do
       include_context "with collection attribute"
 
       it "sorts with reorder" do
@@ -113,14 +115,16 @@ RSpec.describe Katalyst::Tables::Backend::SortForm do
       it "returns sorted" do
         expect(sorted).to be collection
       end
+    end
 
-      context "with desc" do
-        let(:order) { { column: "col", direction: "desc" } }
+    context "with model attribute and direction" do
+      let(:order) { { column: "col", direction: "desc" } }
 
-        it "sorts by desc" do
-          sort
-          expect(collection).to have_received(:reorder).with("col" => "desc")
-        end
+      include_context "with collection attribute"
+
+      it "sorts by desc" do
+        sort
+        expect(collection).to have_received(:reorder).with("col" => "desc")
       end
     end
   end

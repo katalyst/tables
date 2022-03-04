@@ -2,7 +2,7 @@
 
 RSpec.describe Katalyst::Tables do
   it "has a version number" do
-    expect(Katalyst::Tables::VERSION).not_to be nil
+    expect(Katalyst::Tables::VERSION).not_to be_nil
   end
 
   context "when backend is loaded" do

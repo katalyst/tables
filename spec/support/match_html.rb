@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require "compare-xml"
 require "nokogiri"
 
 # Source: https://makandracards.com/makandra/505308-rspec-matcher-to-compare-two-html-fragments
 RSpec::Matchers.define :match_html do |expected_html, **options|
   match do |actual_html|
-    # Note: the HTML5 parser silently drops orphaned th/td tags
+    # NOTE: the HTML5 parser silently drops orphaned th/td tags
     expected_doc = Nokogiri::HTML.fragment(expected_html)
     actual_doc = Nokogiri::HTML.fragment(actual_html)
 

@@ -15,15 +15,15 @@ RSpec.describe Katalyst::Tables::Frontend, type: :view do
 
   let(:html_options) do
     {
-      id:    "ID",
+      id: "ID",
       class: "CLASS",
-      html:  { style: "style" },
-      data:  { foo: "bar" },
+      html: { style: "style" },
+      data: { foo: "bar" }
     }
   end
 
   it "creates a bare table" do
-    expect(table_with(collection: collection) {}).to match_html(<<~HTML)
+    expect(table_with(collection: collection) { "" }).to match_html(<<~HTML)
       <table>
         <thead><tr></tr></thead>
         <tbody></tbody>
@@ -33,25 +33,21 @@ RSpec.describe Katalyst::Tables::Frontend, type: :view do
 
   context "when html options are provided to table_with" do
     subject(:table) do
-      table_with(
-        collection: collection,
-        **html_options
-      ) {}
+      table_with(collection: collection, **html_options) { "" }
     end
 
     it "passes html_options to table tag" do
-      expect(table)
-        .to match_html(<<~HTML)
-          <table id="ID" class="CLASS" style="style" data-foo="bar">
-            <thead><tr></tr></thead>
-            <tbody></tbody>
-          </table>
+      expect(table).to match_html(<<~HTML)
+        <table id="ID" class="CLASS" style="style" data-foo="bar">
+          <thead><tr></tr></thead>
+          <tbody></tbody>
+        </table>
       HTML
     end
   end
 
   context "when header: false" do
-    subject(:table) { table_with(collection: collection, header: false) {} }
+    subject(:table) { table_with(collection: collection, header: false) { "" } }
 
     it "removes the header" do
       expect(table).to match_html(<<~HTML)
@@ -174,9 +170,7 @@ RSpec.describe Katalyst::Tables::Frontend, type: :view do
       end
     end
 
-    let(:collection) do
-      [OpenStruct.new(col: "value")]
-    end
+    include_context "with collection data", ["value"]
 
     it "adds html options to header row tag" do
       expect(table).to match_html(<<~HTML)
@@ -196,7 +190,6 @@ RSpec.describe Katalyst::Tables::Frontend, type: :view do
     end
   end
 
-
   context "when html options are passed to body row" do
     subject(:table) do
       table_with(collection: collection) do |row|
@@ -205,9 +198,7 @@ RSpec.describe Katalyst::Tables::Frontend, type: :view do
       end
     end
 
-    let(:collection) do
-      [OpenStruct.new(col: "value")]
-    end
+    include_context "with collection data", ["value"]
 
     it "adds html options to body row tag" do
       expect(table).to match_html(<<~HTML)
@@ -234,9 +225,7 @@ RSpec.describe Katalyst::Tables::Frontend, type: :view do
       end
     end
 
-    let(:collection) do
-      [OpenStruct.new(col: "value")]
-    end
+    include_context "with collection data", ["value"]
 
     it "adds html options to body cell tag" do
       expect(table).to match_html(<<~HTML)
