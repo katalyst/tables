@@ -14,17 +14,19 @@ And then execute:
 
     $ bundle install
 
+**Reminder:** If you have a rails server running, remember to restart the server to prevent the `uninitialized constant` error.
+
 ## Usage
 
 This gem provides two entry points: Frontend for use in your views, and Backend for use in your controllers. The backend
-is option, it's only required if you want to support sorting by column headers.
+entry point is optional, as it's only required if you want to support sorting by column headers.
 
 ### Frontend
 
 Add `include Katalyst::Tables::Frontend` to your `ApplicationHelper` or similar.
 
 ```erb
-<%= table_with collection: @people do |row, person|
+<%= table_with collection: @people do |row, person| %>
   <%= row.cell :name %>
   <%= row.cell :email %>
   <%= row.cell :actions do %>
@@ -67,7 +69,7 @@ You can customise the options passed to the table, rows, and cells.
 Tables support options via the call to `table_with`, similar to `form_with`.
 
 ```erb
-<%= table_with collection: @people, id: "people-table" do |row, person|
+<%= table_with collection: @people, id: "people-table" do |row, person| %>
   ...
 <% end %>
 ```
@@ -82,7 +84,7 @@ Rows do not get called directly, so instead you can call `options` on the row bu
 generation.
 
 ```erb
-<%= table_with collection: @people, id: "people-table" do |row, person|
+<%= table_with collection: @people, id: "people-table" do |row, person| %>
   <% row.options data: { id: person.id } if row.body? %>
   ...
 <% end %>
@@ -180,7 +182,7 @@ You then add the sort form object to your view so that it can add column header
 links and show the current sort state:
 
 ```erb
-<%= table_with collection: @people, sort: @sort do |row, person|
+<%= table_with collection: @people, sort: @sort do |row, person| %>
   <%= row.cell :name %>
   <%= row.cell :email %>
   <%= row.cell :actions do %>
@@ -221,7 +223,7 @@ end
 ```
 
 ```erb
-<%= table_with collection: @people, sort: @sort do |row, person|
+<%= table_with collection: @people, sort: @sort do |row, person| %>
   <%= row.cell :name %>
   <%= row.cell :email %>
   <%= row.cell :actions do %>
