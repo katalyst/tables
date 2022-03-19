@@ -43,18 +43,30 @@ module Katalyst
         # @param column [String, Symbol] the table column as defined in table_with
         # @return [String] URL for use as a link in a column header
         def url_for(column)
-          direction = "asc"
+          # Implementation inspired by pagy's `pagy_url_for` helper.
 
-          if column.to_s == self.column
-            case self.direction
-            when "asc"
-              direction = "desc"
-            when "desc"
-              direction = "asc"
-            end
-          end
+          request = @controller.request
 
-          @controller.url_for(sort: "#{column} #{direction}")
+          # Preserve any existing GET parameters
+          # CAUTION: these parameters are not sanitised
+          params       = request.GET.merge("sort" => "#{column} #{toggle_direction(column)}")
+          query_string = params.empty? ? "" : "?#{Rack::Utils.build_nested_query(params)}"
+
+          "#{request.path}#{query_string}"
+        end
+
+        # Generates a url for the current page without any sorting parameters.
+        #
+        # @return [String] URL for use as a link in a column header
+        def unsorted_url
+          request = @controller.request
+
+          # Preserve any existing GET parameters but remove sort.
+          # CAUTION: these parameters are not sanitised
+          params       = request.GET.except("sort")
+          query_string = params.empty? ? "" : "?#{Rack::Utils.build_nested_query(params)}"
+
+          "#{request.path}#{query_string}"
         end
 
         # Apply the constructed sort ordering to the collection.
@@ -79,6 +91,17 @@ module Katalyst
 
         def clear!
           self.column = self.direction = nil
+        end
+
+        def toggle_direction(column)
+          return "asc" unless column.to_s == self.column
+
+          case direction
+          when "asc"
+            "desc"
+          when "desc"
+            "asc"
+          end
         end
       end
     end

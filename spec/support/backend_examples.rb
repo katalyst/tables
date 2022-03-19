@@ -33,3 +33,15 @@ RSpec.shared_context "with collection scope" do |scope: :order_by_col|
     end
   end
 end
+
+RSpec.shared_context "with mocked request" do |path:, params:|
+  before do
+    request = instance_double("Rack::Request")
+    allow(request).to receive_messages(GET: params, path: path)
+    allow(self).to receive(:request).and_return(request)
+
+    rack = double("Rack::Utils") # rubocop:disable RSpec/VerifiedDoubles
+    allow(rack).to receive(:build_nested_query) { |p| p.map { |k, v| "#{k}=#{v}" }.join("&") }
+    stub_const("Rack::Utils", rack)
+  end
+end

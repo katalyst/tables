@@ -12,7 +12,8 @@ RSpec.describe Katalyst::Tables::Frontend, type: :view do
   include_context "with collection"
 
   attr_accessor :output_buffer
-  attr_reader :controller
+
+  let(:controller) { double "controller" } # rubocop:disable RSpec/VerifiedDoubles
 
   let(:html_options) do
     {
@@ -104,7 +105,9 @@ RSpec.describe Katalyst::Tables::Frontend, type: :view do
 
     include_context "with collection attribute"
 
-    before { allow(self).to receive(:url_for).and_return("URL") }
+    before do
+      allow(sort).to receive(:url_for).and_return("URL")
+    end
 
     it "adds sort links" do
       expect(table).to match_html(<<~HTML)
@@ -277,8 +280,6 @@ RSpec.describe Katalyst::Tables::Frontend, type: :view do
     subject(:table) do
       table_with(collection: collection) { nil }
     end
-
-    let(:controller) { double }
 
     it "adds custom classes to all tags" do
       allow(controller).to receive(:default_table_builder).and_return(Test::CustomTable)

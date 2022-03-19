@@ -41,23 +41,27 @@ RSpec.describe Katalyst::Tables::Backend::SortForm do
   end
 
   describe "#url_for" do
-    before do
-      allow(self).to receive(:url_for) { |params| params }
-    end
+    include_context "with mocked request", path: "/path", params: { "s" => "q" }
 
-    it { expect(form.url_for("col")).to eq(sort: "col desc") }
+    it { expect(form.url_for("col")).to eq("/path?s=q&sort=col desc") }
 
     context "with desc" do
       let(:order) { { column: "col", direction: "desc" } }
 
-      it { expect(form.url_for("col")).to eq(sort: "col asc") }
+      it { expect(form.url_for("col")).to eq("/path?s=q&sort=col asc") }
     end
 
     context "with another column" do
       let(:order) { { column: "other", direction: "asc" } }
 
-      it { expect(form.url_for("col")).to eq(sort: "col asc") }
+      it { expect(form.url_for("col")).to eq("/path?s=q&sort=col asc") }
     end
+  end
+
+  describe "#unsorted_url" do
+    include_context "with mocked request", path: "/path", params: { "s" => "q", "sort" => "col asc" }
+
+    it { expect(form.unsorted_url).to eq("/path?s=q") }
   end
 
   describe "#apply" do
