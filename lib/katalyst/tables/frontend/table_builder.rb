@@ -26,8 +26,8 @@ module Katalyst
           @template.table_header_row(self, builder || Builder::HeaderRow, &block)
         end
 
-        def table_header_cell(method, builder = nil, **options)
-          @template.table_header_cell(self, method, builder || Builder::HeaderCell, **options)
+        def table_header_cell(method, builder = nil, **options, &block)
+          @template.table_header_cell(self, method, builder || Builder::HeaderCell, **options, &block)
         end
 
         def table_body_row(object, builder = nil, &block)

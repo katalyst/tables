@@ -14,7 +14,8 @@ module Katalyst
             @header = true
           end
 
-          def build
+          def build(&_block)
+            # NOTE: block ignored intentionally but subclasses may consume it
             if @table.sort&.supports?(@table.collection, method)
               content = sort_link(value) # writes to html_options
               table_tag :th, content # consumes options

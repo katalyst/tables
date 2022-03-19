@@ -29,8 +29,8 @@ module Katalyst
         builder.new(table).build(&block)
       end
 
-      def table_header_cell(table, method, builder, **options)
-        builder.new(table, method, **options).build
+      def table_header_cell(table, method, builder, **options, &block)
+        builder.new(table, method, **options).build(&block)
       end
 
       def table_body_row(table, object, builder, &block)
