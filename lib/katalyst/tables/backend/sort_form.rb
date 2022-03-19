@@ -49,7 +49,7 @@ module Katalyst
 
           # Preserve any existing GET parameters
           # CAUTION: these parameters are not sanitised
-          params       = request.GET.merge("sort" => "#{column} #{toggle_direction(column)}")
+          params       = request.GET.merge("sort" => "#{column} #{toggle_direction(column)}").except("page")
           query_string = params.empty? ? "" : "?#{Rack::Utils.build_nested_query(params)}"
 
           "#{request.path}#{query_string}"
@@ -63,7 +63,7 @@ module Katalyst
 
           # Preserve any existing GET parameters but remove sort.
           # CAUTION: these parameters are not sanitised
-          params       = request.GET.except("sort")
+          params       = request.GET.except("sort", "page")
           query_string = params.empty? ? "" : "?#{Rack::Utils.build_nested_query(params)}"
 
           "#{request.path}#{query_string}"

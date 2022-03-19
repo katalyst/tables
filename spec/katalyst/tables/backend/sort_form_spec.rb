@@ -56,12 +56,24 @@ RSpec.describe Katalyst::Tables::Backend::SortForm do
 
       it { expect(form.url_for("col")).to eq("/path?s=q&sort=col asc") }
     end
+
+    context "with page set" do
+      include_context "with mocked request", path: "/path", params: { "page" => "2" }
+
+      it { expect(form.url_for("col")).to eq("/path?sort=col desc") }
+    end
   end
 
   describe "#unsorted_url" do
     include_context "with mocked request", path: "/path", params: { "s" => "q", "sort" => "col asc" }
 
     it { expect(form.unsorted_url).to eq("/path?s=q") }
+
+    context "with page set" do
+      include_context "with mocked request", path: "/path", params: { "page" => "2", "sort" => "col asc" }
+
+      it { expect(form.unsorted_url).to eq("/path") }
+    end
   end
 
   describe "#apply" do
