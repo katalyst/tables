@@ -17,9 +17,10 @@ module Katalyst
       # Sort the given collection by params[:sort], which is set when a user
       # interacts with a column header in a frontend table view.
       #
+      # @param sort [String] Sort ordering. Defaults to params[:sort]
       # @return [[SortForm, ActiveRecord::Relation]]
-      def table_sort(collection)
-        column, direction = params[:sort]&.split(" ")
+      def table_sort(collection, sort = params[:sort])
+        column, direction = sort&.split(" ")
         direction         = "asc" unless SortForm::DIRECTIONS.include?(direction)
 
         SortForm.new(self,

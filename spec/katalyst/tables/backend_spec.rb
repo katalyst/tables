@@ -32,6 +32,16 @@ RSpec.describe Katalyst::Tables::Backend do
       end
     end
 
+    context "when sort parameter is passed explicitly" do
+      let(:params) { {} }
+      let(:pair) { table_sort(collection, "col desc") }
+
+      it "sorts by desc" do
+        sort
+        expect(collection).to have_received(:reorder).with("col" => "desc")
+      end
+    end
+
     context "when sort param is unknown" do
       before do
         allow(model).to receive(:has_attribute?).with("col").and_return(false)
