@@ -17,7 +17,7 @@ module Katalyst
       def table_with(collection:, **options, &block)
         table_options = options.slice(:header, :object_name, :sort)
 
-        table_options[:object_name] ||= collection.try(:model_name)&.param_key
+        table_options[:object_name] ||= collection.try(:model_name)&.i18n_key
 
         html_options = html_options_for_table_with(**options)
 
