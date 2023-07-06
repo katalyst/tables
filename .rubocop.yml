@@ -19,4 +19,8 @@ Layout/LineLength:
   Max: 120
 
 Metrics/BlockLength:
-  IgnoredMethods: ["describe", "context"]
+  Exclude:
+    - spec/**/*
+
+RSpec/ExampleLength:
+  Enabled: false
