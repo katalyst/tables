@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [1.1.0] - 2023-07-18
+
 - Replaces `param_key` with `i18n_key` for attribute lookup in locale file
 - Remove controller and url helpers from backend
   - No changes required to existing code unless you were using the internal
