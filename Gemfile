@@ -13,10 +13,10 @@ gem "rubocop-rake"
 gem "rubocop-rspec"
 
 group :development, :test do
-  gem "actionview"
-  gem "activerecord"
-  gem "activesupport"
+  gem "capybara", require: false
   gem "compare-xml"
   gem "nokogiri"
-  gem "rspec"
+  gem "rails"
+  gem "rspec-rails"
+  gem "sqlite3"
 end

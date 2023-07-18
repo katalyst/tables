@@ -1,19 +1,14 @@
 # frozen_string_literal: true
 
-require "action_view/buffers"
-require "action_view/helpers/tag_helper"
-require "action_view/helpers/url_helper"
+require "rails_helper"
 
-RSpec.describe Katalyst::Tables::Frontend, type: :view do
-  include described_class
-  include ActionView::Helpers::TagHelper
-  include ActionView::Helpers::UrlHelper
+RSpec.describe Katalyst::Tables::Frontend do
+  let(:request) { nil }
 
+  delegate :table_with, to: :template
+
+  include_context "with template"
   include_context "with collection"
-
-  attr_accessor :output_buffer
-
-  let(:controller) { double "controller" } # rubocop:disable RSpec/VerifiedDoubles
 
   let(:html_options) do
     {
@@ -81,7 +76,7 @@ RSpec.describe Katalyst::Tables::Frontend, type: :view do
     subject(:table) { table_with(collection: collection, object_name: "my_model") { |row| row.cell :col } }
 
     before do
-      allow(self).to receive(:translate).with("activerecord.attributes.my_model.col", any_args).and_return("COL")
+      allow(template).to receive(:translate).with("activerecord.attributes.my_model.col", any_args).and_return("COL")
     end
 
     it "translates column headers" do

@@ -6,6 +6,18 @@ module Katalyst
       module Helper # :nodoc:
         extend ActiveSupport::Concern
 
+        def initialize(**options)
+          super()
+
+          options(**options)
+        end
+
+        # Add HTML options to the current component.
+        def options(html: {}, **options)
+          @html_options = options.slice(:id, :aria, :class, :data).merge(html)
+          @html_options.stringify_keys!
+        end
+
         # Generates a url for applying/toggling sort for the given column.
         #
         # @param sort [String, nil] sort parameter to apply, or nil to remove sorting
@@ -22,13 +34,6 @@ module Katalyst
           query_string = params.empty? ? "" : "?#{Rack::Utils.build_nested_query(params)}"
 
           "#{request.path}#{query_string}"
-        end
-
-        private
-
-        def html_options_for_table_with(html: {}, **options)
-          html_options = options.slice(:id, :class, :data).merge(html)
-          html_options.stringify_keys!
         end
       end
     end

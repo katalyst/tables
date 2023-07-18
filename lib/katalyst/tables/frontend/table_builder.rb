@@ -11,15 +11,18 @@ module Katalyst
       # Builder API for generating HTML tables from ActiveRecord.
       # @see Frontend#table_with
       class TableBuilder
+        include Helper
+
         attr_reader :template, :collection, :object_name, :sort
 
-        def initialize(template, collection, options, html_options)
+        def initialize(template, collection, **options)
+          super(**options)
+
           @template     = template
           @collection   = collection
           @header       = options.fetch(:header, true)
           @object_name  = options.fetch(:object_name, nil)
           @sort         = options[:sort]
-          @html_options = html_options
         end
 
         def table_header_row(builder = nil, &block)

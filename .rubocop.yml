@@ -1,4 +1,5 @@
 require:
+  - rubocop-capybara
   - rubocop-rails
   - rubocop-rake
   - rubocop-rspec
@@ -23,4 +24,7 @@ Metrics/BlockLength:
     - spec/**/*
 
 RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/AnyInstance:
   Enabled: false

@@ -1,0 +1,3 @@
+test:
+  adapter: sqlite3
+  database: <%= Rails.application.root.join("db/test.sqlite3") %>
