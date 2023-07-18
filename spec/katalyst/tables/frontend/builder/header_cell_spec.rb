@@ -27,14 +27,15 @@ RSpec.describe Katalyst::Tables::Frontend::Builder::HeaderCell do
 
     before do
       allow(table).to receive(:sort).and_return(sort)
+      allow(table).to receive(:request).and_return(request)
       allow(sort).to receive(:supports?).with(collection, :key).and_return(true)
       allow(sort).to receive(:status).with(:key).and_return(nil)
-      allow(sort).to receive(:url_for).with(:key).and_return("https://localhost/resource?sort=key+desc")
+      allow(sort).to receive(:toggle).with(:key).and_return("key asc")
     end
 
     it "renders with sort link" do
       expect(cell.build).to match_html(<<~HTML)
-        <th><a href="https://localhost/resource?sort=key+desc">Key</a></th>
+        <th><a href="/resource?sort=key asc">Key</a></th>
       HTML
     end
 
@@ -47,16 +48,18 @@ RSpec.describe Katalyst::Tables::Frontend::Builder::HeaderCell do
 
     it "adds status to data attribute, if specified" do
       allow(sort).to receive(:status).with(:key).and_return(:desc)
+      allow(sort).to receive(:toggle).with(:key).and_return("key asc")
       expect(cell.build).to match_html(<<~HTML)
-        <th data-sort="desc"><a href="https://localhost/resource?sort=key+desc">Key</a></th>
+        <th data-sort="desc"><a href="/resource?sort=key asc">Key</a></th>
       HTML
     end
 
     it "supports other data options" do
       allow(sort).to receive(:status).with(:key).and_return(:asc)
+      allow(sort).to receive(:toggle).with(:key).and_return("key desc")
       expect(described_class.new(table, :key, data: { other: "" }).build).to match_html(<<~HTML)
         <th data-other data-sort="asc">
-          <a href="https://localhost/resource?sort=key+desc">Key</a>
+          <a href="/resource?sort=key desc">Key</a>
         </th>
       HTML
     end

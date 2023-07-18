@@ -25,6 +25,7 @@ module Katalyst
           delegate :content_tag,
                    :link_to,
                    :render,
+                   :request,
                    :translate,
                    :with_output_buffer,
                    to: :template

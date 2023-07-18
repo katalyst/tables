@@ -10,11 +10,9 @@ module Katalyst
 
         attr_accessor :column, :direction
 
-        def initialize(controller, column: nil, direction: nil)
+        def initialize(column: nil, direction: nil)
           self.column    = column
           self.direction = direction
-
-          @controller = controller
         end
 
         # Returns true if the given collection supports sorting on the given
@@ -38,35 +36,19 @@ module Katalyst
           direction if column.to_s == self.column
         end
 
-        # Generates a url for applying/toggling sort for the given column.
+        # Calculates the sort parameter to apply when the given column is toggled.
         #
-        # @param column [String, Symbol] the table column as defined in table_with
-        # @return [String] URL for use as a link in a column header
-        def url_for(column)
-          # Implementation inspired by pagy's `pagy_url_for` helper.
+        # @param column [String, Symbol]
+        # @return [String]
+        def toggle(column)
+          return "#{column} asc" unless column.to_s == self.column
 
-          request = @controller.request
-
-          # Preserve any existing GET parameters
-          # CAUTION: these parameters are not sanitised
-          params       = request.GET.merge("sort" => "#{column} #{toggle_direction(column)}").except("page")
-          query_string = params.empty? ? "" : "?#{Rack::Utils.build_nested_query(params)}"
-
-          "#{request.path}#{query_string}"
-        end
-
-        # Generates a url for the current page without any sorting parameters.
-        #
-        # @return [String] URL for use as a link in a column header
-        def unsorted_url
-          request = @controller.request
-
-          # Preserve any existing GET parameters but remove sort.
-          # CAUTION: these parameters are not sanitised
-          params       = request.GET.except("sort", "page")
-          query_string = params.empty? ? "" : "?#{Rack::Utils.build_nested_query(params)}"
-
-          "#{request.path}#{query_string}"
+          case direction
+          when "asc"
+            "#{column} desc"
+          when "desc"
+            "#{column} asc"
+          end
         end
 
         # Apply the constructed sort ordering to the collection.
@@ -91,17 +73,6 @@ module Katalyst
 
         def clear!
           self.column = self.direction = nil
-        end
-
-        def toggle_direction(column)
-          return "asc" unless column.to_s == self.column
-
-          case direction
-          when "asc"
-            "desc"
-          when "desc"
-            "asc"
-          end
         end
       end
     end

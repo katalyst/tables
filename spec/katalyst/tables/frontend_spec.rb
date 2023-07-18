@@ -101,20 +101,17 @@ RSpec.describe Katalyst::Tables::Frontend, type: :view do
   context "when sort is provided" do
     subject(:table) { table_with(collection: collection, sort: sort) { |row| row.cell :col } }
 
-    let(:sort) { Katalyst::Tables::Backend::SortForm.new(self) }
+    let(:sort) { Katalyst::Tables::Backend::SortForm.new }
 
     include_context "with collection attribute"
-
-    before do
-      allow(sort).to receive(:url_for).and_return("URL")
-    end
+    include_context "with mocked request", params: { "s" => "q", "page" => 2 }
 
     it "adds sort links" do
       expect(table).to match_html(<<~HTML)
         <table>
           <thead>
             <tr>
-              <th><a href="URL">Col</a></th>
+              <th><a href="/resource?s=q&sort=col asc">Col</a></th>
             </tr>
           </thead>
           <tbody></tbody>

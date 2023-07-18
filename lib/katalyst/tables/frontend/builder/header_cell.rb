@@ -46,7 +46,7 @@ module Katalyst
 
           def sort_link(content)
             (@html_options["data"] ||= {})["sort"] = sort.status(method)
-            link_to(content, @table.sort.url_for(method))
+            link_to(content, sort_url_for(sort: sort.toggle(method)))
           end
         end
       end

@@ -2,7 +2,7 @@
 
 RSpec.describe Katalyst::Tables::Backend::SortForm do
   # base config: sort specified but not supported
-  subject(:form) { described_class.new(self, **order) }
+  subject(:form) { described_class.new(**order) }
 
   let(:order) { { column: "col", direction: "asc" } }
 
@@ -40,39 +40,19 @@ RSpec.describe Katalyst::Tables::Backend::SortForm do
     end
   end
 
-  describe "#url_for" do
-    include_context "with mocked request", path: "/path", params: { "s" => "q" }
-
-    it { expect(form.url_for("col")).to eq("/path?s=q&sort=col desc") }
+  describe "#toggle" do
+    it { expect(form.toggle("col")).to eq("col desc") }
 
     context "with desc" do
       let(:order) { { column: "col", direction: "desc" } }
 
-      it { expect(form.url_for("col")).to eq("/path?s=q&sort=col asc") }
+      it { expect(form.toggle("col")).to eq("col asc") }
     end
 
     context "with another column" do
       let(:order) { { column: "other", direction: "asc" } }
 
-      it { expect(form.url_for("col")).to eq("/path?s=q&sort=col asc") }
-    end
-
-    context "with page set" do
-      include_context "with mocked request", path: "/path", params: { "page" => "2" }
-
-      it { expect(form.url_for("col")).to eq("/path?sort=col desc") }
-    end
-  end
-
-  describe "#unsorted_url" do
-    include_context "with mocked request", path: "/path", params: { "s" => "q", "sort" => "col asc" }
-
-    it { expect(form.unsorted_url).to eq("/path?s=q") }
-
-    context "with page set" do
-      include_context "with mocked request", path: "/path", params: { "page" => "2", "sort" => "col asc" }
-
-      it { expect(form.unsorted_url).to eq("/path") }
+      it { expect(form.toggle("col")).to eq("col asc") }
     end
   end
 

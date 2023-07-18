@@ -22,8 +22,7 @@ module Katalyst
         column, direction = params[:sort]&.split(" ")
         direction         = "asc" unless SortForm::DIRECTIONS.include?(direction)
 
-        SortForm.new(self,
-                     column: column,
+        SortForm.new(column: column,
                      direction: direction)
                 .apply(collection)
       end

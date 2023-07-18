@@ -10,7 +10,11 @@ module Test
     include ActionView::Helpers::TagHelper
     include ActionView::Helpers::UrlHelper
 
-    attr_accessor :output_buffer
+    attr_accessor :output_buffer, :request
+
+    def initialize(request:)
+      @request = request
+    end
 
     def translate(_key, default:)
       default
@@ -121,6 +125,19 @@ module Test
   end
 end
 
+RSpec.shared_context "with mocked request" do |path: "/resource", params: {}|
+  let(:request) do
+    request = instance_double("Rack::Request") # rubocop:disable RSpec/VerifiedDoubleReference
+    allow(request).to receive_messages(GET: params, path: path)
+    request
+  end
+  before do
+    rack = double("Rack::Utils") # rubocop:disable RSpec/VerifiedDoubles
+    allow(rack).to receive(:build_nested_query) { |p| p.map { |k, v| "#{k}=#{v}" }.join("&") }
+    stub_const("Rack::Utils", rack)
+  end
+end
+
 RSpec.shared_context "with table" do
   let(:html_options) do
     {
@@ -133,7 +150,8 @@ RSpec.shared_context "with table" do
   let(:table) do
     Katalyst::Tables::Frontend::TableBuilder.new(template, collection, { object_name: :test_record }, {})
   end
-  let(:template) { Test::Template.new }
+  let(:template) { Test::Template.new(request: request) }
 
   include_context "with collection"
+  include_context "with mocked request"
 end
