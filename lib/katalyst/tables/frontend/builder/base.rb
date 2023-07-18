@@ -44,10 +44,6 @@ module Katalyst
             !@header
           end
 
-          def options(**options)
-            @html_options = html_options_for_table_with(**options)
-          end
-
           private
 
           def table_tag(type, value = nil, &block)

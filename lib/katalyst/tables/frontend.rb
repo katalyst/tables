@@ -12,17 +12,12 @@ module Katalyst
   module Tables
     # View Helper for generating HTML tables. Include in your ApplicationHelper, or similar.
     module Frontend
-      include Helper
-
-      def table_with(collection:, **options, &block)
-        table_options = options.slice(:header, :object_name, :sort)
-
-        table_options[:object_name] ||= collection.try(:model_name)&.i18n_key
-
-        html_options = html_options_for_table_with(**options)
-
-        builder = options.fetch(:builder) { default_table_builder_class }
-        builder.new(self, collection, table_options, html_options).build(&block)
+      def table_with(collection:,
+                     builder: nil,
+                     object_name: collection.try(:model_name)&.i18n_key,
+                     **options, &block)
+        builder ||= default_table_builder_class
+        builder.new(self, collection, object_name: object_name, **options).build(&block)
       end
 
       def table_header_row(table, builder, &block)

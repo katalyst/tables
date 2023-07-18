@@ -21,7 +21,9 @@ Gem::Specification.new do |spec|
   spec.metadata["source_code_uri"] = spec.homepage
   spec.metadata["changelog_uri"] = "https://github.com/katalyst/katalyst-tables/blobs/main/CHANGELOG.md"
 
-  spec.files = Dir["{lib}/**/*", "CHANGELOG.md", "LICENSE.txt", "README.md"]
+  spec.files = Dir["{app,config,lib}/**/*", "CHANGELOG.md", "LICENSE.txt", "README.md"]
 
   spec.require_paths = ["lib"]
+
+  spec.add_dependency "view_component"
 end

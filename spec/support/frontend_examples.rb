@@ -1,19 +1,17 @@
 # frozen_string_literal: true
 
-require "action_view/buffers"
-require "action_view/helpers/tag_helper"
-require "action_view/helpers/url_helper"
-
 module Test
   class Template
-    include Katalyst::Tables::Frontend
+    include ActionView::Helpers::CaptureHelper
     include ActionView::Helpers::TagHelper
     include ActionView::Helpers::UrlHelper
+    include Katalyst::Tables::Frontend
 
-    attr_accessor :output_buffer, :request
+    attr_accessor :output_buffer, :request, :controller
 
-    def initialize(request:)
-      @request = request
+    def initialize(request:, controller:)
+      @controller = controller
+      @request    = request
     end
 
     def translate(_key, default:)
@@ -127,31 +125,40 @@ end
 
 RSpec.shared_context "with mocked request" do |path: "/resource", params: {}|
   let(:request) do
-    request = instance_double("Rack::Request") # rubocop:disable RSpec/VerifiedDoubleReference
+    require("rack/request")
+    request = instance_double(Rack::Request)
     allow(request).to receive_messages(GET: params, path: path)
     request
   end
+  let(:controller) do
+    ApplicationController.new
+  end
   before do
-    rack = double("Rack::Utils") # rubocop:disable RSpec/VerifiedDoubles
+    rack = double(Rack::Utils)
     allow(rack).to receive(:build_nested_query) { |p| p.map { |k, v| "#{k}=#{v}" }.join("&") }
     stub_const("Rack::Utils", rack)
   end
 end
 
-RSpec.shared_context "with table" do
-  let(:html_options) do
-    {
-      id: "ID",
-      class: "CLASS",
-      html: { style: "style" },
-      data: { foo: "bar" }
-    }
-  end
-  let(:table) do
-    Katalyst::Tables::Frontend::TableBuilder.new(template, collection, { object_name: :test_record }, {})
-  end
-  let(:template) { Test::Template.new(request: request) }
+RSpec.shared_context "with template" do
+  let(:template) { Test::Template.new(request: request, controller: controller) }
 
   include_context "with collection"
   include_context "with mocked request"
+end
+
+RSpec.shared_context "with table" do
+  let(:html_options) do
+    {
+      id:    "ID",
+      class: "CLASS",
+      html:  { style: "style" },
+      data:  { foo: "bar" }
+    }
+  end
+  let(:table) do
+    Katalyst::Tables::Frontend::TableBuilder.new(template, collection, object_name: :test_record)
+  end
+
+  include_context "with template"
 end
