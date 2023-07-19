@@ -4,12 +4,6 @@ require "rails_helper"
 
 RSpec.describe Katalyst::Tables::Frontend do
   let(:request) { nil }
-
-  delegate :table_with, to: :template
-
-  include_context "with template"
-  include_context "with collection"
-
   let(:html_options) do
     {
       id: "ID",
@@ -18,6 +12,11 @@ RSpec.describe Katalyst::Tables::Frontend do
       data: { foo: "bar" }
     }
   end
+
+  delegate :table_with, to: :template
+
+  include_context "with template"
+  include_context "with collection"
 
   it "creates a bare table" do
     expect(table_with(collection: collection) { "" }).to match_html(<<~HTML)
@@ -63,7 +62,7 @@ RSpec.describe Katalyst::Tables::Frontend do
         <table>
           <thead>
             <tr>
-              <th>Col Name</th>
+              <th>Col name</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -76,7 +75,8 @@ RSpec.describe Katalyst::Tables::Frontend do
     subject(:table) { table_with(collection: collection, object_name: "my_model") { |row| row.cell :col } }
 
     before do
-      allow(template).to receive(:translate).with("activerecord.attributes.my_model.col", any_args).and_return("COL")
+      allow_any_instance_of(Katalyst::Tables::HeaderCellComponent)
+        .to receive(:translate).with("activerecord.attributes.my_model.col", any_args).and_return("COL")
     end
 
     it "translates column headers" do
@@ -94,19 +94,22 @@ RSpec.describe Katalyst::Tables::Frontend do
   end
 
   context "when sort is provided" do
-    subject(:table) { table_with(collection: collection, sort: sort) { |row| row.cell :col } }
+    subject(:table) do
+      template.with_request_url("/resource?s=q&page=2") do
+        table_with(collection: collection, sort: sort) { |row| row.cell :col }
+      end
+    end
 
     let(:sort) { Katalyst::Tables::Backend::SortForm.new }
 
     include_context "with collection attribute"
-    include_context "with mocked request", params: { "s" => "q", "page" => 2 }
 
     it "adds sort links" do
       expect(table).to match_html(<<~HTML)
         <table>
           <thead>
             <tr>
-              <th><a href="/resource?s=q&sort=col asc">Col</a></th>
+              <th><a href="/resource?s=q&sort=col+asc">Col</a></th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -241,9 +244,38 @@ RSpec.describe Katalyst::Tables::Frontend do
     end
   end
 
+  context "when body cell takes a block" do
+    subject(:table) do
+      table_with(collection: collection) do |row|
+        row.cell :col do |cell|
+          template.link_to(cell.value, "/resource")
+        end
+      end
+    end
+
+    include_context "with collection data", ["value"]
+
+    it "adds html options to body cell tag" do
+      expect(table).to match_html(<<~HTML)
+        <table>
+          <thead>
+            <tr>
+              <th>Col</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="/resource">value</a></td>
+            </tr>
+          </tbody>
+        </table>
+      HTML
+    end
+  end
+
   context "with a custom table builder" do
     subject(:table) do
-      table_with(collection: collection, builder: Test::CustomTable) do |row|
+      table_with(collection: collection, component: CustomTableComponent) do |row|
         row.cell :col
       end
     end
@@ -274,7 +306,7 @@ RSpec.describe Katalyst::Tables::Frontend do
     end
 
     it "adds custom classes to all tags" do
-      allow(controller).to receive(:default_table_builder).and_return(Test::CustomTable)
+      allow(controller).to receive(:default_table_component).and_return(CustomTableComponent)
       expect(table).to match_html(<<~HTML)
         <table class="custom-table">
           <thead>
@@ -290,12 +322,12 @@ RSpec.describe Katalyst::Tables::Frontend do
 
   context "with a custom builder that adds methods" do
     subject(:table) do
-      table_with(collection: collection, builder: Test::ActionTable) do |row|
-        row.cell(:col) +
-          row.actions do |cell|
-            cell.action("Edit", :edit) +
-              cell.action("Delete", :delete, method: :delete)
-          end
+      table_with(collection: collection, component: ActionTableComponent) do |row|
+        row.cell(:col)
+        row.actions do |cell|
+          cell.action("Edit", :edit) +
+            cell.action("Delete", :delete, method: :delete)
+        end
       end
     end
 
