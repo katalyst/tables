@@ -14,7 +14,11 @@ module Katalyst
           # Implementation inspired by pagy's `pagy_url_for` helper.
           # Preserve any existing GET parameters
           # CAUTION: these parameters are not sanitised
-          params       = request.GET.merge("sort" => sort).except("page")
+          params = if sort
+                     request.GET.merge("sort" => sort).except("page")
+                   else
+                     request.GET.except("page", "sort")
+                   end
           query_string = params.empty? ? "" : "?#{Rack::Utils.build_nested_query(params)}"
 
           "#{request.path}#{query_string}"
