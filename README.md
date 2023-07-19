@@ -7,18 +7,16 @@ Tools for building HTML tables from ActiveRecord collections.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem "katalyst-tables", git: "https://github.com/katalyst/katalyst-tables", branch: "main" 
+gem "katalyst-tables" 
 ```
 
 And then execute:
 
     $ bundle install
 
-**Reminder:** If you have a rails server running, remember to restart the server to prevent the `uninitialized constant` error.
-
 ## Usage
 
-This gem provides two entry points: Frontend for use in your views, and Backend for use in your controllers. The backend
+This gem provides two entry points: `Frontend` for use in your views, and `Backend` for use in your controllers. The backend
 entry point is optional, as it's only required if you want to support sorting by column headers.
 
 ### Frontend
@@ -35,7 +33,7 @@ Add `include Katalyst::Tables::Frontend` to your `ApplicationHelper` or similar.
 <% end %>
 ```
 
-`table_builder` will call your block once per row and accumulate the cells you generate into rows:
+The table builder will call your block once per row and accumulate the cells you generate into rows:
 
 ```html
 
@@ -102,14 +100,14 @@ All cells generated in the table header iteration will automatically be header c
 in your body rows by passing `heading: true` when you generate the cell.
 
 ```erb
-<%= row.cell :id, heading: true %>
+<% row.cell :id, heading: true %>
 ```
 
-The table header cells default to showing the titleized column name, but you can customize this in one of two ways:
+The table header cells default to showing the capitalized column name, but you can customize this in one of two ways:
 
 * Set the value inline
     ```erb
-    <%= row.cell :id, label: "ID" %>
+    <% row.cell :id, label: "ID" %>
     ```
 * Define a translation for the attribute
     ```yml
@@ -261,56 +259,42 @@ You can write a custom builder that helps generate this type of table by adding 
 for generating the actions. This allows for a declarative table syntax, something like this:
 
 ```erb
-<%= table_with(collection: collection, builder: Test::ActionTable) do |row| %>
-  <%= row.cell :name %>
-  <%= row.actions do |cell| %>
+<%= table_with(collection: collection, component: ActionTableComponent) do |row| %>
+  <% row.cell :name %>
+  <% row.actions do |cell| %>
     <%= cell.action "Edit", :edit %>
     <%= cell.action "Delete", :delete, method: :delete %>
   <% end %>
 <% end %>
 ```
 
-And the custom builder:
+And the customized component:
 
 ```ruby
-class ActionTable < Katalyst::Tables::Frontend::TableBuilder
-  def build(&block)
-    (@html_options[:class] ||= []) << "action-table"
+class ActionTableComponent < Katalyst::TableComponent
+
+  config.header_row = "ActionHeaderRow"
+  config.body_row   = "ActionBodyRow"
+  config.body_cell  = "ActionBodyCell"
+
+  def call
+    options(class: "action-table")
     super
   end
 
-  def table_header_row(builder = ActionHeaderRow, &block)
-    super
-  end
-
-  def table_header_cell(method, builder = ActionHeaderCell, **options)
-    super
-  end
-
-  def table_body_row(object, builder = ActionBodyRow, &block)
-    super
-  end
-
-  def table_body_cell(object, method, builder = ActionBodyCell, **options, &block)
-    super
-  end
-
-  class ActionHeaderRow < Katalyst::Tables::Frontend::Builder::HeaderRow
+  class ActionHeaderRow < Katalyst::Tables::HeaderRowComponent
     def actions(&block)
-      cell(:actions, class: "actions", label: "")
+      cell(:actions, class: "actions", label: "", &block)
     end
   end
 
-  class ActionHeaderCell < Katalyst::Tables::Frontend::Builder::HeaderCell
-  end
-
-  class ActionBodyRow < Katalyst::Tables::Frontend::Builder::BodyRow
+  class ActionBodyRow < Katalyst::Tables::BodyRowComponent
     def actions(&block)
       cell(:actions, class: "actions", &block)
     end
   end
 
-  class ActionBodyCell < Katalyst::Tables::Frontend::Builder::BodyCell
+  class ActionBodyCell < Katalyst::Tables::BodyCellComponent
     def action(label, href, **opts)
       content_tag :a, label, { href: href }.merge(opts)
     end
@@ -318,11 +302,11 @@ class ActionTable < Katalyst::Tables::Frontend::TableBuilder
 end
 ```
 
-If you have a table builder you want to reuse, you can set it as a default for some or all of your controllers:
+If you have a table component you want to reuse, you can set it as a default for some or all of your controllers:
 
 ```html
 class ApplicationController < ActiveController::Base
-  default_table_builder ActionTableBuilder
+  default_table_component ActionTableComponent
 end
 ```
 
