@@ -2,12 +2,11 @@
 
 require "rails_helper"
 
-RSpec.describe Katalyst::Tables::BodyCellComponent, type: :component do
-  subject(:cell) { described_class.new(table, record, :key) }
+RSpec.describe Katalyst::Tables::BodyCellComponent do
+  subject(:cell) { described_class.new(table, record, :name) }
 
-  include_context "with table"
-
-  let(:record) { Test::Record.new(key: "VALUE") }
+  let(:table) { instance_double(Katalyst::TableComponent) }
+  let(:record) { build(:resource, name: "VALUE") }
 
   it "renders the record's attribute value" do
     expect(render_inline(cell)).to match_html(<<~HTML)
@@ -16,7 +15,7 @@ RSpec.describe Katalyst::Tables::BodyCellComponent, type: :component do
   end
 
   context "when heading" do
-    subject(:cell) { described_class.new(table, record, :key, heading: true) }
+    subject(:cell) { described_class.new(table, record, :name, heading: true) }
 
     it "renders a table header tag" do
       expect(render_inline(cell)).to match_html(<<~HTML)
@@ -26,17 +25,17 @@ RSpec.describe Katalyst::Tables::BodyCellComponent, type: :component do
   end
 
   context "with html_options" do
-    subject(:cell) { described_class.new(table, record, :key, **html_options) }
+    subject(:cell) { described_class.new(table, record, :name, **Test::HTML_OPTIONS) }
 
     it "renders tag with html_options" do
       expect(render_inline(cell)).to match_html(<<~HTML)
-        <td id="ID" class="CLASS" style="style" data-foo="bar">VALUE</td>
+        <td id="ID" class="CLASS" style="style" data-foo="bar" aria-label="LABEL">VALUE</td>
       HTML
     end
   end
 
   context "with boolean values" do
-    let(:record) { Test::Record.new(key: false) }
+    let(:record) { build(:resource, name: false) }
 
     it "renders as a string" do
       expect(render_inline(cell)).to match_html(<<~HTML)
@@ -46,7 +45,7 @@ RSpec.describe Katalyst::Tables::BodyCellComponent, type: :component do
   end
 
   context "with nil values" do
-    let(:record) { Test::Record.new(key: nil) }
+    let(:record) { build(:resource, name: nil) }
 
     it "renders as a string" do
       expect(render_inline(cell)).to match_html(<<~HTML)
@@ -70,7 +69,7 @@ RSpec.describe Katalyst::Tables::BodyCellComponent, type: :component do
   end
 
   context "with html_options from args and block" do
-    subject(:cell) { described_class.new(table, record, :key, **html_options) }
+    subject(:cell) { described_class.new(table, record, :name, **Test::HTML_OPTIONS) }
 
     it "uses block options instead of args" do
       expect(render_inline(cell) do |cell|

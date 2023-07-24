@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 RSpec.describe Katalyst::Tables::Backend do
   include described_class
 
@@ -7,20 +9,18 @@ RSpec.describe Katalyst::Tables::Backend do
     # base config: attribute defined and sort present
     subject(:sort) { pair.first }
 
-    let(:pair) { table_sort(collection) }
+    let(:items) { build(:relation) }
+    let(:pair) { table_sort(items) }
     let(:sorted) { pair.second }
-    let(:params) { { sort: "col asc" } }
-
-    include_context "with collection"
-    include_context "with collection attribute", attribute: "col"
+    let(:params) { { sort: "name asc" } }
 
     it "sorts collection" do
       sort
-      expect(collection).to have_received(:reorder).with("col" => "asc")
+      expect(items).to have_received(:reorder).with("name" => "asc")
     end
 
     it "returns sorted" do
-      expect(sorted).to be collection
+      expect(sorted).to be items
     end
 
     context "when sort param is not present" do
@@ -28,55 +28,53 @@ RSpec.describe Katalyst::Tables::Backend do
 
       it "does not sort collection" do
         sort
-        expect(collection).not_to have_received(:reorder)
+        expect(items).not_to have_received(:reorder)
       end
     end
 
     context "when sort param is unknown" do
       before do
-        allow(model).to receive(:has_attribute?).with("col").and_return(false)
+        allow(items.model).to receive(:has_attribute?).with("name").and_return(false)
       end
 
       it "checks whether col is defined" do
         sort
-        expect(model).to have_received(:has_attribute?).with("col")
+        expect(items.model).to have_received(:has_attribute?).with("name")
       end
 
       it "does not sort collection" do
         sort
-        expect(collection).not_to have_received(:reorder)
+        expect(items).not_to have_received(:reorder)
       end
     end
 
     context "when direction is desc" do
-      let(:params) { { sort: "col desc" } }
+      let(:params) { { sort: "name desc" } }
 
       it "sorts by desc" do
         sort
-        expect(collection).to have_received(:reorder).with("col" => "desc")
+        expect(items).to have_received(:reorder).with("name" => "desc")
       end
     end
 
     context "when direction is unknown" do
-      let(:params) { { sort: "col bad" } }
+      let(:params) { { sort: "name bad" } }
 
       it "defaults direction to asc" do
         sort
-        expect(collection).to have_received(:reorder).with("col" => "asc")
+        expect(items).to have_received(:reorder).with("name" => "asc")
       end
     end
 
-    context "when model has scope" do
-      include_context "with collection scope", scope: :order_by_col
-
+    it_behaves_like "when collection has scope", :name do
       it "calls reorder to reset default (if any)" do
         sort
-        expect(collection).to have_received(:reorder).with(nil)
+        expect(items).to have_received(:reorder).with(nil)
       end
 
       it "calls scope" do
         sort
-        expect(collection).to have_received(:order_by_col).with(:asc)
+        expect(items).to have_received(:order_by_name).with(:asc)
       end
     end
   end

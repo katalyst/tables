@@ -2,10 +2,20 @@
 
 require "rails_helper"
 
-RSpec.describe Katalyst::Tables::HeaderRowComponent, type: :component do
+RSpec.describe Katalyst::Tables::HeaderRowComponent do
   subject(:row) { described_class.new(table) }
 
-  include_context "with table"
+  let(:table) do
+    instance_double(Katalyst::TableComponent).tap do |table|
+      allow(table).to receive_messages(sort: sort, object_name: "resource", collection: items)
+    end
+  end
+  let(:items) { build(:relation) }
+  let(:sort) { nil }
+
+  before do
+    allow(table.class).to receive(:header_cell_component).and_return(Katalyst::Tables::HeaderCellComponent)
+  end
 
   it "renders an empty row" do
     expect(render_inline(row) { "" }).to match_html(<<~HTML)
@@ -15,10 +25,10 @@ RSpec.describe Katalyst::Tables::HeaderRowComponent, type: :component do
 
   it "renders cells" do
     expect(render_inline(row) do |row|
-      row.cell(:key)
-      row.cell(:key)
+      row.cell(:name)
+      row.cell(:name)
     end).to match_html(<<~HTML)
-      <tr><th>Key</th><th>Key</th></tr>
+      <tr><th>Name</th><th>Name</th></tr>
     HTML
   end
 
@@ -32,7 +42,7 @@ RSpec.describe Katalyst::Tables::HeaderRowComponent, type: :component do
 
   it "sets body? to false" do
     expect(render_inline(row) do |row|
-      row.cell(:key, label: row.body?.to_s)
+      row.cell(:name, label: row.body?.to_s)
     end).to match_html(<<~HTML)
       <tr><th>false</th></tr>
     HTML
@@ -40,7 +50,7 @@ RSpec.describe Katalyst::Tables::HeaderRowComponent, type: :component do
 
   it "sets header? to true" do
     expect(render_inline(row) do |row|
-      row.cell(:key, label: row.header?.to_s)
+      row.cell(:name, label: row.header?.to_s)
     end).to match_html(<<~HTML)
       <tr><th>true</th></tr>
     HTML
@@ -48,7 +58,7 @@ RSpec.describe Katalyst::Tables::HeaderRowComponent, type: :component do
 
   it "passes self and nil to block" do
     expect(render_inline(row) do |row, object|
-      row.cell(:key, label: object.nil?.to_s)
+      row.cell(:name, label: object.nil?.to_s)
     end).to match_html(<<~HTML)
       <tr><th>true</th></tr>
     HTML

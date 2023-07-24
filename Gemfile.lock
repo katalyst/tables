@@ -92,6 +92,8 @@ GEM
     date (3.3.3)
     diff-lcs (1.5.0)
     erubi (1.12.0)
+    factory_bot (6.2.1)
+      activesupport (>= 5.0.0)
     globalid (1.1.0)
       activesupport (>= 5.0)
     i18n (1.14.1)
@@ -237,6 +239,7 @@ PLATFORMS
 DEPENDENCIES
   capybara
   compare-xml
+  factory_bot
   katalyst-tables!
   nokogiri
   rails

@@ -1,0 +1,53 @@
+# frozen_string_literal: true
+
+class Resource
+  include ActiveModel::Model
+  include ActiveModel::Attributes
+
+  attribute :index, :integer
+  attribute :name
+end
+
+FactoryBot.define do
+  factory :resource, class: "Resource" do
+    sequence(:index) { |i| i }
+    name { "Resource #{index + 1}" }
+  end
+
+  factory :relation, class: "ActiveRecord::Relation" do
+    model { Resource }
+    values { count.times.map { |i| build(:resource, index: i) } }
+    count { 0 }
+    attributes { %i[index name] }
+
+    initialize_with do
+      # use a relaxed double to add scope
+      collection = double(ActiveRecord::Relation) # rubocop:disable RSpec/VerifiedDoubles
+      model      = attributes[:model]
+      values     = attributes[:values]
+
+      allow(collection).to receive_messages(reorder: collection, model: model)
+      allow(collection).to receive(:count) do
+        values.count
+      end
+      allow(collection).to receive(:offset) do |i|
+        values.replace(values.slice(i..-1))
+        collection
+      end
+      allow(collection).to receive(:limit) do |i|
+        values.replace(values.take(i))
+        collection
+      end
+      allow(collection).to receive(:each) do |&block|
+        values.each(&block)
+      end
+
+      attributes[:with_attributes]
+      allow(model).to receive(:has_attribute?) do |attribute|
+        attributes[:attributes].include?(attribute.to_sym)
+      end
+
+      collection
+    end
+  end
+end

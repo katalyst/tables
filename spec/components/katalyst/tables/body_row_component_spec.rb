@@ -2,12 +2,15 @@
 
 require "rails_helper"
 
-RSpec.describe Katalyst::Tables::BodyRowComponent, type: :component do
+RSpec.describe Katalyst::Tables::BodyRowComponent do
   subject(:row) { described_class.new(table, record) }
 
-  let(:record) { Test::Record.new(key: "VALUE") }
+  let(:table) { instance_double(Katalyst::TableComponent) }
+  let(:record) { build(:resource, name: "VALUE") }
 
-  include_context "with table"
+  before do
+    allow(table.class).to receive(:body_cell_component).and_return(Katalyst::Tables::BodyCellComponent)
+  end
 
   # simulate table passing its block to each row
   def render_row(&block)
@@ -24,8 +27,8 @@ RSpec.describe Katalyst::Tables::BodyRowComponent, type: :component do
 
   it "renders cells" do
     expect(render_row do |row|
-      row.cell(:key)
-      row.cell(:key)
+      row.cell(:name)
+      row.cell(:name)
     end).to match_html(<<~HTML)
       <tr><td>VALUE</td><td>VALUE</td></tr>
     HTML
@@ -41,7 +44,7 @@ RSpec.describe Katalyst::Tables::BodyRowComponent, type: :component do
 
   it "sets body? to true" do
     expect(render_row do |row|
-      row.cell(:key) { row.body?.inspect }
+      row.cell(:name) { row.body?.inspect }
     end).to match_html(<<~HTML)
       <tr><td>true</td></tr>
     HTML
@@ -49,7 +52,7 @@ RSpec.describe Katalyst::Tables::BodyRowComponent, type: :component do
 
   it "sets header? to false" do
     expect(render_row do |row|
-      row.cell(:key) { row.header?.inspect }
+      row.cell(:name) { row.header?.inspect }
     end).to match_html(<<~HTML)
       <tr><td>false</td></tr>
     HTML
@@ -57,7 +60,7 @@ RSpec.describe Katalyst::Tables::BodyRowComponent, type: :component do
 
   it "passes self and record to block" do
     expect(render_row do |row, record|
-      row.cell(:key) { record.key }
+      row.cell(:name) { record.name }
     end).to match_html(<<~HTML)
       <tr><td>VALUE</td></tr>
     HTML

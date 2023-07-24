@@ -2,24 +2,11 @@
 
 require "rails_helper"
 
-RSpec.describe Katalyst::TableComponent, type: :component do
-  subject(:component) { described_class.new(collection: collection) }
+RSpec.describe Katalyst::TableComponent do
+  subject(:component) { described_class.new(collection: items) }
 
-  include_context "with collection"
-
-  let(:table) do
-    render_inline(component) { "" }
-  end
-
-  let(:html_options) do
-    {
-      id: "ID",
-      class: "CLASS",
-      html: { style: "style" },
-      aria: { label: "LABEL" },
-      data: { foo: "bar" }
-    }
-  end
+  let(:table) { render_inline(component) { "" } }
+  let(:items) { build(:relation) }
 
   it "creates a bare table" do
     expect(table).to match_html(<<~HTML)
@@ -31,7 +18,7 @@ RSpec.describe Katalyst::TableComponent, type: :component do
   end
 
   context "when html options are provided" do
-    subject(:component) { described_class.new(collection: collection, **html_options) }
+    subject(:component) { described_class.new(collection: items, **Test::HTML_OPTIONS) }
 
     it "passes html_options to table tag" do
       expect(table).to match_html(<<~HTML)
@@ -44,7 +31,7 @@ RSpec.describe Katalyst::TableComponent, type: :component do
   end
 
   context "when header: false" do
-    subject(:component) { described_class.new(collection: collection, header: false) }
+    subject(:component) { described_class.new(collection: items, header: false) }
 
     it "removes the header" do
       expect(table).to match_html(<<~HTML)
@@ -58,7 +45,7 @@ RSpec.describe Katalyst::TableComponent, type: :component do
   context "when a column is provided" do
     let(:table) do
       render_inline(component) do |row|
-        row.cell :col_name
+        row.cell :name
       end
     end
 
@@ -67,7 +54,7 @@ RSpec.describe Katalyst::TableComponent, type: :component do
         <table>
           <thead>
             <tr>
-              <th>Col name</th>
+              <th>Name</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -77,18 +64,18 @@ RSpec.describe Katalyst::TableComponent, type: :component do
   end
 
   context "when model name is available" do
-    subject(:component) { described_class.new(collection: collection, object_name: "my_model") }
+    subject(:component) { described_class.new(collection: items, object_name: "resource") }
 
     let(:table) do
       render_inline(component) do |row|
-        row.cell :col
+        row.cell :name
       end
     end
 
     before do
       allow_any_instance_of(Katalyst::Tables::HeaderCellComponent)
-        .to receive(:translate).with("activerecord.attributes.my_model.col", any_args)
-                               .and_return("COL")
+        .to receive(:translate).with("activerecord.attributes.resource.name", any_args)
+                               .and_return("TRANSLATED")
     end
 
     it "translates column headers" do
@@ -96,7 +83,7 @@ RSpec.describe Katalyst::TableComponent, type: :component do
         <table>
           <thead>
             <tr>
-              <th>COL</th>
+              <th>TRANSLATED</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -106,26 +93,24 @@ RSpec.describe Katalyst::TableComponent, type: :component do
   end
 
   context "when sort is provided" do
-    subject(:component) { described_class.new(collection: collection, sort: sort) }
+    subject(:component) { described_class.new(collection: items, sort: sort) }
 
     let(:sort) { Katalyst::Tables::Backend::SortForm.new }
 
     let(:table) do
       with_request_url("/resource?s=q&page=2") do
         render_inline(component) do |row|
-          row.cell :col
+          row.cell :name
         end
       end
     end
-
-    include_context "with collection attribute"
 
     it "adds sort links" do
       expect(table).to match_html(<<~HTML)
         <table>
           <thead>
             <tr>
-              <th><a href="/resource?s=q&sort=col+asc">Col</a></th>
+              <th><a href="/resource?s=q&sort=name+asc">Name</a></th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -137,8 +122,8 @@ RSpec.describe Katalyst::TableComponent, type: :component do
   context "when html options are passed to header row" do
     let(:table) do
       render_inline(component) do |row|
-        row.options(**html_options) if row.header?
-        row.cell :col
+        row.options(**Test::HTML_OPTIONS) if row.header?
+        row.cell :name
       end
     end
 
@@ -147,7 +132,7 @@ RSpec.describe Katalyst::TableComponent, type: :component do
         <table>
           <thead>
             <tr id="ID" aria-label="LABEL" class="CLASS" style="style" data-foo="bar">
-              <th>Col</th>
+              <th>Name</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -159,7 +144,7 @@ RSpec.describe Katalyst::TableComponent, type: :component do
   context "when html options are passed to header cell" do
     let(:table) do
       render_inline(component) do |row|
-        row.cell :col, **(row.header? ? html_options : {})
+        row.cell :name, **(row.header? ? Test::HTML_OPTIONS : {})
       end
     end
 
@@ -168,7 +153,7 @@ RSpec.describe Katalyst::TableComponent, type: :component do
         <table>
           <thead>
             <tr>
-              <th id="ID" aria-label="LABEL" class="CLASS" style="style" data-foo="bar">Col</th>
+              <th id="ID" aria-label="LABEL" class="CLASS" style="style" data-foo="bar">Name</th>
             </tr>
           </thead>
           <tbody>
@@ -181,23 +166,23 @@ RSpec.describe Katalyst::TableComponent, type: :component do
   context "with collection data" do
     let(:table) do
       render_inline(component) do |row|
-        row.cell :col
+        row.cell :name
       end
     end
 
-    include_context "with collection data", ["value"]
+    let(:items) { build(:relation, count: 1) }
 
     it "adds html options to header row tag" do
       expect(table).to match_html(<<~HTML)
         <table>
           <thead>
             <tr>
-              <th>Col</th>
+              <th>Name</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>value</td>
+              <td>Resource 1</td>
             </tr>
           </tbody>
         </table>
@@ -208,24 +193,24 @@ RSpec.describe Katalyst::TableComponent, type: :component do
   context "when html options are passed to body row" do
     let(:table) do
       render_inline(component) do |row|
-        row.options(**html_options) if row.body?
-        row.cell :col
+        row.options(**Test::HTML_OPTIONS) if row.body?
+        row.cell :name
       end
     end
 
-    include_context "with collection data", ["value"]
+    let(:items) { build(:relation, count: 1) }
 
     it "adds html options to body row tag" do
       expect(table).to match_html(<<~HTML)
         <table>
           <thead>
             <tr>
-              <th>Col</th>
+              <th>Name</th>
             </tr>
           </thead>
           <tbody>
             <tr id="ID" aria-label="LABEL" class="CLASS" style="style" data-foo="bar">
-              <td>value</td>
+              <td>Resource 1</td>
             </tr>
           </tbody>
         </table>
@@ -236,23 +221,23 @@ RSpec.describe Katalyst::TableComponent, type: :component do
   context "when html options are passed to body cell" do
     let(:table) do
       render_inline(component) do |row|
-        row.cell :col, **(row.body? ? html_options : {})
+        row.cell :name, **(row.body? ? Test::HTML_OPTIONS : {})
       end
     end
 
-    include_context "with collection data", ["value"]
+    let(:items) { build(:relation, count: 1) }
 
     it "adds html options to body cell tag" do
       expect(table).to match_html(<<~HTML)
         <table>
           <thead>
             <tr>
-              <th>Col</th>
+              <th>Name</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td id="ID" aria-label="LABEL" class="CLASS" style="style" data-foo="bar">value</td>
+              <td id="ID" aria-label="LABEL" class="CLASS" style="style" data-foo="bar">Resource 1</td>
             </tr>
           </tbody>
         </table>
@@ -261,27 +246,27 @@ RSpec.describe Katalyst::TableComponent, type: :component do
   end
 
   context "with a custom table builder" do
-    subject(:component) { CustomTableComponent.new(collection: collection) }
+    subject(:component) { CustomTableComponent.new(collection: items) }
 
     let(:table) do
       render_inline(component) do |row|
-        row.cell :col
+        row.cell :name
       end
     end
 
-    include_context "with collection data", ["value"]
+    let(:items) { build(:relation, count: 1) }
 
     it "adds custom classes to all tags" do
       expect(table).to match_html(<<~HTML)
         <table class="custom-table">
           <thead>
             <tr class="custom-header-row">
-              <th class="custom-header-cell">Col</th>
+              <th class="custom-header-cell">Name</th>
             </tr>
           </thead>
           <tbody>
             <tr class="custom-body-row">
-              <td class="custom-body-cell">value</td>
+              <td class="custom-body-cell">Resource 1</td>
             </tr>
           </tbody>
         </table>
@@ -290,11 +275,11 @@ RSpec.describe Katalyst::TableComponent, type: :component do
   end
 
   context "with a custom builder that adds methods" do
-    subject(:component) { ActionTableComponent.new(collection: collection) }
+    subject(:component) { ActionTableComponent.new(collection: items) }
 
     let(:table) do
       render_inline(component) do |row|
-        row.cell(:col)
+        row.cell(:name)
         row.actions do |cell|
           cell.action("Edit", :edit) +
             cell.action("Delete", :delete, method: :delete)
@@ -302,20 +287,20 @@ RSpec.describe Katalyst::TableComponent, type: :component do
       end
     end
 
-    include_context "with collection data", ["value"]
+    let(:items) { build(:relation, count: 1) }
 
     it "generates actions column" do
       expect(table).to match_html(<<~HTML)
         <table class="action-table">
           <thead>
             <tr>
-              <th>Col</th>
+              <th>Name</th>
               <th class="actions"></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>value</td>
+              <td>Resource 1</td>
               <td class="actions">
                 <a href="edit">Edit</a>
                 <a href="delete" method="delete">Delete</a>

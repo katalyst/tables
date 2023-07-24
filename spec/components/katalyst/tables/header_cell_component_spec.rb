@@ -2,8 +2,17 @@
 
 require "rails_helper"
 
-RSpec.describe Katalyst::Tables::HeaderCellComponent, type: :component do
-  subject(:cell) { described_class.new(table, :key) }
+RSpec.describe Katalyst::Tables::HeaderCellComponent do
+  subject(:cell) { described_class.new(table, :name) }
+
+  let(:table) do
+    instance_double(Katalyst::TableComponent).tap do |table|
+      allow(table).to receive_messages(sort: sort, object_name: "resource", collection: items)
+    end
+  end
+  let(:items) { build(:relation) }
+  let(:record) { build(:resource, name: "VALUE") }
+  let(:sort) { nil }
 
   let(:rendered) do
     with_request_url("/resource") do
@@ -11,66 +20,62 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent, type: :component do
     end
   end
 
-  include_context "with table"
-
   it "renders with titleized key" do
     expect(rendered).to match_html(<<~HTML)
-      <th>Key</th>
+      <th>Name</th>
     HTML
   end
 
   context "with translation available" do
     it "renders with translation" do
-      allow_any_instance_of(described_class).to receive(:translate)
-        .with("activerecord.attributes.test_record.key", any_args)
-        .and_return("KEY")
+      allow_any_instance_of(described_class)
+        .to receive(:translate)
+        .with("activerecord.attributes.resource.name", any_args)
+        .and_return("TRANSLATED")
       expect(rendered).to match_html(<<~HTML)
-        <th>KEY</th>
+        <th>TRANSLATED</th>
       HTML
     end
   end
 
   context "with sort" do
-    let(:sort) { instance_double(Katalyst::Tables::Backend::SortForm) }
-
-    before do
-      allow(table).to receive(:sort).and_return(sort)
-      allow(table).to receive(:request).and_return(request)
-      allow(sort).to receive(:supports?).with(collection, :key).and_return(true)
-      allow(sort).to receive(:status).with(:key).and_return(nil)
-      allow(sort).to receive(:toggle).with(:key).and_return("key asc")
-    end
+    let(:sort) { Katalyst::Tables::Backend::SortForm.new }
 
     it "renders with sort link" do
       expect(rendered).to match_html(<<~HTML)
-        <th><a href="/resource?sort=key+asc">Key</a></th>
+        <th><a href="/resource?sort=name+asc">Name</a></th>
       HTML
     end
 
-    it "does not add sort link if column is not supported" do
-      allow(sort).to receive(:supports?).with(collection, :key).and_return(false)
-      expect(rendered).to match_html(<<~HTML)
-        <th>Key</th>
-      HTML
+    context "when column is not supported" do
+      subject(:cell) { described_class.new(table, :unsupported) }
+
+      it "does not add sort link" do
+        expect(rendered).to match_html(<<~HTML)
+          <th>Unsupported</th>
+        HTML
+      end
     end
 
-    it "adds status to data attribute, if specified" do
-      allow(sort).to receive(:status).with(:key).and_return(:desc)
-      allow(sort).to receive(:toggle).with(:key).and_return("key asc")
-      expect(rendered).to match_html(<<~HTML)
-        <th data-sort="desc"><a href="/resource?sort=key+asc">Key</a></th>
-      HTML
+    context "with sorted column" do
+      let(:sort) { Katalyst::Tables::Backend::SortForm.new(column: "name", direction: "desc") }
+
+      it "adds status to data attribute" do
+        expect(rendered).to match_html(<<~HTML)
+          <th data-sort="desc"><a href="/resource?sort=name+asc">Name</a></th>
+        HTML
+      end
     end
 
-    context "with other data options" do
-      subject(:cell) { described_class.new(table, :key, data: { other: "" }) }
+    context "with sorted column and other data options" do
+      subject(:cell) { described_class.new(table, :name, data: { other: "" }) }
 
-      it "supports other data options" do
-        allow(sort).to receive(:status).with(:key).and_return(:asc)
-        allow(sort).to receive(:toggle).with(:key).and_return("key desc")
+      let(:sort) { Katalyst::Tables::Backend::SortForm.new(column: "name", direction: "asc") }
+
+      it "does not cobber other options" do
         expect(rendered).to match_html(<<~HTML)
           <th data-other data-sort="asc">
-            <a href="/resource?sort=key+desc">Key</a>
+            <a href="/resource?sort=name+desc">Name</a>
           </th>
         HTML
       end
@@ -78,17 +83,17 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent, type: :component do
   end
 
   context "with html_options" do
-    subject(:cell) { described_class.new(table, :key, **html_options) }
+    subject(:cell) { described_class.new(table, :name, **Test::HTML_OPTIONS) }
 
     it "renders tag with html_options" do
       expect(rendered).to match_html(<<~HTML)
-        <th id="ID" class="CLASS" style="style" data-foo="bar">Key</th>
+        <th id="ID" class="CLASS" style="style" data-foo="bar" aria-label="LABEL">Name</th>
       HTML
     end
   end
 
   context "when given a label" do
-    subject(:cell) { described_class.new(table, :key, label: "LABEL") }
+    subject(:cell) { described_class.new(table, :name, label: "LABEL") }
 
     it "renders the label" do
       expect(rendered).to match_html(<<~HTML)
@@ -98,7 +103,7 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent, type: :component do
   end
 
   context "when given an empty label" do
-    subject(:cell) { described_class.new(table, :key, label: "") }
+    subject(:cell) { described_class.new(table, :name, label: "") }
 
     it "renders an empty cell" do
       expect(rendered).to match_html(<<~HTML)
@@ -111,7 +116,7 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent, type: :component do
     it "renders the default value" do
       # this behaviour is intentional – assumes block is for body rendering, not header
       expect(rendered { "BLOCK" }).to match_html(<<~HTML)
-        <th>Key</th>
+        <th>Name</th>
       HTML
     end
   end

@@ -15,6 +15,7 @@ gem "rubocop-rspec"
 group :development, :test do
   gem "capybara", require: false
   gem "compare-xml"
+  gem "factory_bot"
   gem "nokogiri"
   gem "rails"
   gem "rspec-rails"

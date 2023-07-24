@@ -14,4 +14,8 @@ RSpec.configure do |config|
   config.include ViewComponent::TestHelpers, type: :component
   config.include ViewComponent::SystemTestHelpers, type: :component
   config.include Capybara::RSpecMatchers, type: :component
+
+  RSpec::Rails::DIRECTORY_MAPPINGS[:component] = %w[spec components]
+
+  config.infer_spec_type_from_file_location!
 end

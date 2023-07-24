@@ -4,23 +4,18 @@ RSpec.describe Katalyst::Tables::Backend::SortForm do
   # base config: sort specified but not supported
   subject(:form) { described_class.new(**order) }
 
+  let(:items) { build(:relation) }
   let(:order) { { column: "col", direction: "asc" } }
 
-  include_context "with collection"
-
   describe "#supports?" do
-    it { is_expected.not_to be_support(collection, :col) }
+    it { is_expected.not_to be_support(items, :col) }
 
-    context "when model has attribute" do
-      include_context "with collection attribute"
-
-      it { is_expected.to be_support(collection, :col) }
+    it_behaves_like "when collection has attribute" do
+      it { is_expected.to be_support(items, :col) }
     end
 
-    context "when collection has scope" do
-      include_context "with collection scope"
-
-      it { is_expected.to be_support(collection, :col) }
+    it_behaves_like "when collection has scope" do
+      it { is_expected.to be_support(items, :col) }
     end
   end
 
@@ -60,7 +55,7 @@ RSpec.describe Katalyst::Tables::Backend::SortForm do
     # base config: attribute defined and sort present
     subject(:sort) { pair.first }
 
-    let(:pair) { form.apply(collection) }
+    let(:pair) { form.apply(items) }
     let(:sorted) { pair.second }
 
     context "when sort param is undefined" do
@@ -68,59 +63,51 @@ RSpec.describe Katalyst::Tables::Backend::SortForm do
 
       it "does not sort collection" do
         sort
-        expect(collection).not_to have_received(:reorder)
+        expect(items).not_to have_received(:reorder)
       end
 
       it "returns sorted" do
-        expect(sorted).to be collection
+        expect(sorted).to be items
       end
     end
 
-    context "with model scope" do
-      include_context "with collection scope"
-
+    it_behaves_like "when collection has scope" do
       it "sorts with scope" do
         sort
-        expect(collection).to have_received(:order_by_col).with(:asc)
+        expect(items).to have_received(:order_by_col).with(:asc)
       end
 
       it "returns sorted" do
-        expect(sorted).to be collection
+        expect(sorted).to be items
+      end
+
+      context "when direction is provided" do
+        let(:order) { { column: "col", direction: "desc" } }
+
+        it "sorts by desc" do
+          sort
+          expect(items).to have_received(:order_by_col).with(:desc)
+        end
       end
     end
 
-    context "with model scope and direction" do
-      let(:order) { { column: "col", direction: "desc" } }
-
-      include_context "with collection scope"
-
-      it "sorts by desc" do
-        sort
-        expect(collection).to have_received(:order_by_col).with(:desc)
-      end
-    end
-
-    context "with model attribute" do
-      include_context "with collection attribute"
-
+    it_behaves_like "when collection has attribute" do
       it "sorts with reorder" do
         sort
-        expect(collection).to have_received(:reorder).with("col" => "asc")
+        expect(items).to have_received(:reorder).with("col" => "asc")
       end
 
       it "returns sorted" do
-        expect(sorted).to be collection
+        expect(sorted).to be items
       end
-    end
 
-    context "with model attribute and direction" do
-      let(:order) { { column: "col", direction: "desc" } }
+      context "when direction is provided" do
+        let(:order) { { column: "col", direction: "desc" } }
 
-      include_context "with collection attribute"
-
-      it "sorts by desc" do
-        sort
-        expect(collection).to have_received(:reorder).with("col" => "desc")
+        it "sorts by desc" do
+          sort
+          expect(items).to have_received(:reorder).with("col" => "desc")
+        end
       end
     end
   end
