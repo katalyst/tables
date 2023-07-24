@@ -3,20 +3,21 @@
 module Katalyst
   module Tables
     class HeaderRowComponent < ViewComponent::Base # :nodoc:
-      include Frontend::Helper
+      include HasHtmlAttributes
 
       renders_many :columns, ->(component) { component }
 
-      def initialize(table)
+      def initialize(table, link: {})
         super()
 
-        @table = table
+        @table           = table
+        @link_attributes = link
       end
 
       def call
         content # generate content before rendering
 
-        tag.tr(**@html_options) do
+        tag.tr(**html_attributes) do
           columns.each do |column|
             concat(column.to_s)
           end
@@ -24,7 +25,8 @@ module Katalyst
       end
 
       def cell(attribute, **options, &block)
-        with_column(@table.class.header_cell_component.new(@table, attribute, **options), &block)
+        with_column(@table.class.header_cell_component.new(@table, attribute, link: @link_attributes, **options),
+                    &block)
       end
 
       def header?

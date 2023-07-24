@@ -4,25 +4,27 @@ module Katalyst
   module Tables
     class HeaderCellComponent < ViewComponent::Base # :nodoc:
       include Frontend::Helper
+      include HasHtmlAttributes
 
       delegate :object_name, :sort, to: :@table
 
-      def initialize(table, attribute, label: nil, **html_options)
-        super(**html_options)
+      def initialize(table, attribute, label: nil, link: {}, **html_attributes)
+        super(**html_attributes)
 
-        @table        = table
-        @attribute    = attribute
-        @value        = label
+        @table           = table
+        @attribute       = attribute
+        @value           = label
+        @link_attributes = link
       end
 
       def call
         content = if @table.sort&.supports?(@table.collection, @attribute)
-                    sort_link(value) # writes to html_options
+                    sort_link(value) # writes to html_attributes
                   else
                     value
                   end
 
-        tag.th(content, **@html_options)
+        tag.th(content, **html_attributes)
       end
 
       def value
@@ -46,8 +48,8 @@ module Katalyst
       private
 
       def sort_link(content)
-        (@html_options["data"] ||= {})["sort"] = sort.status(@attribute)
-        link_to(content, sort_url_for(sort: sort.toggle(@attribute)))
+        (@html_attributes[:data] ||= {})[:sort] = sort.status(@attribute)
+        link_to(content, sort_url_for(sort: sort.toggle(@attribute)), **@link_attributes)
       end
     end
   end

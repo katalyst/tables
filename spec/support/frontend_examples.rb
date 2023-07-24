@@ -3,7 +3,7 @@
 require "rack/request"
 
 module Test
-  HTML_OPTIONS = {
+  HTML_ATTRIBUTES = {
     id: "ID",
     class: "CLASS",
     html: { style: "style" },

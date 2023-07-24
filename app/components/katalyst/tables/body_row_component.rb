@@ -3,7 +3,7 @@
 module Katalyst
   module Tables
     class BodyRowComponent < ViewComponent::Base # :nodoc:
-      include Frontend::Helper
+      include HasHtmlAttributes
 
       renders_many :columns, ->(component) { component }
 
@@ -17,7 +17,7 @@ module Katalyst
       def call
         content # generate content before rendering
 
-        tag.tr(**@html_options) do
+        tag.tr(**html_attributes) do
           columns.each do |column|
             concat(column.to_s)
           end

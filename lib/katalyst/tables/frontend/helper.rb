@@ -6,18 +6,6 @@ module Katalyst
       module Helper # :nodoc:
         extend ActiveSupport::Concern
 
-        def initialize(**options)
-          super()
-
-          options(**options)
-        end
-
-        # Add HTML options to the current component.
-        def options(html: {}, **options)
-          @html_options = options.slice(:id, :aria, :class, :data).merge(html)
-          @html_options.stringify_keys!
-        end
-
         # Generates a url for applying/toggling sort for the given column.
         #
         # @param sort [String, nil] sort parameter to apply, or nil to remove sorting

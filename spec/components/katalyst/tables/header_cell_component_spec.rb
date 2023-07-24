@@ -83,7 +83,7 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent do
   end
 
   context "with html_options" do
-    subject(:cell) { described_class.new(table, :name, **Test::HTML_OPTIONS) }
+    subject(:cell) { described_class.new(table, :name, **Test::HTML_ATTRIBUTES) }
 
     it "renders tag with html_options" do
       expect(rendered).to match_html(<<~HTML)

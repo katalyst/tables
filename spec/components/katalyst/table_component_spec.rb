@@ -17,8 +17,8 @@ RSpec.describe Katalyst::TableComponent do
     HTML
   end
 
-  context "when html options are provided" do
-    subject(:component) { described_class.new(collection: items, **Test::HTML_OPTIONS) }
+  context "when html attributes are provided" do
+    subject(:component) { described_class.new(collection: items, **Test::HTML_ATTRIBUTES) }
 
     it "passes html_options to table tag" do
       expect(table).to match_html(<<~HTML)
@@ -119,10 +119,10 @@ RSpec.describe Katalyst::TableComponent do
     end
   end
 
-  context "when html options are passed to header row" do
+  context "when html attributes are passed to header row" do
     let(:table) do
       render_inline(component) do |row|
-        row.options(**Test::HTML_OPTIONS) if row.header?
+        row.options(**Test::HTML_ATTRIBUTES) if row.header?
         row.cell :name
       end
     end
@@ -141,10 +141,10 @@ RSpec.describe Katalyst::TableComponent do
     end
   end
 
-  context "when html options are passed to header cell" do
+  context "when html attributes are passed to header cell" do
     let(:table) do
       render_inline(component) do |row|
-        row.cell :name, **(row.header? ? Test::HTML_OPTIONS : {})
+        row.cell :name, **(row.header? ? Test::HTML_ATTRIBUTES : {})
       end
     end
 
@@ -190,10 +190,10 @@ RSpec.describe Katalyst::TableComponent do
     end
   end
 
-  context "when html options are passed to body row" do
+  context "when html attributes are passed to body row" do
     let(:table) do
       render_inline(component) do |row|
-        row.options(**Test::HTML_OPTIONS) if row.body?
+        row.options(**Test::HTML_ATTRIBUTES) if row.body?
         row.cell :name
       end
     end
@@ -218,10 +218,10 @@ RSpec.describe Katalyst::TableComponent do
     end
   end
 
-  context "when html options are passed to body cell" do
+  context "when html attributes are passed to body cell" do
     let(:table) do
       render_inline(component) do |row|
-        row.cell :name, **(row.body? ? Test::HTML_OPTIONS : {})
+        row.cell :name, **(row.body? ? Test::HTML_ATTRIBUTES : {})
       end
     end
 

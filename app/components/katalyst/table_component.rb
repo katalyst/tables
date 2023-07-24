@@ -12,7 +12,7 @@ module Katalyst
   # ```
   class TableComponent < ViewComponent::Base
     include ActiveSupport::Configurable
-    include Tables::Frontend::Helper
+    include Tables::HasHtmlAttributes
 
     attr_reader :collection, :sort, :object_name
 
@@ -28,17 +28,18 @@ module Katalyst
                    sort: nil,
                    header: true,
                    object_name: collection.try(:model_name)&.i18n_key,
-                   **html_options)
-      super
+                   **html_attributes)
+      super(**html_attributes)
 
-      @collection   = collection
-      @sort         = sort
-      @header       = header
-      @object_name  = object_name
+      @collection     = collection
+      @sort           = sort
+      @header         = header
+      @header_options = (header if header.is_a?(Hash)) || {}
+      @object_name    = object_name
     end
 
     def call
-      tag.table(**@html_options) do
+      tag.table(**html_attributes) do
         thead + tbody
       end
     end
@@ -61,7 +62,7 @@ module Katalyst
 
     def render_header
       # extract the column's block from the slot and pass it to the cell for rendering
-      self.class.header_row_component.new(self).render_in(view_context, &@__vc_render_in_block)
+      self.class.header_row_component.new(self, **@header_options).render_in(view_context, &@__vc_render_in_block)
     end
 
     def render_row(record)

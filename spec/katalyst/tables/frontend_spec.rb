@@ -19,7 +19,7 @@ RSpec.describe Katalyst::Tables::Frontend do
 
   context "when html options are provided to table_with" do
     subject(:table) do
-      table_with(collection: items, **Test::HTML_OPTIONS) { "" }
+      table_with(collection: items, **Test::HTML_ATTRIBUTES) { "" }
     end
 
     it "passes html_options to table tag" do
@@ -109,7 +109,7 @@ RSpec.describe Katalyst::Tables::Frontend do
   context "when html options are passed to header row" do
     subject(:table) do
       table_with(collection: items) do |row|
-        row.options(**Test::HTML_OPTIONS) if row.header?
+        row.options(**Test::HTML_ATTRIBUTES) if row.header?
         row.cell :name
       end
     end
@@ -131,7 +131,7 @@ RSpec.describe Katalyst::Tables::Frontend do
   context "when html options are passed to header cell" do
     subject(:table) do
       table_with(collection: items) do |row|
-        row.cell :name, **(row.header? ? Test::HTML_OPTIONS : {})
+        row.cell :name, **(row.header? ? Test::HTML_ATTRIBUTES : {})
       end
     end
 
@@ -180,7 +180,7 @@ RSpec.describe Katalyst::Tables::Frontend do
   context "when html options are passed to body row" do
     subject(:table) do
       table_with(collection: items) do |row|
-        row.options(**Test::HTML_OPTIONS) if row.body?
+        row.options(**Test::HTML_ATTRIBUTES) if row.body?
         row.cell :name
       end
     end
@@ -208,7 +208,7 @@ RSpec.describe Katalyst::Tables::Frontend do
   context "when html options are passed to body cell" do
     subject(:table) do
       table_with(collection: items) do |row|
-        row.cell :name, **(row.body? ? Test::HTML_OPTIONS : {})
+        row.cell :name, **(row.body? ? Test::HTML_ATTRIBUTES : {})
       end
     end
 

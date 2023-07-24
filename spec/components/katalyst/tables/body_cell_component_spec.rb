@@ -25,7 +25,7 @@ RSpec.describe Katalyst::Tables::BodyCellComponent do
   end
 
   context "with html_options" do
-    subject(:cell) { described_class.new(table, record, :name, **Test::HTML_OPTIONS) }
+    subject(:cell) { described_class.new(table, record, :name, **Test::HTML_ATTRIBUTES) }
 
     it "renders tag with html_options" do
       expect(render_inline(cell)).to match_html(<<~HTML)
@@ -68,12 +68,12 @@ RSpec.describe Katalyst::Tables::BodyCellComponent do
     end
   end
 
-  context "with html_options from args and block" do
-    subject(:cell) { described_class.new(table, record, :name, **Test::HTML_OPTIONS) }
+  context "with html_attributes from args and block" do
+    subject(:cell) { described_class.new(table, record, :name, **Test::HTML_ATTRIBUTES) }
 
     it "uses block options instead of args" do
       expect(render_inline(cell) do |cell|
-        cell.options(id: "BLOCK", data: { block: "" })
+        cell.html_attributes = { id: "BLOCK", data: { block: "" } }
         "BLOCK"
       end).to match_html(<<~HTML)
         <td id="BLOCK" data-block="">BLOCK</td>

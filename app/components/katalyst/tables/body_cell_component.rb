@@ -3,12 +3,12 @@
 module Katalyst
   module Tables
     class BodyCellComponent < ViewComponent::Base # :nodoc:
-      include Frontend::Helper
+      include HasHtmlAttributes
 
       attr_reader :record
 
-      def initialize(table, record, attribute, heading: false, **html_options)
-        super(**html_options)
+      def initialize(table, record, attribute, heading: false, **html_attributes)
+        super(**html_attributes)
 
         @table     = table
         @record    = record
@@ -24,7 +24,7 @@ module Katalyst
       def call
         content # ensure content is set before rendering options
 
-        content_tag(@type, content, **@html_options)
+        content_tag(@type, content, **html_attributes)
       end
 
       # @return the object for this row.
