@@ -119,6 +119,31 @@ RSpec.describe Katalyst::TableComponent do
     end
   end
 
+  context "when collection supports sort and default is provided" do
+    let(:table) do
+      with_request_url("/resource?s=q&page=2") do
+        render_inline(component) do |row|
+          row.cell :name
+        end
+      end
+    end
+
+    let(:items) { build(:collection, sorting: "name asc") }
+
+    it "adds sort links" do
+      expect(table).to match_html(<<~HTML)
+        <table>
+          <thead>
+            <tr>
+              <th data-sort="asc"><a href="/resource?s=q&sort=name+desc">Name</a></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      HTML
+    end
+  end
+
   context "when html attributes are passed to header row" do
     let(:table) do
       render_inline(component) do |row|

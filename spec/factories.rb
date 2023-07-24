@@ -30,6 +30,9 @@ FactoryBot.define do
       allow(collection).to receive(:count) do
         values.count
       end
+      allow(collection).to receive(:empty?) do
+        values.empty?
+      end
       allow(collection).to receive(:offset) do |i|
         values.replace(values.slice(i..-1))
         collection
@@ -48,6 +51,22 @@ FactoryBot.define do
       end
 
       collection
+    end
+  end
+
+  factory :collection, class: "Katalyst::Tables::Collection::Base" do
+    items { association :relation, count: count }
+    transient do
+      count { 0 }
+    end
+
+    initialize_with do
+      items    = attributes.delete(:items)
+      sorting  = attributes.delete(:sorting)
+      paginate = attributes.delete(:paginate)
+      params   = ActionController::Parameters.new(attributes)
+
+      new(sorting: sorting, paginate: paginate).with_params(params).apply(items)
     end
   end
 end

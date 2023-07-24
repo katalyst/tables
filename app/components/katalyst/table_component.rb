@@ -44,7 +44,7 @@ module Katalyst
       super(**html_attributes)
 
       @collection     = collection
-      @sorting        = sorting || sort
+      @sorting        = sorting || sort || default_sorting
 
       # header: true means render the header row, header: false means no header row, if a hash, passes as options
       @header         = header
@@ -112,5 +112,9 @@ module Katalyst
       @as          ||= collection.model_name.param_key.to_sym
     end
     # rubocop:enable Naming/MemoizedInstanceVariableName
+
+    def default_sorting
+      collection.sorting if collection.respond_to?(:sorting)
+    end
   end
 end
