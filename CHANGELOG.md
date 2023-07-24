@@ -4,6 +4,8 @@
   - No changes required to existing code unless you were using the internal
     classes directly
   - Change allows sort param and sorting model to co-exist
+- Add support for row partials when content is not provided
+  - See [[README.md]] for examples
 
 ## [2.0.0]
 

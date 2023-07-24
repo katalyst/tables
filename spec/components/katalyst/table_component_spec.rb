@@ -64,7 +64,7 @@ RSpec.describe Katalyst::TableComponent do
   end
 
   context "when model name is available" do
-    subject(:component) { described_class.new(collection: items, object_name: "resource") }
+    subject(:component) { described_class.new(collection: items) }
 
     let(:table) do
       render_inline(component) do |row|
@@ -238,6 +238,56 @@ RSpec.describe Katalyst::TableComponent do
           <tbody>
             <tr>
               <td id="ID" aria-label="LABEL" class="CLASS" style="style" data-foo="bar">Resource 1</td>
+            </tr>
+          </tbody>
+        </table>
+      HTML
+    end
+  end
+
+  context "when no content is provided" do
+    let(:table) do
+      render_inline(described_class.new(collection: items))
+    end
+
+    let(:items) { build(:relation, count: 1) }
+
+    it "calls the partial to render rows" do
+      expect(table).to match_html(<<~HTML)
+        <table>
+          <thead>
+            <tr>
+              <th>Resource partial</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Resource 1</td>
+            </tr>
+          </tbody>
+        </table>
+      HTML
+    end
+  end
+
+  context "with custom partial options" do
+    let(:table) do
+      render_inline(described_class.new(collection: items, partial: "custom", as: :foobar))
+    end
+
+    let(:items) { build(:relation, count: 1) }
+
+    it "calls the custom partial with correct local" do
+      expect(table).to match_html(<<~HTML)
+        <table>
+          <thead>
+            <tr>
+              <th>Custom partial</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Resource 1</td>
             </tr>
           </tbody>
         </table>

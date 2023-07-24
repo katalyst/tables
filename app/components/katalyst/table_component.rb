@@ -29,7 +29,9 @@ module Katalyst
                    sorting: nil,
                    sort: nil, # backwards compatibility
                    header: true,
-                   object_name: collection.try(:model_name)&.i18n_key,
+                   object_name: nil,
+                   partial: nil,
+                   as: nil,
                    **html_attributes)
       super(**html_attributes)
 
@@ -38,6 +40,10 @@ module Katalyst
       @header         = header
       @header_options = (header if header.is_a?(Hash)) || {}
       @object_name    = object_name
+      @partial        = partial
+      @as             = as
+
+      with_model_name_defaults
     end
     # rubocop:enable Metrics/ParameterLists
 
@@ -65,12 +71,12 @@ module Katalyst
 
     def render_header
       # extract the column's block from the slot and pass it to the cell for rendering
-      header_row_component.new(self, **@header_options).render_in(view_context, &@__vc_render_in_block)
+      header_row_component.new(self, **@header_options).render_in(view_context, &row_proc)
     end
 
     def render_row(record)
       # extract the column's block from the slot and pass it to the cell for rendering
-      block = @__vc_render_in_block
+      block = row_proc
       body_row_component.new(self, record).render_in(view_context) do |row|
         block.call(row, record)
       end
@@ -91,5 +97,25 @@ module Katalyst
     def body_cell_component
       @body_cell_component ||= self.class.const_get(config.body_cell || "Katalyst::Tables::BodyCellComponent")
     end
+
+    def row_proc
+      @row_proc ||= @__vc_render_in_block || method(:row_partial)
+    end
+
+    def row_partial(row, record = nil)
+      render(partial: @partial, variants: [:row], locals: { @as => record, row: row })
+    end
+
+    private
+
+    # rubocop:disable Naming/MemoizedInstanceVariableName
+    def with_model_name_defaults
+      return unless collection.respond_to?(:model_name)
+
+      @object_name ||= collection.model_name.i18n_key
+      @partial     ||= collection.model_name.param_key.to_s
+      @as          ||= collection.model_name.param_key.to_sym
+    end
+    # rubocop:enable Naming/MemoizedInstanceVariableName
   end
 end

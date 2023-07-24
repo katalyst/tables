@@ -60,6 +60,27 @@ The table builder will call your block once per row and accumulate the cells you
 </table>
 ```
 
+### Partials
+
+You can also use partials to generate rows. If you do not provide a block to
+`table_with`, the table builder will look for a partial with the same name as
+the collection class. For example, if you pass `collection: @people`, the table
+component will look for a partial called `_person.html+row.erb` and render it
+for each row (and once for the header row).
+
+```erb
+<%# locals: { row:, person: nil } %>
+<%= row.cell :name %>
+<%= row.cell :email %>
+```
+
+You can customize the partial and/or the name of the resource in a similar style
+to view partials:
+
+```erb
+<%= table_with collection: @employees, as: :person, partial: "person" %>
+``` 
+
 ### Options
 
 You can customise the options passed to the table, rows, and cells.

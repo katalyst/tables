@@ -26,7 +26,7 @@ FactoryBot.define do
       model      = attributes[:model]
       values     = attributes[:values]
 
-      allow(collection).to receive_messages(reorder: collection, model: model)
+      allow(collection).to receive_messages(reorder: collection, model: model, model_name: model.model_name)
       allow(collection).to receive(:count) do
         values.count
       end
