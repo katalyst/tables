@@ -17,6 +17,7 @@ group :development, :test do
   gem "compare-xml"
   gem "factory_bot"
   gem "nokogiri"
+  gem "pagy"
   gem "rails"
   gem "rspec-rails"
   gem "sqlite3"
