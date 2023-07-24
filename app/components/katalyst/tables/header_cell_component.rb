@@ -6,7 +6,7 @@ module Katalyst
       include Frontend::Helper
       include HasHtmlAttributes
 
-      delegate :object_name, :sort, to: :@table
+      delegate :object_name, :sorting, to: :@table
 
       def initialize(table, attribute, label: nil, link: {}, **html_attributes)
         super(**html_attributes)
@@ -18,7 +18,7 @@ module Katalyst
       end
 
       def call
-        content = if @table.sort&.supports?(@table.collection, @attribute)
+        content = if @table.sorting&.supports?(@table.collection, @attribute)
                     sort_link(value) # writes to html_attributes
                   else
                     value
@@ -48,8 +48,8 @@ module Katalyst
       private
 
       def sort_link(content)
-        (@html_attributes[:data] ||= {})[:sort] = sort.status(@attribute)
-        link_to(content, sort_url_for(sort: sort.toggle(@attribute)), **@link_attributes)
+        (@html_attributes[:data] ||= {})[:sort] = sorting.status(@attribute)
+        link_to(content, sort_url_for(sort: sorting.toggle(@attribute)), **@link_attributes)
       end
     end
   end

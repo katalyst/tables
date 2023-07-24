@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+- Replaces internal references to SortForm to use `sorting` instead
+  - No changes required to existing code unless you were using the internal
+    classes directly
+  - Change allows sort param and sorting model to co-exist
+
 ## [2.0.0]
 
 - Replaces builders with view_components 

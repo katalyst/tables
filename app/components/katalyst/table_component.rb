@@ -14,7 +14,7 @@ module Katalyst
     include ActiveSupport::Configurable
     include Tables::HasHtmlAttributes
 
-    attr_reader :collection, :sort, :object_name
+    attr_reader :collection, :sorting, :object_name
 
     # Workaround: ViewComponent::Base.config is incompatible with ActiveSupport::Configurable
     @_config = Class.new(Configuration).new
@@ -24,19 +24,22 @@ module Katalyst
     config_accessor :body_row_component
     config_accessor :body_cell_component
 
+    # rubocop:disable Metrics/ParameterLists
     def initialize(collection:,
-                   sort: nil,
+                   sorting: nil,
+                   sort: nil, # backwards compatibility
                    header: true,
                    object_name: collection.try(:model_name)&.i18n_key,
                    **html_attributes)
       super(**html_attributes)
 
       @collection     = collection
-      @sort           = sort
+      @sorting        = sorting || sort
       @header         = header
       @header_options = (header if header.is_a?(Hash)) || {}
       @object_name    = object_name
     end
+    # rubocop:enable Metrics/ParameterLists
 
     def call
       tag.table(**html_attributes) do

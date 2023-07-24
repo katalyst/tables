@@ -92,10 +92,10 @@ RSpec.describe Katalyst::TableComponent do
     end
   end
 
-  context "when sort is provided" do
-    subject(:component) { described_class.new(collection: items, sort: sort) }
+  context "when sorting is provided" do
+    subject(:component) { described_class.new(collection: items, sorting: sorting) }
 
-    let(:sort) { Katalyst::Tables::Backend::SortForm.new }
+    let(:sorting) { Katalyst::Tables::Backend::SortForm.new }
 
     let(:table) do
       with_request_url("/resource?s=q&page=2") do

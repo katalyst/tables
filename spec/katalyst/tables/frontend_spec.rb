@@ -83,14 +83,14 @@ RSpec.describe Katalyst::Tables::Frontend do
     end
   end
 
-  context "when sort is provided" do
+  context "when sorting is provided" do
     subject(:table) do
       template.with_request_url("/resource?s=q&page=2") do
-        table_with(collection: items, sort: sort) { |row| row.cell :name }
+        table_with(collection: items, sorting: sorting) { |row| row.cell :name }
       end
     end
 
-    let(:sort) { Katalyst::Tables::Backend::SortForm.new }
+    let(:sorting) { Katalyst::Tables::Backend::SortForm.new }
 
     it "adds sort links" do
       expect(table).to match_html(<<~HTML)
