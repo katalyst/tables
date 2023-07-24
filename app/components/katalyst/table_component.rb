@@ -19,10 +19,10 @@ module Katalyst
     # Workaround: ViewComponent::Base.config is incompatible with ActiveSupport::Configurable
     @_config = Class.new(Configuration).new
 
-    config_accessor :header_row
-    config_accessor :header_cell
-    config_accessor :body_row
-    config_accessor :body_cell
+    config_accessor :header_row_component
+    config_accessor :header_cell_component
+    config_accessor :body_row_component
+    config_accessor :body_cell_component
 
     def initialize(collection:,
                    sort: nil,
@@ -62,31 +62,31 @@ module Katalyst
 
     def render_header
       # extract the column's block from the slot and pass it to the cell for rendering
-      self.class.header_row_component.new(self, **@header_options).render_in(view_context, &@__vc_render_in_block)
+      header_row_component.new(self, **@header_options).render_in(view_context, &@__vc_render_in_block)
     end
 
     def render_row(record)
       # extract the column's block from the slot and pass it to the cell for rendering
       block = @__vc_render_in_block
-      self.class.body_row_component.new(self, record).render_in(view_context) do |row|
+      body_row_component.new(self, record).render_in(view_context) do |row|
         block.call(row, record)
       end
     end
 
-    def self.header_row_component
-      @header_row_component ||= const_get(config.header_row || "Katalyst::Tables::HeaderRowComponent")
+    def header_row_component
+      @header_row_component ||= self.class.const_get(config.header_row || "Katalyst::Tables::HeaderRowComponent")
     end
 
-    def self.header_cell_component
-      @header_cell_component ||= const_get(config.header_cell || "Katalyst::Tables::HeaderCellComponent")
+    def header_cell_component
+      @header_cell_component ||= self.class.const_get(config.header_cell || "Katalyst::Tables::HeaderCellComponent")
     end
 
-    def self.body_row_component
-      @body_row_component ||= const_get(config.body_row || "Katalyst::Tables::BodyRowComponent")
+    def body_row_component
+      @body_row_component ||= self.class.const_get(config.body_row || "Katalyst::Tables::BodyRowComponent")
     end
 
-    def self.body_cell_component
-      @body_cell_component ||= const_get(config.body_cell || "Katalyst::Tables::BodyCellComponent")
+    def body_cell_component
+      @body_cell_component ||= self.class.const_get(config.body_cell || "Katalyst::Tables::BodyCellComponent")
     end
   end
 end

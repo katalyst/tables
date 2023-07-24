@@ -8,14 +8,11 @@ RSpec.describe Katalyst::Tables::HeaderRowComponent do
   let(:table) do
     instance_double(Katalyst::TableComponent).tap do |table|
       allow(table).to receive_messages(sort: sort, object_name: "resource", collection: items)
+      allow(table).to receive(:header_cell_component).and_return(Katalyst::Tables::HeaderCellComponent)
     end
   end
   let(:items) { build(:relation) }
   let(:sort) { nil }
-
-  before do
-    allow(table.class).to receive(:header_cell_component).and_return(Katalyst::Tables::HeaderCellComponent)
-  end
 
   it "renders an empty row" do
     expect(render_inline(row) { "" }).to match_html(<<~HTML)

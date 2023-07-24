@@ -9,7 +9,7 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
   let(:record) { build(:resource, name: "VALUE") }
 
   before do
-    allow(table.class).to receive(:body_cell_component).and_return(Katalyst::Tables::BodyCellComponent)
+    allow(table).to receive(:body_cell_component).and_return(Katalyst::Tables::BodyCellComponent)
   end
 
   # simulate table passing its block to each row
