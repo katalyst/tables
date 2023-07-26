@@ -1,11 +1,19 @@
 ## [Unreleased]
 
+## [2.1.0]
+
+- Add Collection model for building collections in a controller from params.
+  - See [[README.md]] for examples
+- Add turbo entry points for table and pagy_nav
+  - See [[README.md]] for examples
+- Add support for row partials when content is not provided
+  - See [[README.md]] for examples
+- Add messages when table is empty, off by default (caption: true)
+- Add PagyNavComponent for rendering `pagy_nav` from a collection.
 - Replaces internal references to SortForm to use `sorting` instead
   - No changes required to existing code unless you were using the internal
     classes directly
   - Change allows sort param and sorting model to co-exist
-- Add support for row partials when content is not provided
-  - See [[README.md]] for examples
 
 ## [2.0.0]
 
