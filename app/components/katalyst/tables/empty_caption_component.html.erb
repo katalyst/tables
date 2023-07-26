@@ -1,0 +1,6 @@
+<%= tag.caption(**html_attributes) do %>
+  No <%= plural_human_model_name %> found.
+  <% if filtered? %>
+    <%= link_to("Clear filters", clear_filters_path) %>.
+  <% end %>
+<% end %>

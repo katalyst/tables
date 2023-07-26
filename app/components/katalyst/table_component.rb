@@ -20,12 +20,14 @@ module Katalyst
     config_component :header_cell, default: "Katalyst::Tables::HeaderCellComponent"
     config_component :body_row, default: "Katalyst::Tables::BodyRowComponent"
     config_component :body_cell, default: "Katalyst::Tables::BodyCellComponent"
+    config_component :caption, default: "Katalyst::Tables::EmptyCaptionComponent"
 
     # Construct a new table component. This entry point supports a large number
     # of options for customizing the table. The most common options are:
     # - `collection`: the collection to render
     # - `sorting`: the sorting to apply to the collection (defaults to collection.storing if available)
     # - `header`: whether to render the header row (defaults to true)
+    # - `caption`: whether to render the caption (defaults to true)
     # - `object_name`: the name of the object to use for partial rendering (defaults to collection.model_name.i18n_key)
     # - `partial`: the name of the partial to use for rendering each row (defaults to collection.model_name.param_key)
     # - `as`: the name of the local variable to use for rendering each row (defaults to collection.model_name.param_key)
@@ -37,6 +39,7 @@ module Katalyst
                    sorting: nil,
                    sort: nil, # backwards compatibility
                    header: true,
+                   caption: false,
                    object_name: nil,
                    partial: nil,
                    as: nil,
@@ -50,6 +53,10 @@ module Katalyst
       @header         = header
       @header_options = (header if header.is_a?(Hash)) || {}
 
+      # caption: true means render the caption, caption: false means no caption, if a hash, passes as options
+      @caption         = caption
+      @caption_options = (caption if caption.is_a?(Hash)) || {}
+
       # model configuration, derived from collection.model_name if collection responds to model_name
       @object_name    = object_name # defaults to collection.model_name.i18n_key
       @partial        = partial # defaults to collection.model_name.param_key
@@ -60,8 +67,14 @@ module Katalyst
 
     def call
       tag.table(**html_attributes) do
-        thead + tbody
+        concat(caption)
+        concat(thead)
+        concat(tbody)
       end
+    end
+
+    def caption
+      caption_component&.new(self)&.render_in(view_context) if @caption
     end
 
     def thead
