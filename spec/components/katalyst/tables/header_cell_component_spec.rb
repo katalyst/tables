@@ -80,6 +80,16 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent do
         HTML
       end
     end
+
+    context "when sorting would restore default sort" do
+      let(:sorting) { Katalyst::Tables::Backend::SortForm.new(column: "name", direction: "desc", default: "name asc") }
+
+      it "adds status to data attribute" do
+        expect(rendered).to match_html(<<~HTML)
+          <th data-sort="desc"><a href="/resource">Name</a></th>
+        HTML
+      end
+    end
   end
 
   context "with html_options" do

@@ -8,11 +8,25 @@ module Katalyst
       class SortForm
         DIRECTIONS = %w[asc desc].freeze
 
-        attr_accessor :column, :direction
+        attr_accessor :column, :direction, :default
 
-        def initialize(column: nil, direction: nil)
+        def self.parse(param, default: nil)
+          column, direction = param.to_s.split
+          direction         = "asc" unless DIRECTIONS.include?(direction)
+
+          default = SortForm.parse(default).to_param if default.present?
+
+          SortForm.new(column: column, direction: direction, default: default)
+        end
+
+        def initialize(column: nil, direction: nil, default: nil)
           self.column    = column
           self.direction = direction
+          self.default   = default
+        end
+
+        def to_param
+          "#{column} #{direction}"
         end
 
         # Returns true if the given collection supports sorting on the given
