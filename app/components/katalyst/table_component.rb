@@ -11,19 +11,27 @@ module Katalyst
   # <% end %>
   # ```
   class TableComponent < ViewComponent::Base
-    include ActiveSupport::Configurable
+    include Tables::ConfigurableComponent
     include Tables::HasHtmlAttributes
 
     attr_reader :collection, :sorting, :object_name
 
-    # Workaround: ViewComponent::Base.config is incompatible with ActiveSupport::Configurable
-    @_config = Class.new(Configuration).new
+    config_component :header_row, default: "Katalyst::Tables::HeaderRowComponent"
+    config_component :header_cell, default: "Katalyst::Tables::HeaderCellComponent"
+    config_component :body_row, default: "Katalyst::Tables::BodyRowComponent"
+    config_component :body_cell, default: "Katalyst::Tables::BodyCellComponent"
 
-    config_accessor :header_row_component
-    config_accessor :header_cell_component
-    config_accessor :body_row_component
-    config_accessor :body_cell_component
-
+    # Construct a new table component. This entry point supports a large number
+    # of options for customizing the table. The most common options are:
+    # - `collection`: the collection to render
+    # - `sorting`: the sorting to apply to the collection (defaults to collection.storing if available)
+    # - `header`: whether to render the header row (defaults to true)
+    # - `object_name`: the name of the object to use for partial rendering (defaults to collection.model_name.i18n_key)
+    # - `partial`: the name of the partial to use for rendering each row (defaults to collection.model_name.param_key)
+    # - `as`: the name of the local variable to use for rendering each row (defaults to collection.model_name.param_key)
+    #
+    # In addition to these options, standard HTML attributes can be passed which will be added to the table tag.
+    #
     # rubocop:disable Metrics/ParameterLists
     def initialize(collection:,
                    sorting: nil,
@@ -37,12 +45,15 @@ module Katalyst
 
       @collection     = collection
       @sorting        = sorting || sort
+
+      # header: true means render the header row, header: false means no header row, if a hash, passes as options
       @header         = header
       @header_options = (header if header.is_a?(Hash)) || {}
-      @object_name    = object_name
-      @partial        = partial
-      @as             = as
 
+      # model configuration, derived from collection.model_name if collection responds to model_name
+      @object_name    = object_name # defaults to collection.model_name.i18n_key
+      @partial        = partial # defaults to collection.model_name.param_key
+      @as             = as # defaults to collection.model_name.param_key
       with_model_name_defaults
     end
     # rubocop:enable Metrics/ParameterLists
@@ -80,22 +91,6 @@ module Katalyst
       body_row_component.new(self, record).render_in(view_context) do |row|
         block.call(row, record)
       end
-    end
-
-    def header_row_component
-      @header_row_component ||= self.class.const_get(config.header_row || "Katalyst::Tables::HeaderRowComponent")
-    end
-
-    def header_cell_component
-      @header_cell_component ||= self.class.const_get(config.header_cell || "Katalyst::Tables::HeaderCellComponent")
-    end
-
-    def body_row_component
-      @body_row_component ||= self.class.const_get(config.body_row || "Katalyst::Tables::BodyRowComponent")
-    end
-
-    def body_cell_component
-      @body_cell_component ||= self.class.const_get(config.body_cell || "Katalyst::Tables::BodyCellComponent")
     end
 
     def row_proc
