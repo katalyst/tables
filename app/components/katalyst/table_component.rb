@@ -13,8 +13,9 @@ module Katalyst
   class TableComponent < ViewComponent::Base
     include Tables::ConfigurableComponent
     include Tables::HasHtmlAttributes
+    include Tables::HasTableContent
 
-    attr_reader :collection, :sorting, :object_name
+    attr_reader :collection, :object_name
 
     config_component :header_row, default: "Katalyst::Tables::HeaderRowComponent"
     config_component :header_cell, default: "Katalyst::Tables::HeaderCellComponent"
@@ -26,28 +27,21 @@ module Katalyst
     # of options for customizing the table. The most common options are:
     # - `collection`: the collection to render
     # - `sorting`: the sorting to apply to the collection (defaults to collection.storing if available)
-    # - `header`: whether to render the header row (defaults to true)
-    # - `caption`: whether to render the caption (defaults to true)
+    # - `header`: whether to render the header row (defaults to true, supports options)
+    # - `caption`: whether to render the caption (defaults to true, supports options)
     # - `object_name`: the name of the object to use for partial rendering (defaults to collection.model_name.i18n_key)
     # - `partial`: the name of the partial to use for rendering each row (defaults to collection.model_name.param_key)
     # - `as`: the name of the local variable to use for rendering each row (defaults to collection.model_name.param_key)
-    #
     # In addition to these options, standard HTML attributes can be passed which will be added to the table tag.
-    #
-    # rubocop:disable Metrics/ParameterLists
     def initialize(collection:,
                    sorting: nil,
-                   sort: nil, # backwards compatibility
                    header: true,
                    caption: false,
-                   object_name: nil,
-                   partial: nil,
-                   as: nil,
                    **html_attributes)
-      super(**html_attributes)
+      @collection = collection
 
-      @collection     = collection
-      @sorting        = sorting || sort || default_sorting
+      # sorting: instance of Katalyst::Tables::Backend::SortForm. If not provided will be inferred from the collection.
+      @sorting = sorting || html_attributes.delete(:sort) # backwards compatibility with old `sort` option
 
       # header: true means render the header row, header: false means no header row, if a hash, passes as options
       @header         = header
@@ -57,13 +51,8 @@ module Katalyst
       @caption         = caption
       @caption_options = (caption if caption.is_a?(Hash)) || {}
 
-      # model configuration, derived from collection.model_name if collection responds to model_name
-      @object_name    = object_name # defaults to collection.model_name.i18n_key
-      @partial        = partial # defaults to collection.model_name.param_key
-      @as             = as # defaults to collection.model_name.param_key
-      with_model_name_defaults
+      super(**html_attributes)
     end
-    # rubocop:enable Metrics/ParameterLists
 
     def call
       tag.table(**html_attributes) do
@@ -99,34 +88,14 @@ module Katalyst
     end
 
     def render_row(record)
-      # extract the column's block from the slot and pass it to the cell for rendering
-      block = row_proc
       body_row_component.new(self, record).render_in(view_context) do |row|
-        block.call(row, record)
+        row_proc.call(row, record)
       end
     end
 
-    def row_proc
-      @row_proc ||= @__vc_render_in_block || method(:row_partial)
-    end
+    def sorting
+      return @sorting if @sorting.present?
 
-    def row_partial(row, record = nil)
-      render(partial: @partial, variants: [:row], locals: { @as => record, row: row })
-    end
-
-    private
-
-    # rubocop:disable Naming/MemoizedInstanceVariableName
-    def with_model_name_defaults
-      return unless collection.respond_to?(:model_name)
-
-      @object_name ||= collection.model_name.i18n_key
-      @partial     ||= collection.model_name.param_key.to_s
-      @as          ||= collection.model_name.param_key.to_sym
-    end
-    # rubocop:enable Naming/MemoizedInstanceVariableName
-
-    def default_sorting
       collection.sorting if collection.respond_to?(:sorting)
     end
   end
