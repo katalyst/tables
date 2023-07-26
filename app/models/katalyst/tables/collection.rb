@@ -24,8 +24,8 @@ module Katalyst
         include Pagination
         include Sorting
 
-        use(Pagination::Paginate)
         use(Sorting::Sort)
+        use(Pagination::Paginate)
       end
     end
   end

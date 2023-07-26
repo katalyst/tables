@@ -11,13 +11,9 @@ module Katalyst
         include ActiveModel::Dirty
         include ActiveSupport::Configurable
 
+        include Reducers
+
         included do
-          class_attribute :reducers, default: ActionDispatch::MiddlewareStack.new
-
-          class << self
-            delegate :use, :before, to: :reducers
-          end
-
           attr_accessor :items
 
           delegate :model, :to_model, :each, :count, :empty?, to: :items, allow_nil: true
