@@ -281,8 +281,8 @@ def index
   table = Katalyst::Turbo::TableComponent.new(collection:, id: "people")
   
   respond_to do |format|
+    format.turbo_stream { render table } if self_referred?
     format.html { render locals: { table: table } }
-    format.turbo_stream { render table }
   end
 end
 ```
