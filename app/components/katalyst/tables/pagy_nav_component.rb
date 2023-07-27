@@ -3,7 +3,9 @@
 module Katalyst
   module Tables
     class PagyNavComponent < ViewComponent::Base # :nodoc:
-      include Pagy::Frontend
+      # Pagy is not a required gem unless you're using pagination
+      # Expect to see NoMethodError failures if pagy is not available
+      "Pagy::Frontend".safe_constantize&.tap { |pagy| include(pagy) }
 
       attr_reader :pagy_options
 

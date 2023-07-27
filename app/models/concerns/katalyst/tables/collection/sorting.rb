@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "pagy/backend"
-
 module Katalyst
   module Tables
     module Collection

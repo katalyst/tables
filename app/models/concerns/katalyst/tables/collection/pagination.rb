@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "pagy/backend"
-
 module Katalyst
   module Tables
     module Collection
@@ -41,7 +39,9 @@ module Katalyst
         end
 
         class Paginate # :nodoc:
-          include Pagy::Backend
+          # Pagy is not a required gem unless you're using pagination
+          # Expect to see NoMethodError failures if pagy is not available
+          "Pagy::Backend".safe_constantize&.tap { |pagy| include(pagy) }
 
           def initialize(app)
             @app = app
