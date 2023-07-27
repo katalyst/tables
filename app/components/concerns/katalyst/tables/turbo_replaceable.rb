@@ -47,10 +47,10 @@ module Katalyst
             component_class.alias_method(:vc_render_template_for, :render_template_for)
             component_class.class_eval <<-RUBY, __FILE__, __LINE__ + 1
             def render_template_for(variant = nil)
-              return vc_render_template_for(variant) unless turbo?
-              controller.respond_to do |format|
-                format.html { vc_render_template_for(variant) }
-                format.turbo_stream { turbo_stream.replace(id, vc_render_template_for(variant)) }
+              if turbo? && response.media_type.eql?("text/vnd.turbo-stream.html")
+                turbo_stream.replace(id, vc_render_template_for(variant))
+              else
+                vc_render_template_for(variant)
               end
             end
             RUBY

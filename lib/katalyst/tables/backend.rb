@@ -27,6 +27,11 @@ module Katalyst
                 .apply(collection)
       end
 
+      def self_referred?
+        request.referer.present? && URI.parse(request.referer).path == request.path
+      end
+      alias self_refered? self_referred?
+
       included do
         class_attribute :_default_table_component, instance_accessor: false
       end
