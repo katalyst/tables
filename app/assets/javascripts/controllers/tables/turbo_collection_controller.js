@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
+import { Turbo } from "@hotwired/turbo";
 
 export default class TurboCollectionController extends Controller {
   static values = {
@@ -7,7 +8,7 @@ export default class TurboCollectionController extends Controller {
   }
 
   urlValueChanged(url) {
-    window.history.replaceState({}, "", this.urlValue);
+    Turbo.navigator.history.replace(this.#url(url));
   }
 
   sortValueChanged(sort) {
@@ -18,5 +19,15 @@ export default class TurboCollectionController extends Controller {
 
   get #sortSelector() {
     return "input[name='sort']";
+  }
+
+  #url(relativeUrl) {
+    const frame = this.element.closest("turbo-frame");
+
+    if (frame) {
+      return new URL(relativeUrl, frame.baseURI);
+    } else {
+      return new URL(relativeUrl, window.location.href);
+    }
   }
 }
