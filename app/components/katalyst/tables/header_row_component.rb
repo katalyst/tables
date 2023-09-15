@@ -35,6 +35,10 @@ module Katalyst
       def body?
         false
       end
+
+      def inspect
+        "#<#{self.class.name} link_attributes: #{@link_attributes.inspect}>"
+      end
     end
   end
 end

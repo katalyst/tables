@@ -28,6 +28,10 @@ module Katalyst
         human.pluralize.downcase
       end
 
+      def inspect
+        "#<#{self.class.name}>"
+      end
+
       private
 
       def default_attributes

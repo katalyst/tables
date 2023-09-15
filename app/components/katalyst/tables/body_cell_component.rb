@@ -35,6 +35,10 @@ module Katalyst
       def value
         @record.public_send(@attribute)
       end
+
+      def inspect
+        "#<#{self.class.name} attribute: #{@attribute.inspect}, value: #{value.inspect}>"
+      end
     end
   end
 end

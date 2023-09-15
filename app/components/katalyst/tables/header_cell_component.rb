@@ -46,6 +46,10 @@ module Katalyst
         @attribute.to_s.humanize.capitalize
       end
 
+      def inspect
+        "#<#{self.class.name} attribute: #{@attribute.inspect}, value: #{value.inspect}>"
+      end
+
       private
 
       def default_attributes

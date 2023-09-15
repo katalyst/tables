@@ -23,6 +23,10 @@ module Katalyst
       def call
         pagy_nav(@pagy, **pagy_options).html_safe # rubocop:disable Rails/OutputSafety
       end
+
+      def inspect
+        "#<#{self.class.name} pagy: #{@pagy.inspect}>"
+      end
     end
   end
 end

@@ -35,6 +35,10 @@ module Katalyst
       def body?
         true
       end
+
+      def inspect
+        "#<#{self.class.name} record: #{record.inspect}>"
+      end
     end
   end
 end

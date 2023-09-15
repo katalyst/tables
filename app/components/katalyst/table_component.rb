@@ -98,5 +98,9 @@ module Katalyst
 
       collection.sorting if collection.respond_to?(:sorting)
     end
+
+    def inspect
+      "#<#{self.class.name} collection: #{collection.inspect}>"
+    end
   end
 end
