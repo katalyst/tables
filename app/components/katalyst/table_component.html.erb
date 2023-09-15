@@ -1,0 +1,13 @@
+<%= tag.table(**html_attributes) do %>
+  <%= render caption if caption? %>
+  <% if header? %>
+  <thead>
+  <%= header_row.render_in(view_context, &row_proc) %>
+  </thead>
+  <% end %>
+  <tbody>
+  <% collection.each do |record| %>
+    <%= body_row(record).render_in(view_context) { |r| row_proc.call(r, record) } %>
+  <% end %>
+  </tbody>
+<% end %>

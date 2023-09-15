@@ -54,43 +54,24 @@ module Katalyst
       super(**html_attributes)
     end
 
-    def call
-      tag.table(**html_attributes) do
-        concat(caption)
-        concat(thead)
-        concat(tbody)
-      end
+    def caption?
+      @caption.present?
     end
 
     def caption
-      caption_component&.new(self)&.render_in(view_context) if @caption
+      caption_component&.new(self)
     end
 
-    def thead
-      return "".html_safe unless @header
-
-      tag.thead do
-        concat(render_header)
-      end
+    def header?
+      @header.present?
     end
 
-    def tbody
-      tag.tbody do
-        collection.each do |record|
-          concat(render_row(record))
-        end
-      end
+    def header_row
+      header_row_component.new(self, **@header_options)
     end
 
-    def render_header
-      # extract the column's block from the slot and pass it to the cell for rendering
-      header_row_component.new(self, **@header_options).render_in(view_context, &row_proc)
-    end
-
-    def render_row(record)
-      body_row_component.new(self, record).render_in(view_context) do |row|
-        row_proc.call(row, record)
-      end
+    def body_row(record)
+      body_row_component.new(self, record)
     end
 
     def sorting
