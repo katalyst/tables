@@ -23,7 +23,7 @@ module Katalyst
 
       private
 
-      def default_attributes
+      def default_html_attributes
         {
           data: {
             controller: "tables--turbo-collection",

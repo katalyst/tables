@@ -83,5 +83,8 @@ module Katalyst
     def inspect
       "#<#{self.class.name} collection: #{collection.inspect}>"
     end
+
+    define_html_attribute_methods(:thead_attributes)
+    define_html_attribute_methods(:tbody_attributes)
   end
 end

@@ -52,7 +52,7 @@ module Katalyst
 
       private
 
-      def default_attributes
+      def default_html_attributes
         return {} unless sorting&.supports?(collection, @attribute)
 
         { data: { sort: sorting.status(@attribute) } }

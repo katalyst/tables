@@ -334,7 +334,7 @@ class ActionTableComponent < Katalyst::TableComponent
   config.body_row   = "ActionBodyRow"
   config.body_cell  = "ActionBodyCell"
   
-  def default_attributes
+  def default_html_attributes
     { class: "action-table" }
   end
 

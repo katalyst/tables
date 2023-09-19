@@ -34,7 +34,7 @@ module Katalyst
 
       private
 
-      def default_attributes
+      def default_html_attributes
         { align: "bottom" }
       end
     end
