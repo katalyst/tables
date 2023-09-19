@@ -5,7 +5,7 @@ export default class TurboCollectionController extends Controller {
   static values = {
     url: String,
     sort: String,
-  }
+  };
 
   urlValueChanged(url) {
     Turbo.navigator.history.replace(this.#url(url));

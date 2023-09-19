@@ -287,6 +287,12 @@ def index
 end
 ```
 
+## Extensions
+
+The following extensions are available:
+
+* [Orderable](docs/orderable.md) - adds bulk-update for 'ordinal' columns via dragging rows in the table.
+
 ## Customization
 
 A common pattern we use is to have a cell at the end of the table for actions. For example:
