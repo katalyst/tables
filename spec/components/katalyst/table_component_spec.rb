@@ -75,7 +75,7 @@ RSpec.describe Katalyst::TableComponent do
     before do
       allow_any_instance_of(Katalyst::Tables::HeaderCellComponent)
         .to receive(:translate).with("activerecord.attributes.resource.name", any_args)
-                               .and_return("TRANSLATED")
+              .and_return("TRANSLATED")
     end
 
     it "translates column headers" do

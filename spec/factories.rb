@@ -16,7 +16,7 @@ FactoryBot.define do
 
   factory :relation, class: "ActiveRecord::Relation" do
     model { Resource }
-    values { count.times.map { |i| build(:resource, index: i) } }
+    values { Array.new(count) { |i| build(:resource, index: i) } }
     count { 0 }
     attributes { %i[index name] }
 

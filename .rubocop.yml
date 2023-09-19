@@ -1,28 +1,11 @@
 require:
   - rubocop-capybara
+  - rubocop-katalyst
   - rubocop-factory_bot
-  - rubocop-rails
-  - rubocop-rake
-  - rubocop-rspec
 
 AllCops:
   NewCops: enable
   TargetRubyVersion: 2.6
-
-Style/StringLiterals:
-  Enabled: true
-  EnforcedStyle: double_quotes
-
-Style/StringLiteralsInInterpolation:
-  Enabled: true
-  EnforcedStyle: double_quotes
-
-Layout/LineLength:
-  Max: 120
-
-Metrics/BlockLength:
-  Exclude:
-    - spec/**/*
 
 RSpec/ExampleLength:
   Enabled: false

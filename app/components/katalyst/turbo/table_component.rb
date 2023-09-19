@@ -26,10 +26,10 @@ module Katalyst
       def default_html_attributes
         {
           data: {
-            controller: "tables--turbo-collection",
-            tables__turbo_collection_url_value: current_path,
-            tables__turbo_collection_sort_value: collection.sort
-          }
+            controller:                          "tables--turbo-collection",
+            tables__turbo_collection_url_value:  current_path,
+            tables__turbo_collection_sort_value: collection.sort,
+          },
         }
       end
 

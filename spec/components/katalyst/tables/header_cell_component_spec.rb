@@ -30,8 +30,8 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent do
     it "renders with translation" do
       allow_any_instance_of(described_class)
         .to receive(:translate)
-        .with("activerecord.attributes.resource.name", any_args)
-        .and_return("TRANSLATED")
+              .with("activerecord.attributes.resource.name", any_args)
+              .and_return("TRANSLATED")
       expect(rendered).to match_html(<<~HTML)
         <th>TRANSLATED</th>
       HTML

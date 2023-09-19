@@ -22,9 +22,9 @@ module Katalyst
         column, direction = params[:sort]&.split(" ")
         direction         = "asc" unless SortForm::DIRECTIONS.include?(direction)
 
-        SortForm.new(column: column,
+        SortForm.new(column:    column,
                      direction: direction)
-                .apply(collection)
+          .apply(collection)
       end
 
       def self_referred?

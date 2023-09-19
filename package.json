@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "lint": "prettier --check *.json app/assets",
+    "format": "prettier --write *.json app/assets"
+  },
+  "devDependencies": {
+    "prettier": "^3.0.3"
+  }
+}

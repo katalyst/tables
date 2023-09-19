@@ -5,21 +5,15 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in katalyst-tables.gemspec
 gemspec
 
+gem "capybara", require: false
+gem "compare-xml"
+gem "erb_lint", "~> 0.5.0"
+gem "factory_bot"
+gem "nokogiri"
+gem "pagy"
+gem "rails"
 gem "rake"
-
-gem "rubocop"
-gem "rubocop-rails"
-gem "rubocop-rake"
-gem "rubocop-rspec"
-
-group :development, :test do
-  gem "capybara", require: false
-  gem "compare-xml"
-  gem "factory_bot"
-  gem "nokogiri"
-  gem "pagy"
-  gem "rails"
-  gem "rspec-rails"
-  gem "sqlite3"
-  gem "turbo-rails"
-end
+gem "rspec-rails"
+gem "rubocop-katalyst", require: false
+gem "sqlite3"
+gem "turbo-rails"

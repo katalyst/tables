@@ -4,11 +4,11 @@ require "rack/request"
 
 module Test
   HTML_ATTRIBUTES = {
-    id: "ID",
+    id:    "ID",
     class: "CLASS",
-    html: { style: "style" },
-    data: { foo: "bar" },
-    aria: { label: "LABEL" }
+    html:  { style: "style" },
+    data:  { foo: "bar" },
+    aria:  { label: "LABEL" },
   }.freeze
 
   class Template

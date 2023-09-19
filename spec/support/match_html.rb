@@ -11,8 +11,8 @@ class HTMLMatcher < RSpec::Matchers::BuiltIn::BaseMatcher
     # Options documented here: https://github.com/vkononov/compare-xml
     default_options = {
       collapse_whitespace: true,
-      ignore_attr_order: true,
-      ignore_comments: true
+      ignore_attr_order:   true,
+      ignore_comments:     true,
     }
 
     @options = default_options.merge(options).merge(verbose: true)

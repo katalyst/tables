@@ -18,7 +18,7 @@ module Katalyst
       MERGEABLE_ATTRIBUTES = [
         *HTMLAttributesUtils::DEFAULT_MERGEABLE_ATTRIBUTES,
         %i[data controller],
-        %i[data action]
+        %i[data action],
       ].freeze
 
       refine Hash do
