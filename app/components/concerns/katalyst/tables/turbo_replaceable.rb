@@ -13,8 +13,14 @@ module Katalyst
 
       include ::Turbo::StreamsHelper
 
+      # Is turbo rendering enabled for this component?
       def turbo?
         @turbo
+      end
+
+      # Are we rendering a turbo stream response?
+      def turbo_stream_response?
+        response.media_type.eql?("text/vnd.turbo-stream.html")
       end
 
       def initialize(turbo: true, **options)
@@ -44,16 +50,27 @@ module Katalyst
           super
 
           redefinition_lock.synchronize do
-            component_class.alias_method(:vc_render_template_for, :render_template_for)
-            component_class.class_eval <<-RUBY, __FILE__, __LINE__ + 1
-            def render_template_for(variant = nil)
-              if turbo? && response.media_type.eql?("text/vnd.turbo-stream.html")
-                turbo_stream.replace(id, vc_render_template_for(variant))
+            # Capture the instance method added by the default compiler and
+            # wrap it in a turbo stream replacement. Take care to ensure that
+            # subclasses of this component don't break delegation, as each
+            # subclass of ViewComponent::Base defines its own version of this
+            # method.
+            vc_render_template = component_class.instance_method(:render_template_for)
+            component_class.define_method(:render_template_for) do |variant = nil|
+              # VC discards the output from this method and uses the buffer
+              # if both are set. Capture and wrap the output.
+              content = capture { vc_render_template.bind_call(self, variant) }
+              # In turbo mode, replace the inner-most element using a turbo
+              # stream. Note that we only want one turbo stream per component
+              # from this mechanism, as subclasses may want to concat their
+              # own additional streams.
+              if turbo? && turbo_stream_response? && !@streamed
+                @streamed = true
+                concat(turbo_stream.replace(id, content))
               else
-                vc_render_template_for(variant)
+                concat(content)
               end
             end
-            RUBY
           end
         end
       end

@@ -26,7 +26,7 @@ module Katalyst
       def row_partial(row, record = nil)
         partial = @partial || model_name&.param_key&.to_s
         as      = @as || model_name&.param_key&.to_sym
-        render(partial: partial, variants: [:row], locals: { as => record, row: row })
+        render(partial: partial, variants: [:row], formats: [:html], locals: { as => record, row: row })
       end
     end
   end
