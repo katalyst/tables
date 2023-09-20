@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [2.2.0]
+
+- Add support for ordinal columns with batch updating
+  - See [[docs/ordinal.md]] for examples
+
 ## [2.1.0]
 
 - Add Collection model for building collections in a controller from params.
