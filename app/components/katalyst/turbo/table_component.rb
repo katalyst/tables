@@ -7,6 +7,8 @@ module Katalyst
     class TableComponent < ::Katalyst::TableComponent
       include Tables::TurboReplaceable
 
+      attr_reader :id
+
       def initialize(collection:, id:, header: true, **options)
         header = if header.is_a?(Hash)
                    default_header_options.merge(header)
@@ -14,11 +16,9 @@ module Katalyst
                    default_header_options
                  end
 
-        super(collection: collection, header: header, id: id, **options)
-      end
+        @id = id
 
-      def id
-        html_attributes[:id]
+        super(collection: collection, header: header, id: id, **options)
       end
 
       private

@@ -41,8 +41,8 @@ export default class OrderableListController extends Controller {
 
     // insert any items that have changed position
     this.tablesOrderableItemOutlets.forEach((item, index) => {
-      if (item.valueValue !== index) {
-        this.tablesOrderableFormOutlet.add(item.nameValue, index);
+      if (item.index !== index) {
+        this.tablesOrderableFormOutlet.add(item, index);
       }
     });
 

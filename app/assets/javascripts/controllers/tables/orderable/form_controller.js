@@ -1,20 +1,26 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class OrderableFormController extends Controller {
-  add(name, value) {
+  add(item, index) {
+    const { id_name, id_value, index_name } = item.paramsValue;
     this.element.insertAdjacentHTML(
       "beforeend",
-      `<input type="hidden" name="${name}" value="${value}" data-generated>`,
+      `<input type="hidden" name="${id_name}" value="${id_value}" data-generated>
+              <input type="hidden" name="${index_name}" value="${index}" data-generated>`,
     );
   }
 
   submit() {
+    if (this.inputs.length === 0) return;
+
     this.element.requestSubmit();
   }
 
   clear() {
-    this.element
-      .querySelectorAll("input[data-generated]")
-      .forEach((input) => input.remove());
+    this.inputs.forEach((input) => input.remove());
+  }
+
+  get inputs() {
+    return this.element.querySelectorAll("input[data-generated]");
   }
 }

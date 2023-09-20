@@ -13,32 +13,30 @@ module Katalyst
 
       using HasHtmlAttributes
 
-      # Enhance a given table component class with orderable support.
-      # Supports extension via `included` and `extended` hooks.
-      def self.make_orderable(table_class)
+      # Support for inclusion in a table component class
+      # Adds an `orderable` slot and component configuration
+      included do
         # Add `orderable` slot to table component
-        table_class.config_component :orderable, default: "FormComponent"
-        table_class.renders_one(:orderable, lambda do |**attrs|
+        config_component :orderable, default: "Katalyst::Tables::Orderable::FormComponent"
+        renders_one(:orderable, lambda do |**attrs|
           orderable_component.new(table: self, **attrs)
         end)
       end
 
-      # Support for inclusion in a table component class
-      included do
-        Orderable.make_orderable(self)
-      end
-
       # Support for extending a table component instance
+      # Adds methods to the table component instance
       def self.extended(table)
-        Orderable.make_orderable(table.class)
+        table.extend(TableMethods)
+
+        # ensure row components support orderable column calls
+        table.send(:add_orderable_columns)
       end
 
       def initialize(**attributes)
         super
 
-        # Add `orderable` columns to row components
-        header_row_component.include(HeaderRow)
-        body_row_component.include(BodyRow)
+        # ensure row components support orderable column calls
+        add_orderable_columns
       end
 
       def tbody_attributes
@@ -57,6 +55,31 @@ module Katalyst
         )
       end
 
+      private
+
+      # Add `orderable` columns to row components
+      def add_orderable_columns
+        header_row_component.include(HeaderRow)
+        body_row_component.include(BodyRow)
+      end
+
+      # Methods required to emulate a slot when extending an existing table.
+      module TableMethods
+        def with_orderable(**attrs)
+          @orderable = FormComponent.new(table: self, **attrs)
+
+          self
+        end
+
+        def orderable?
+          @orderable.present?
+        end
+
+        def orderable
+          @orderable
+        end
+      end
+
       module HeaderRow # :nodoc:
         def ordinal(attribute = :ordinal, **)
           cell(attribute, class: "ordinal", label: "")
@@ -64,13 +87,17 @@ module Katalyst
       end
 
       module BodyRow # :nodoc:
-        def ordinal(attribute = :ordinal, id: :id)
-          name  = @table.orderable.record_scope(@record, id, attribute)
-          value = @record.public_send(attribute)
+        def ordinal(attribute = :ordinal, primary_key: :id)
+          id = @record.public_send(primary_key)
+          params = {
+            id_name:     @table.orderable.record_scope(id, primary_key),
+            id_value:    id,
+            index_name:  @table.orderable.record_scope(id, attribute),
+            index_value: @record.public_send(attribute),
+          }
           cell(attribute, class: "ordinal", data: {
-                 controller: ITEM_CONTROLLER,
-                 "#{ITEM_CONTROLLER}-name-value" => name,
-                 "#{ITEM_CONTROLLER}-value-value" => value,
+                 controller:                        ITEM_CONTROLLER,
+                 "#{ITEM_CONTROLLER}-params-value": params.to_json,
                }) { t("katalyst.tables.orderable.value") }
         end
 
@@ -98,8 +125,8 @@ module Katalyst
           @scope = scope
         end
 
-        def record_scope(record, id, attribute)
-          "#{scope}[#{record.public_send(id)}][#{attribute}]"
+        def record_scope(id, attribute)
+          "#{scope}[#{id}][#{attribute}]"
         end
 
         def call
