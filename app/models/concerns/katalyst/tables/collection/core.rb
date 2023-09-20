@@ -16,7 +16,7 @@ module Katalyst
         included do
           attr_accessor :items
 
-          delegate :model, :to_model, :each, :count, :empty?, to: :items, allow_nil: true
+          delegate :model, :each, :count, :empty?, to: :items, allow_nil: true
           delegate :model_name, to: :model, allow_nil: true
         end
 

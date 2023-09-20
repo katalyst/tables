@@ -16,10 +16,6 @@ module Katalyst
       # Enhance a given table component class with orderable support.
       # Supports extension via `included` and `extended` hooks.
       def self.make_orderable(table_class)
-        # Add `orderable` columns to row components
-        table_class.header_row_component.include(HeaderRow)
-        table_class.body_row_component.include(BodyRow)
-
         # Add `orderable` slot to table component
         table_class.config_component :orderable, default: "FormComponent"
         table_class.renders_one(:orderable, lambda do |**attrs|
@@ -35,6 +31,14 @@ module Katalyst
       # Support for extending a table component instance
       def self.extended(table)
         Orderable.make_orderable(table.class)
+      end
+
+      def initialize(**attributes)
+        super
+
+        # Add `orderable` columns to row components
+        header_row_component.include(HeaderRow)
+        body_row_component.include(BodyRow)
       end
 
       def tbody_attributes
