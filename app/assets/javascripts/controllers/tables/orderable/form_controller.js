@@ -1,12 +1,12 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class OrderableFormController extends Controller {
-  add(item, index) {
+  add(item) {
     const { id_name, id_value, index_name } = item.paramsValue;
     this.element.insertAdjacentHTML(
       "beforeend",
       `<input type="hidden" name="${id_name}" value="${id_value}" data-generated>
-              <input type="hidden" name="${index_name}" value="${index}" data-generated>`,
+              <input type="hidden" name="${index_name}" value="${item.index}" data-generated>`,
     );
   }
 

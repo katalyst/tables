@@ -45,10 +45,7 @@ module Katalyst
         super.merge_html(
           { data: { controller: LIST_CONTROLLER,
                     action: <<~ACTIONS.squish,
-                      dragstart->#{LIST_CONTROLLER}#dragstart
-                      dragenter->#{LIST_CONTROLLER}#dragenter
-                      dragover->#{LIST_CONTROLLER}#dragover
-                      drop->#{LIST_CONTROLLER}#drop
+                      mousedown->#{LIST_CONTROLLER}#mousedown
                     ACTIONS
                     "#{LIST_CONTROLLER}-#{FORM_CONTROLLER}-outlet" => "##{orderable.id}",
                     "#{LIST_CONTROLLER}-#{ITEM_CONTROLLER}-outlet" => "td.ordinal" } },
@@ -95,18 +92,10 @@ module Katalyst
             index_name:  @table.orderable.record_scope(id, attribute),
             index_value: @record.public_send(attribute),
           }
-          cell(attribute, class: "ordinal", data: {
+          cell(attribute, class: "ordinal", draggable: true, data: {
                  controller:                        ITEM_CONTROLLER,
                  "#{ITEM_CONTROLLER}-params-value": params.to_json,
                }) { t("katalyst.tables.orderable.value") }
-        end
-
-        def html_attributes
-          super.merge_html(
-            {
-              draggable: "true",
-            },
-          )
         end
       end
 
