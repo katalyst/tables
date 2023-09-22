@@ -5,16 +5,22 @@ export default class OrderableRowController extends Controller {
     params: Object,
   };
 
+  connect() {
+    // index from server may be inconsistent with the visual ordering,
+    // especially if this is a new node. Use positional indexes instead,
+    // as these are the values we will send on save.
+    this.index = domIndex(this.row);
+  }
+
   paramsValueChanged(params) {
     this.id = params.id_value;
-    this.index = params.index_value;
   }
 
   dragUpdate(offset) {
     this.dragOffset = offset;
     this.row.style.position = "relative";
     this.row.style.top = offset + "px";
-    this.row.style.zIndex = 1;
+    this.row.style.zIndex = "1";
     this.row.toggleAttribute("dragging", true);
   }
 
@@ -97,4 +103,8 @@ export default class OrderableRowController extends Controller {
   get row() {
     return this.element.parentElement;
   }
+}
+
+function domIndex(element) {
+  return Array.from(element.parentElement.children).indexOf(element);
 }
