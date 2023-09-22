@@ -10,6 +10,7 @@ export default class OrderableListController extends Controller {
 
     document.addEventListener("mousemove", this.mousemove);
     document.addEventListener("mouseup", this.mouseup);
+    window.addEventListener("scroll", this.scroll, true);
 
     this.element.style.position = "relative";
   }
@@ -20,6 +21,7 @@ export default class OrderableListController extends Controller {
 
     document.removeEventListener("mousemove", this.mousemove);
     document.removeEventListener("mouseup", this.mouseup);
+    window.removeEventListener("scroll", this.scroll, true);
 
     this.element.removeAttribute("style");
     this.tablesOrderableItemOutlets.forEach((item) => item.reset());
@@ -84,7 +86,7 @@ export default class OrderableListController extends Controller {
 
     this.startDragging(new DragState(this.element, event, target.id));
 
-    this.#updateDragItem(event);
+    this.dragState.updateCursor(this.element, target.row, event, this.animate);
   }
 
   mousemove = (event) => {
@@ -92,13 +94,33 @@ export default class OrderableListController extends Controller {
 
     event.preventDefault(); // prevent build-in drag
 
-    const dragItem = this.#updateDragItem(event);
+    if (this.ticking) return;
 
-    // Visually updates the position of all items in the list relative to the
-    // dragged item. No actual changes to orderings at this stage.
-    this.#currentItems.forEach((item, index) => {
-      if (item === dragItem) return;
-      item.updateVisually(index);
+    this.ticking = true;
+
+    window.requestAnimationFrame(() => {
+      this.ticking = false;
+      this.dragState.updateCursor(
+        this.element,
+        this.dragItem.row,
+        event,
+        this.animate,
+      );
+    });
+  };
+
+  scroll = (event) => {
+    if (!this.isDragging || this.ticking) return;
+
+    this.ticking = true;
+
+    window.requestAnimationFrame(() => {
+      this.ticking = false;
+      this.dragState.updateScroll(
+        this.element,
+        this.dragItem.row,
+        this.animate,
+      );
     });
   };
 
@@ -128,6 +150,27 @@ export default class OrderableListController extends Controller {
 
   //region Helpers
 
+  /**
+   * Updates the position of the drag item with a relative offset. Updates
+   * other items relative to the new position of the drag item, as required.
+   *
+   * @callback {OrderableListController~animate}
+   * @param {number} offset
+   */
+  animate = (offset) => {
+    const dragItem = this.dragItem;
+
+    // Visually update the dragItem so it follows the cursor
+    dragItem.dragUpdate(offset);
+
+    // Visually updates the position of all items in the list relative to the
+    // dragged item. No actual changes to orderings at this stage.
+    this.#currentItems.forEach((item, index) => {
+      if (item === dragItem) return;
+      item.updateVisually(index);
+    });
+  };
+
   get isDragging() {
     return !!this.dragState;
   }
@@ -155,24 +198,13 @@ export default class OrderableListController extends Controller {
   /**
    * Returns the item outlet that was clicked on, if any.
    *
-   * @param event {HTMLElement} the clicked ordinal cell
+   * @param element {HTMLElement} the clicked ordinal cell
    * @returns {OrderableRowController}
    */
   #targetItem(element) {
     return this.tablesOrderableItemOutlets.find(
       (item) => item.element === element,
     );
-  }
-
-  #updateDragItem(event) {
-    const offset = this.dragState.itemOffset(
-      this.element,
-      this.dragItem.row,
-      event,
-    );
-    const item = this.dragItem;
-    item.dragUpdate(offset);
-    return item;
   }
 
   //endregion
@@ -195,23 +227,11 @@ class DragState {
    * @param id {String} the id of the element being dragged
    */
   constructor(list, event, id) {
-    // calculate the offset top of the tbody element relative to offsetParent
-    const offsetParent = list.offsetParent;
-    let offsetTop = event.offsetY;
-    let current = event.target;
-    while (current && current !== offsetParent) {
-      offsetTop += current.offsetTop;
-      current = current.offsetParent;
-    }
-
-    // page offset is the offset of the tbody element relative to the page
-    this.pageOffset = event.pageY - offsetTop + list.offsetTop;
-
     // cursor offset is the offset of the cursor relative to the drag item
     this.cursorOffset = event.offsetY;
 
     // initial offset is the offset position of the drag item at drag start
-    this.initialOffset = event.target.offsetTop - list.offsetTop;
+    this.initialPosition = event.target.offsetTop - list.offsetTop;
 
     // id of the item being dragged
     this.targetId = id;
@@ -223,25 +243,62 @@ class DragState {
    * @param list {HTMLElement} the list controller's element (tbody)
    * @param row {HTMLElement} the row being dragged
    * @param event {MouseEvent} the current event
-   * @returns {number} relative offset for the item being dragged
+   * @param callback {OrderableListController~animate} updates the drag item with a relative offset
    */
-  itemOffset(list, row, event) {
-    // cursor position relative to the list
-    const cursorPosition = event.pageY - this.pageOffset;
+  updateCursor(list, row, event, callback) {
+    // Calculate and store the list offset relative to the viewport
+    // This value is cached so we can calculate the outcome of any scroll events
+    this.listOffset = list.getBoundingClientRect().top;
 
-    // item position relative to the list
+    // Calculate the position of the cursor relative to the list.
+    // Accounts for scroll offsets by using the item's bounding client rect.
+    const cursorPosition = event.clientY - this.listOffset;
+
+    // intended item position relative to the list, from cursor position
     let itemPosition = cursorPosition - this.cursorOffset;
 
+    this.#updateItemPosition(list, row, itemPosition, callback);
+  }
+
+  /**
+   * Animates the item's position as the list scrolls. Requires a previous call
+   * to set the scroll offset.
+   *
+   * @param list {HTMLElement} the list controller's element (tbody)
+   * @param row {HTMLElement} the row being dragged
+   * @param callback {OrderableListController~animate} updates the drag item with a relative offset
+   */
+  updateScroll(list, row, callback) {
+    const previousScrollOffset = this.listOffset;
+
+    // Calculate and store the list offset relative to the viewport
+    // This value is cached so we can calculate the outcome of any scroll events
+    this.listOffset = list.getBoundingClientRect().top;
+
+    // Calculate the change in scroll offset since the last update
+    const scrollDelta = previousScrollOffset - this.listOffset;
+
+    // intended item position relative to the list, from cursor position
+    const position = this.position + scrollDelta;
+
+    this.#updateItemPosition(list, row, position, callback);
+  }
+
+  #updateItemPosition(list, row, position, callback) {
     // ensure itemPosition is within the bounds of the list (tbody)
-    itemPosition = Math.max(itemPosition, 0);
-    itemPosition = Math.min(itemPosition, list.offsetHeight - row.offsetHeight);
+    position = Math.max(position, 0);
+    position = Math.min(position, list.offsetHeight - row.offsetHeight);
+
+    // cache the item's position relative to the list for use in scroll events
+    this.position = position;
 
     // Item has position: relative, so we want to calculate the amount to move
     // the item relative to it's DOM position to represent how much it has been
     // dragged by.
+    const offset = position - this.initialPosition;
 
     // Convert itemPosition from offset relative to list to offset relative to
     // its position within the DOM (if it hadn't moved).
-    return itemPosition - this.initialOffset;
+    callback(offset);
   }
 }
