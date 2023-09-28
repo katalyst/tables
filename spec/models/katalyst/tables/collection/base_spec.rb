@@ -112,6 +112,31 @@ RSpec.describe Katalyst::Tables::Collection::Base do
     end
   end
 
+  context "with custom permitted params" do
+    subject(:collection) do
+      klass = Class.new(described_class) do
+        attr_accessor :custom
+
+        def self.permitted_params
+          super + ["custom"]
+        end
+
+        def filter
+          self.items = items.with_custom(custom) if custom.present?
+        end
+      end
+      klass.new.with_params(params)
+    end
+
+    let(:params) { ActionController::Parameters.new(custom: "test") }
+
+    it "permits custom" do
+      allow(items).to receive(:with_custom).and_return(items)
+      collection.apply(items)
+      expect(items).to have_received(:with_custom).with("test")
+    end
+  end
+
   context "with sort, paginate, and filter options" do
     subject(:collection) do
       klass = Class.new(described_class)

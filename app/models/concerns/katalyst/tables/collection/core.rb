@@ -13,6 +13,12 @@ module Katalyst
 
         include Reducers
 
+        class_methods do
+          def permitted_params
+            attribute_names
+          end
+        end
+
         included do
           attr_accessor :items
 
@@ -48,7 +54,7 @@ module Katalyst
         end
 
         def with_params(params)
-          self.attributes = params.permit(self.class.attribute_types.keys)
+          self.attributes = params.permit(self.class.permitted_params)
 
           self
         end
