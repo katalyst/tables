@@ -2,6 +2,8 @@
 
 require "rails_helper"
 
+require_relative "../../../../support/collection_examples"
+
 RSpec.describe Katalyst::Tables::Collection::Base do
   subject(:collection) { described_class.new }
 
@@ -13,9 +15,9 @@ RSpec.describe Katalyst::Tables::Collection::Base do
 
   context "with pagination config" do
     subject(:collection) do
-      klass                 = Class.new(described_class)
-      klass.config.paginate = true
-      klass.new
+      Class.new(described_class) do
+        config.paginate = true
+      end.new
     end
 
     it "applies pagination" do
@@ -82,9 +84,9 @@ RSpec.describe Katalyst::Tables::Collection::Base do
 
   context "with sort config" do
     subject(:collection) do
-      klass                = Class.new(described_class)
-      klass.config.sorting = :name
-      klass.new
+      Class.new(described_class) do
+        config.sorting = :name
+      end.new
     end
 
     it "applies default sort" do
@@ -115,34 +117,35 @@ RSpec.describe Katalyst::Tables::Collection::Base do
 
   context "with custom filter" do
     subject(:collection) do
-      klass = Class.new(described_class)
-      klass.define_method(:filter) do
-        self.items = items.admin_search("test")
-      end
-      klass.new
+      Examples::SearchCollection.new.with_params(params)
     end
 
+    let(:params) { ActionController::Parameters.new(search: "query") }
+
     it "applies filter" do
-      allow(items).to receive(:admin_search).and_return(items)
+      allow(items).to receive(:search).and_return(items)
       collection.apply(items)
-      expect(items).to have_received(:admin_search).with("test")
+      expect(items).to have_received(:search).with("query")
+    end
+  end
+
+  context "with array params" do
+    subject(:collection) do
+      Examples::TagsCollection.new.with_params(params)
+    end
+
+    let(:params) { ActionController::Parameters.new(tags: %w[foo bar]) }
+
+    it "permits array params" do
+      allow(items).to receive(:with_tags).and_return(items)
+      collection.apply(items)
+      expect(items).to have_received(:with_tags).with(%w[foo bar])
     end
   end
 
   context "with custom permitted params" do
     subject(:collection) do
-      klass = Class.new(described_class) do
-        attr_accessor :custom
-
-        def self.permitted_params
-          super + ["custom"]
-        end
-
-        def filter
-          self.items = items.with_custom(custom) if custom.present?
-        end
-      end
-      klass.new.with_params(params)
+      Examples::CustomParamsCollection.new.with_params(params)
     end
 
     let(:params) { ActionController::Parameters.new(custom: "test") }
@@ -154,14 +157,26 @@ RSpec.describe Katalyst::Tables::Collection::Base do
     end
   end
 
+  context "with nested params" do
+    subject(:collection) do
+      Examples::NestedCollection.new.with_params(params)
+    end
+
+    let(:params) { ActionController::Parameters.new(nested: { custom: "test" }) }
+
+    it "permits custom" do
+      allow(items).to receive(:filter_by).and_return(items)
+      collection.apply(items)
+      expect(items).to have_received(:filter_by).with(have_attributes(custom: "test"))
+    end
+  end
+
   context "with sort, paginate, and filter options" do
     subject(:collection) do
-      klass = Class.new(described_class)
-      klass.define_method(:filter) do
-        self.items = items.admin_search("test")
-      end
-      klass.new(sorting: "name", paginate: true)
+      Examples::SearchCollection.new(sorting: "name", paginate: true).with_params(params)
     end
+
+    let(:params) { ActionController::Parameters.new(search: "query") }
 
     it "applies filtering then sort then pagination" do # rubocop:disable RSpec/MultipleExpectations
       items = spy(ActiveRecord::Relation) # rubocop:disable RSpec/VerifiedDoubles
@@ -171,7 +186,7 @@ RSpec.describe Katalyst::Tables::Collection::Base do
 
       collection.apply(items)
 
-      expect(items).to have_received(:admin_search).ordered # filter
+      expect(items).to have_received(:search).ordered # filter
       expect(items).to have_received(:reorder).ordered # sort
       expect(items).to have_received(:offset).ordered # pagination
       expect(items).to have_received(:limit).ordered # pagination
@@ -180,9 +195,7 @@ RSpec.describe Katalyst::Tables::Collection::Base do
 
   describe "#filtered?" do
     subject(:collection) do
-      klass = Class.new(described_class)
-      klass.attribute(:search, :string)
-      klass.new(sorting: "name", paginate: true).with_params(params)
+      Examples::SearchCollection.new(sorting: "name", paginate: true).with_params(params)
     end
 
     let(:params) { ActionController::Parameters.new }
@@ -205,6 +218,38 @@ RSpec.describe Katalyst::Tables::Collection::Base do
       let(:params) { ActionController::Parameters.new(page: "2") }
 
       it { is_expected.not_to be_filtered }
+    end
+
+    context "with empty array params" do
+      subject(:collection) do
+        Examples::TagsCollection.new.with_params(ActionController::Parameters.new(tags: []))
+      end
+
+      it { is_expected.not_to be_filtered }
+    end
+
+    context "with array params present" do
+      subject(:collection) do
+        Examples::TagsCollection.new.with_params(ActionController::Parameters.new(tags: %w[foo bar]))
+      end
+
+      it { is_expected.to be_filtered }
+    end
+
+    context "with empty nested params" do
+      subject(:collection) do
+        Examples::NestedCollection.new.with_params(ActionController::Parameters.new(nested: { custom: "" }))
+      end
+
+      it { is_expected.not_to be_filtered }
+    end
+
+    context "with nested params present" do
+      subject(:collection) do
+        Examples::NestedCollection.new.with_params(ActionController::Parameters.new(nested: { custom: "test" }))
+      end
+
+      it { is_expected.to be_filtered }
     end
   end
 

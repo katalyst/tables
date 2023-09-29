@@ -15,7 +15,14 @@ module Katalyst
 
         class_methods do
           def permitted_params
-            attribute_names
+            _default_attributes.to_h.each_with_object([]) do |(k, v), h|
+              h << case v
+                   when Array
+                     { k => [] }
+                   else
+                     k
+                   end
+            end
           end
         end
 
@@ -37,7 +44,7 @@ module Katalyst
         end
 
         def filtered?
-          !self.class.new.filters.eql?(filters)
+          self.class.new.filters != filters
         end
 
         def filters
