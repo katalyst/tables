@@ -162,7 +162,7 @@ class ImagesTableComponent < Katalyst::Turbo::TableComponent
     [:new, @model, :image]
   end
   
-  def turbo_response?
+  def turbo_stream_response?
     response.media_type.eql?("text/vnd.turbo-stream.html")
   end
   
@@ -179,11 +179,12 @@ end
 ```
 
 ```erb
+<%= turbo_stream.kpop.dismiss if turbo_stream_response? %>
 <%= render_parent %>
-<% unless turbo_response? %>
-  <%= dismiss_kpop %>
-<% else %>
-  <%= kpop_link_to("Add Image", new_image_url) %>
+<% unless turbo_stream_response? %>
+  <div class="actions-group">
+    <%= kpop_link_to("Add Image", new_image_url, class: "button button--secondary") %>
+  </div>
   <%= orderable %>
 <% end %>
 ```
