@@ -35,9 +35,7 @@ module Katalyst
 
       def current_path
         params = collection.to_params
-        query_string = params.empty? ? "" : "?#{Rack::Utils.build_nested_query(params)}"
-
-        "#{query_string}"
+        params.empty? ? "" : "?#{Rack::Utils.build_nested_query(params)}"
       end
 
       def default_header_options
