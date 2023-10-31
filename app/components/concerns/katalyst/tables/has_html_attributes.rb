@@ -21,9 +21,31 @@ module Katalyst
         %i[data action],
       ].freeze
 
+      FLATTENABLE_ATTRIBUTES = [
+        %i[data controller],
+        %i[data action],
+      ].freeze
+
+      refine NilClass do
+        def flatten_html(*)
+          self
+        end
+      end
+
       refine Hash do
         def merge_html(attributes)
-          deep_merge_html_attributes(attributes, mergeable_attributes: MERGEABLE_ATTRIBUTES)
+          result = deep_merge_html_attributes(attributes, mergeable_attributes: MERGEABLE_ATTRIBUTES)
+          FLATTENABLE_ATTRIBUTES.each_with_object(result) do |path, flattened|
+            flattened.flatten_html(*path)
+          end
+        end
+
+        def flatten_html(key, *path)
+          if path.empty?
+            self[key] = self[key].join(" ") if self[key].is_a?(Array)
+          else
+            self[key].flatten_html(*path)
+          end
         end
       end
 
