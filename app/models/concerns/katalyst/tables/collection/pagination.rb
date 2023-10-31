@@ -27,7 +27,7 @@ module Katalyst
         def initialize(paginate: config.paginate, **options)
           super(**options)
 
-          @paginate = paginate
+          @paginate = paginate.freeze
         end
 
         def paginate?
@@ -50,7 +50,7 @@ module Katalyst
           def call(collection)
             @collection = @app.call(collection)
             if collection.paginate?
-              @collection.pagination, @collection.items = pagy(@collection.items, collection.paginate_options)
+              @collection.pagination, @collection.items = pagy(@collection.items, collection.paginate_options.dup)
             end
             @collection
           end

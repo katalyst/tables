@@ -23,6 +23,23 @@ RSpec.describe Katalyst::Tables::Collection::Base do
     end
   end
 
+  context "with pagination item count config" do
+    subject(:collection) do
+      klass                 = Class.new(described_class)
+      klass.config.paginate = { items: 10 }
+      klass.new
+    end
+
+    it "applies pagination" do
+      expect(collection.apply(items).items).to have_attributes(count: 10)
+    end
+
+    it "does not mutate class options" do
+      collection.apply(items)
+      expect(collection.config.paginate).not_to include(page: anything)
+    end
+  end
+
   context "with pagination options" do
     subject(:collection) { described_class.new(paginate: true) }
 
