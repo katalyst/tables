@@ -16,11 +16,20 @@ module Katalyst
 
         class_methods do
           delegate :use, :insert, to: :reducers
+
+          def inherited(subclass)
+            super
+            subclass.reducers = reducers.dup
+          end
         end
 
         class Stack # :nodoc:
           def initialize
             @stack = []
+          end
+
+          def initialize_dup(other)
+            @stack = other.instance_variable_get(:@stack).dup
           end
 
           def use(klass)
