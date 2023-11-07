@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus";
-import { Turbo } from "@hotwired/turbo";
+import { Turbo } from "@hotwired/turbo-rails";
 
 export default class TurboCollectionController extends Controller {
   static values = {
