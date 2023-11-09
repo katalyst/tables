@@ -3,12 +3,12 @@ import { Turbo } from "@hotwired/turbo-rails";
 
 export default class TurboCollectionController extends Controller {
   static values = {
-    url: String,
+    query: String,
     sort: String,
   };
 
-  urlValueChanged(url) {
-    Turbo.navigator.history.replace(this.#url(url));
+  queryValueChanged(query) {
+    Turbo.navigator.history.replace(this.#url(query));
   }
 
   sortValueChanged(sort) {
@@ -21,13 +21,18 @@ export default class TurboCollectionController extends Controller {
     return "input[name='sort']";
   }
 
-  #url(relativeUrl) {
+  #url(query) {
     const frame = this.element.closest("turbo-frame");
+    let url;
 
     if (frame) {
-      return new URL(relativeUrl, frame.baseURI);
+      url = new URL(frame.baseURI);
     } else {
-      return new URL(relativeUrl, window.location.href);
+      url = new URL(window.location.href);
     }
+
+    url.search = query;
+
+    return url;
   }
 }

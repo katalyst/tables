@@ -26,16 +26,15 @@ module Katalyst
       def default_html_attributes
         {
           data: {
-            controller:                          "tables--turbo-collection",
-            tables__turbo_collection_url_value:  current_path,
-            tables__turbo_collection_sort_value: collection.sort,
+            controller:                           "tables--turbo-collection",
+            tables__turbo_collection_query_value: current_query,
+            tables__turbo_collection_sort_value:  collection.sort,
           },
         }
       end
 
-      def current_path
-        params = collection.to_params
-        params.empty? ? "" : "?#{Rack::Utils.build_nested_query(params)}"
+      def current_query
+        Rack::Utils.build_nested_query(collection.to_params)
       end
 
       def default_header_options
