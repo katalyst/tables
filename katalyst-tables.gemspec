@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
-require_relative "lib/katalyst/tables/version"
-
 Gem::Specification.new do |spec|
   spec.name = "katalyst-tables"
-  spec.version = Katalyst::Tables::VERSION
+  spec.version = "2.2.11"
   spec.authors = ["Katalyst Interactive"]
   spec.email = ["devs@katalyst.com.au"]
 
@@ -25,6 +23,6 @@ Gem::Specification.new do |spec|
 
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "html-attributes-utils"
+  spec.add_dependency "katalyst-html-attributes"
   spec.add_dependency "view_component"
 end

@@ -3,7 +3,7 @@
 module Katalyst
   module Tables
     class EmptyCaptionComponent < ViewComponent::Base # :nodoc:
-      include HasHtmlAttributes
+      include Katalyst::HtmlAttributes
 
       def initialize(table, **html_attributes)
         super(**html_attributes)

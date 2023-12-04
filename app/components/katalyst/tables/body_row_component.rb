@@ -3,7 +3,7 @@
 module Katalyst
   module Tables
     class BodyRowComponent < ViewComponent::Base # :nodoc:
-      include HasHtmlAttributes
+      include Katalyst::HtmlAttributes
 
       renders_many :columns, ->(component) { component }
 
@@ -39,6 +39,9 @@ module Katalyst
       def inspect
         "#<#{self.class.name} record: #{record.inspect}>"
       end
+
+      # Backwards compatibility with tables 1.0
+      alias_method :options, :html_attributes=
     end
   end
 end

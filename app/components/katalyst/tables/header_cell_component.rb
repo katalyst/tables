@@ -4,7 +4,7 @@ module Katalyst
   module Tables
     class HeaderCellComponent < ViewComponent::Base # :nodoc:
       include Frontend::Helper
-      include HasHtmlAttributes
+      include Katalyst::HtmlAttributes
       include Sortable
 
       delegate :object_name, :collection, :sorting, to: :@table
@@ -49,6 +49,9 @@ module Katalyst
       def inspect
         "#<#{self.class.name} attribute: #{@attribute.inspect}, value: #{value.inspect}>"
       end
+
+      # Backwards compatibility with tables 1.0
+      alias_method :options, :html_attributes=
 
       private
 

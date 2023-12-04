@@ -11,8 +11,8 @@ module Katalyst
   # <% end %>
   # ```
   class TableComponent < ViewComponent::Base
+    include Katalyst::HtmlAttributes
     include Tables::ConfigurableComponent
-    include Tables::HasHtmlAttributes
     include Tables::HasTableContent
 
     attr_reader :collection, :object_name
@@ -86,5 +86,8 @@ module Katalyst
 
     define_html_attribute_methods(:thead_attributes)
     define_html_attribute_methods(:tbody_attributes)
+
+    # Backwards compatibility with tables 1.0
+    alias_method :options, :html_attributes=
   end
 end

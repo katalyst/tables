@@ -11,7 +11,7 @@ module Katalyst
       ITEM_CONTROLLER = "tables--orderable--item"
       LIST_CONTROLLER = "tables--orderable--list"
 
-      using HasHtmlAttributes
+      using Katalyst::HtmlAttributes
 
       # Support for inclusion in a table component class
       # Adds an `orderable` slot and component configuration
