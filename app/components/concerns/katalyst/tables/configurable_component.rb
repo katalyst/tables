@@ -24,9 +24,9 @@ module Katalyst
         # other tables.
         def config_component(name, component_name: "#{name}_component", default: nil) # rubocop:disable Metrics/MethodLength
           config_accessor(name)
-          config.public_send("#{name}=", default)
+          config.public_send(:"#{name}=", default)
           define_method(component_name) do
-            return instance_variable_get("@#{component_name}") if instance_variable_defined?("@#{component_name}")
+            return instance_variable_get(:"@#{component_name}") if instance_variable_defined?(:"@#{component_name}")
 
             klass     = config.public_send(name)
             component = klass ? self.class.const_get(klass) : nil
@@ -37,7 +37,7 @@ module Katalyst
               component.extend(HiddenSubcomponent)
             end
 
-            instance_variable_set("@#{component_name}", component) if component
+            instance_variable_set(:"@#{component_name}", component) if component
           end
         end
       end

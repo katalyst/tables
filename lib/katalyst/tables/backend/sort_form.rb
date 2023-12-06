@@ -37,7 +37,7 @@ module Katalyst
         # @param column [String, Symbol]
         # @return [true, false]
         def supports?(collection, column)
-          collection.respond_to?("order_by_#{column}") ||
+          collection.respond_to?(:"order_by_#{column}") ||
             collection.model.has_attribute?(column.to_s)
         end
 
@@ -72,8 +72,8 @@ module Katalyst
         def apply(collection)
           return [self, collection] if column.nil?
 
-          if collection.respond_to?("order_by_#{column}")
-            collection = collection.reorder(nil).public_send("order_by_#{column}", direction.to_sym)
+          if collection.respond_to?(:"order_by_#{column}")
+            collection = collection.reorder(nil).public_send(:"order_by_#{column}", direction.to_sym)
           elsif collection.model.has_attribute?(column)
             collection = collection.reorder(column => direction)
           else
