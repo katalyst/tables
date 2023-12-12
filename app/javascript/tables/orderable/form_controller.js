@@ -6,7 +6,7 @@ export default class OrderableFormController extends Controller {
     this.element.insertAdjacentHTML(
       "beforeend",
       `<input type="hidden" name="${id_name}" value="${id_value}" data-generated>
-              <input type="hidden" name="${index_name}" value="${item.index}" data-generated>`,
+              <input type="hidden" name="${index_name}" value="${item.index}" data-generated>`
     );
   }
 

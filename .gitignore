@@ -11,3 +11,9 @@
 
 # rspec failure tracking
 .rspec_status
+
+# yarn
+app/assets/builds/
+node_modules/
+yarn-debug.log*
+yarn-error.log*
