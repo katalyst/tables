@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [2.3.0]
+
+- Remove support for Ruby < 3.0 (no longer used at Katalyst)
+
 ## [2.2.0]
 
 - Add support for ordinal columns with batch updating

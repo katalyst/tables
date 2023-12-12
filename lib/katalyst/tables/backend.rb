@@ -19,7 +19,7 @@ module Katalyst
       #
       # @return [[SortForm, ActiveRecord::Relation]]
       def table_sort(collection)
-        column, direction = params[:sort]&.split(" ")
+        column, direction = params[:sort]&.split
         direction         = "asc" unless SortForm::DIRECTIONS.include?(direction)
 
         SortForm.new(column:    column,

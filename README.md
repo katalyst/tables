@@ -14,6 +14,16 @@ And then execute:
 
     $ bundle install
 
+Add the Gem's javascript and CSS to your build pipeline. This assumes that
+you're using `rails-dartsass` and `importmaps` to manage your assets.
+
+```javascript
+// app/javascript/controllers/application.js
+import { application } from "controllers/application";
+import tables from "@katalyst/tables";
+application.load(tables);
+```
+
 ## Usage
 
 This gem provides entry points for backend and frontend concerns:
