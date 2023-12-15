@@ -20,7 +20,7 @@ RSpec.describe Katalyst::Turbo::TableComponent do
 
   it "creates a bare table" do
     expect(table).to match_html(<<~HTML)
-      <table id="table" data-controller="tables--turbo-collection" data-tables--turbo-collection-query-value="">
+      <table id="table" data-controller="tables--turbo--collection" data-tables--turbo--collection-query-value="">
         <thead><tr></tr></thead>
         <tbody></tbody>
       </table>
@@ -33,9 +33,9 @@ RSpec.describe Katalyst::Turbo::TableComponent do
     it "creates a bare table" do
       expect(table).to match_html(<<~HTML)
         <table id="table"
-               data-controller="tables--turbo-collection"
-               data-tables--turbo-collection-sort-value="name desc"
-               data-tables--turbo-collection-query-value="sort=name+desc">
+               data-controller="tables--turbo--collection"
+               data-tables--turbo--collection-sort-value="name desc"
+               data-tables--turbo--collection-query-value="sort=name+desc">
           <thead><tr></tr></thead>
           <tbody></tbody>
         </table>
@@ -49,9 +49,9 @@ RSpec.describe Katalyst::Turbo::TableComponent do
     it "creates a bare table" do
       expect(table).to match_html(<<~HTML)
         <table id="table"
-               data-controller="tables--turbo-collection"
-               data-tables--turbo-collection-sort-value="name asc"
-               data-tables--turbo-collection-query-value="">
+               data-controller="tables--turbo--collection"
+               data-tables--turbo--collection-sort-value="name asc"
+               data-tables--turbo--collection-query-value="">
           <thead><tr></tr></thead>
           <tbody></tbody>
         </table>
@@ -66,7 +66,7 @@ RSpec.describe Katalyst::Turbo::TableComponent do
       expect(table).to match_html(<<~HTML)
         <turbo-stream action="replace" target="table">
           <template>
-            <table id="table" data-controller="tables--turbo-collection" data-tables--turbo-collection-query-value="">
+            <table id="table" data-controller="tables--turbo--collection" data-tables--turbo--collection-query-value="">
               <thead><tr></tr></thead>
               <tbody></tbody>
             </table>

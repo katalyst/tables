@@ -1,11 +1,11 @@
-import TurboCollectionController from "./turbo/turbo_collection_controller";
+import TurboCollectionController from "./turbo/collection_controller";
 import ItemController from "./orderable/item_controller";
 import ListController from "./orderable/list_controller";
 import FormController from "./orderable/form_controller";
 
 const Definitions = [
   {
-    identifier: "tables--turbo--turbo-collection",
+    identifier: "tables--turbo--collection",
     controllerConstructor: TurboCollectionController,
   },
   {

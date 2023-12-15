@@ -26,9 +26,9 @@ module Katalyst
       def default_html_attributes
         {
           data: {
-            controller:                           "tables--turbo-collection",
-            tables__turbo_collection_query_value: current_query,
-            tables__turbo_collection_sort_value:  collection.sort,
+            controller:                            "tables--turbo--collection",
+            tables__turbo__collection_query_value: current_query,
+            tables__turbo__collection_sort_value:  collection.sort,
           },
         }
       end
