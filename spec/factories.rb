@@ -1,17 +1,18 @@
 # frozen_string_literal: true
 
-class Resource
-  include ActiveModel::Model
-  include ActiveModel::Attributes
-
-  attribute :index, :integer
-  attribute :name
-end
-
 FactoryBot.define do
   factory :resource, class: "Resource" do
     sequence(:index) { |i| i }
     name { "Resource #{index + 1}" }
+  end
+
+  factory :parent do
+    sequence(:name) { |i| "Parent #{i}" }
+  end
+
+  factory :child do
+    sequence(:name) { |i| "Child #{i}" }
+    parent
   end
 
   factory :relation, class: "ActiveRecord::Relation" do
@@ -27,12 +28,11 @@ FactoryBot.define do
       values     = attributes[:values]
 
       allow(collection).to receive_messages(reorder: collection, model: model, model_name: model.model_name)
-      allow(collection).to receive(:count) do
-        values.count
-      end
-      allow(collection).to receive(:empty?) do
-        values.empty?
-      end
+      allow(collection).to(receive(:count)) { values.count }
+      allow(collection).to(receive(:empty?)) { values.empty? }
+      allow(collection).to(receive(:any?)) { values.any? }
+      allow(collection).to(receive(:new)) { build(:resource) }
+      allow(collection).to(receive(:first)) { values.first }
       allow(collection).to receive(:offset) do |i|
         values.replace(values.slice(i..-1))
         collection

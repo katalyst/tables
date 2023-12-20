@@ -6,7 +6,7 @@ RSpec.describe Katalyst::Turbo::TableComponent do
   subject(:component) { described_class.new(collection: collection, id: "table") }
 
   let(:table) do
-    with_request_url("/resource") do
+    with_request_url("/resources") do
       vc_test_request.headers["Accept"] = format
       render_inline(component) { "" }
     end
