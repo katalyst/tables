@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-require "active_support"
-require "active_support/concern"
-
-require_relative "backend/sort_form"
-
 module Katalyst
   module Tables
     # Utilities for controllers that are generating collections for visualisation

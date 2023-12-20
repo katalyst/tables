@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "rack/request"
+require "rails_helper"
 
 module Test
   HTML_ATTRIBUTES = {
@@ -12,7 +13,10 @@ module Test
   }.freeze
 
   class Template
+    include ActionView::Context
+
     include ActionView::Helpers::CaptureHelper
+    include ActionView::Helpers::FormHelper
     include ActionView::Helpers::TagHelper
     include ActionView::Helpers::UrlHelper
     include Katalyst::Tables::Frontend
@@ -25,5 +29,7 @@ module Test
     alias controller vc_test_controller
     alias render render_inline
     alias request vc_test_request
+
+    delegate_missing_to :controller
   end
 end

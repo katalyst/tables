@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "frontend/helper"
-
 module Katalyst
   module Tables
     # View Helper for generating HTML tables. Include in your ApplicationHelper, or similar.

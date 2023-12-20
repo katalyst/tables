@@ -45,7 +45,6 @@ FactoryBot.define do
         values.each(&block)
       end
 
-      attributes[:with_attributes]
       allow(model).to receive(:has_attribute?) do |attribute|
         attributes[:attributes].include?(attribute.to_sym)
       end

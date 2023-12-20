@@ -2,8 +2,6 @@
 
 require "rails_helper"
 
-require_relative "../../../../support/collection_examples"
-
 RSpec.describe Katalyst::Tables::Collection::Base do
   subject(:collection) { described_class.new }
 

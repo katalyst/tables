@@ -4,6 +4,8 @@ require "spec_helper"
 ENV["RAILS_ENV"] ||= "test"
 require File.expand_path("dummy/spec/rails_helper", __dir__)
 
+Dir[File.expand_path("support/**/*.rb", __dir__)].each { |f| require f }
+
 require "rspec/rails"
 
 require "view_component/test_helpers"
