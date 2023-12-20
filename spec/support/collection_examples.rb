@@ -74,4 +74,13 @@ module Examples
       self.items = items.filter_by(nested) if nested.changed?
     end
   end
+
+  # Example of a collection that uses a simple attribute for a filter.
+  class FilterCollection < Katalyst::Tables::Collection::Filter
+    attribute :search, :string, default: ""
+
+    def filter
+      self.items = items.search(search) if search.present?
+    end
+  end
 end

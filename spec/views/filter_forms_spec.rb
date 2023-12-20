@@ -23,4 +23,20 @@ RSpec.describe "Filter Forms" do
       </form>
     HTML
   end
+
+  context "with a filter collection" do
+    subject(:collection) { Examples::FilterCollection.new(param_key: "filters").with_params(params).apply(items) }
+
+    let(:params) { ActionController::Parameters.new(filters: { search: "query" }) }
+
+    it "nests the names appropriately" do
+      actual = template.form_with(model: collection) { |form| form.text_field(:search) }
+
+      expect(actual).to match_html(<<~HTML)
+        <form action="/resources" accept-charset="UTF-8" method="post">
+          <input type="text" value="query" name="filters[search]" id="filters_search" />
+        </form>
+      HTML
+    end
+  end
 end

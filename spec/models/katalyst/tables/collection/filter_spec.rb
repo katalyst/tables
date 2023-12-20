@@ -2,9 +2,9 @@
 
 require "rails_helper"
 
-RSpec.describe Katalyst::Tables::Collection::Filtering do
+RSpec.describe Katalyst::Tables::Collection::Filter do
   subject(:collection) do
-    Class.new(Katalyst::Tables::Collection::Base) do
+    Class.new(described_class) do
       attribute :search, default: ""
 
       def filter
@@ -19,8 +19,8 @@ RSpec.describe Katalyst::Tables::Collection::Filtering do
   it { is_expected.not_to be_filtered }
   it { is_expected.to have_attributes(to_params: {}) }
 
-  context "with filters" do
-    let(:params) { ActionController::Parameters.new(search: "query") }
+  context "with filter" do
+    let(:params) { ActionController::Parameters.new(filters: { search: "query" }) }
 
     let(:form) do
       form_with(model: collection, url: "/") do |f|
@@ -33,7 +33,7 @@ RSpec.describe Katalyst::Tables::Collection::Filtering do
     end
 
     it { is_expected.to be_filtered }
-    it { is_expected.to have_attributes(to_params: { "search" => "query" }) }
+    it { is_expected.to have_attributes(to_params: { "filters" => { "search" => "query" } }) }
 
     it "applies filter" do
       collection.apply(items)
@@ -42,14 +42,14 @@ RSpec.describe Katalyst::Tables::Collection::Filtering do
   end
 
   context "with sort, paginate, and filter" do
-    let(:params) { ActionController::Parameters.new(search: "query", page: 2, sort: "name desc") }
+    let(:params) { ActionController::Parameters.new(filters: { search: "query" }, page: 2, sort: "name desc") }
 
     it { is_expected.to be_filtered }
 
     it "includes filters and sort/page params" do
-      expect(collection).to have_attributes(to_params: { "search" => "query",
-                                                         "page"   => 2,
-                                                         "sort"   => "name desc" })
+      expect(collection).to have_attributes(to_params: { "filters" => { "search" => "query" },
+                                                         "page"    => 2,
+                                                         "sort"    => "name desc" })
     end
 
     it "applies filtering then sort then pagination" do # rubocop:disable RSpec/MultipleExpectations
