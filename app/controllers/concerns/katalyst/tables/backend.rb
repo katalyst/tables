@@ -4,27 +4,8 @@ module Katalyst
   module Tables
     # Utilities for controllers that are generating collections for visualisation
     # in a table view using Katalyst::Tables::Frontend.
-    #
-    # Provides `table_sort` for sorting based on column interactions (sort param).
     module Backend
       extend ActiveSupport::Concern
-
-      # @deprecated backwards compatibility
-      class SortForm < Katalyst::Tables::Collection::SortForm
-      end
-
-      # Sort the given collection by params[:sort], which is set when a user
-      # interacts with a column header in a frontend table view.
-      #
-      # @return [[SortForm, ActiveRecord::Relation]]
-      def table_sort(collection)
-        column, direction = params[:sort]&.split
-        direction         = "asc" unless SortForm::DIRECTIONS.include?(direction)
-
-        SortForm.new(column:    column,
-                     direction: direction)
-          .apply(collection)
-      end
 
       def self_referred?
         request.referer.present? && URI.parse(request.referer).path == request.path

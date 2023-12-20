@@ -43,6 +43,7 @@ FactoryBot.define do
       allow(collection).to receive(:each) do |&block|
         values.each(&block)
       end
+      allow(collection).to receive(:sortable?).and_return(false)
 
       allow(model).to receive(:has_attribute?) do |attribute|
         attributes[:attributes].include?(attribute.to_sym)

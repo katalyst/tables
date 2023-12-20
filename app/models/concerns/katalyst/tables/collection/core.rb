@@ -39,6 +39,10 @@ module Katalyst
           clear_changes_information
         end
 
+        def sortable?(_)
+          false # default implementation
+        end
+
         def apply(items)
           @items = items
           reducers.build do |_|

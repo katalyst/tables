@@ -7,12 +7,10 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent do
 
   let(:table) do
     instance_double(Katalyst::TableComponent).tap do |table|
-      allow(table).to receive_messages(sorting: sorting, object_name: "resource", collection: items)
+      allow(table).to receive_messages(object_name: "resource", collection: collection)
     end
   end
-  let(:items) { build(:relation) }
-  let(:record) { build(:resource, name: "VALUE") }
-  let(:sorting) { nil }
+  let(:collection) { build(:collection) }
 
   let(:rendered) do
     with_request_url("/resource") do
@@ -39,7 +37,7 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent do
   end
 
   context "with sorting" do
-    let(:sorting) { Katalyst::Tables::Backend::SortForm.new }
+    let(:collection) { build(:collection, sorting: "title asc") }
 
     it "renders with sort link" do
       expect(rendered).to match_html(<<~HTML)
@@ -58,7 +56,7 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent do
     end
 
     context "with sorted column" do
-      let(:sorting) { Katalyst::Tables::Backend::SortForm.new(column: "name", direction: "desc") }
+      let(:collection) { build(:collection, sorting: "name desc") }
 
       it "adds status to data attribute" do
         expect(rendered).to match_html(<<~HTML)
@@ -70,7 +68,7 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent do
     context "with sorted column and other data options" do
       subject(:cell) { described_class.new(table, :name, data: { other: "" }) }
 
-      let(:sorting) { Katalyst::Tables::Backend::SortForm.new(column: "name", direction: "asc") }
+      let(:collection) { build(:collection, sorting: "name asc") }
 
       it "does not cobber other options" do
         expect(rendered).to match_html(<<~HTML)
@@ -82,7 +80,7 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent do
     end
 
     context "when sorting would restore default sort" do
-      let(:sorting) { Katalyst::Tables::Backend::SortForm.new(column: "name", direction: "desc", default: "name asc") }
+      let(:collection) { build(:collection, sorting: "name asc", sort: "name desc") }
 
       it "adds status to data attribute" do
         expect(rendered).to match_html(<<~HTML)

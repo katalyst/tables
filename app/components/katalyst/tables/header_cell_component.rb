@@ -3,11 +3,10 @@
 module Katalyst
   module Tables
     class HeaderCellComponent < ViewComponent::Base # :nodoc:
-      include Frontend::Helper
       include Katalyst::HtmlAttributes
       include Sortable
 
-      delegate :object_name, :collection, :sorting, to: :@table
+      delegate :object_name, :collection, to: :@table
 
       def initialize(table, attribute, label: nil, link: {}, **html_attributes)
         super(**html_attributes)
@@ -56,9 +55,9 @@ module Katalyst
       private
 
       def default_html_attributes
-        return {} unless sorting&.supports?(collection, @attribute)
+        return {} unless sortable?(@attribute)
 
-        { data: { sort: sorting.status(@attribute) } }
+        { data: { sort: sorting_state(@attribute) } }
       end
     end
   end

@@ -27,6 +27,22 @@ module Katalyst
           super(sort: sorting, **options) # set default sort based on config
         end
 
+        def sortable?(attribute)
+          @sorting&.supports?(self, attribute)
+        end
+
+        def sorting_state(attribute)
+          @sorting&.status(attribute)
+        end
+
+        def toggle_sort(attribute)
+          @sorting&.toggle(attribute)
+        end
+
+        def default_sort
+          @sorting&.default
+        end
+
         def sort=(value)
           return unless @sorting
 

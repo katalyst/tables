@@ -7,9 +7,18 @@ module Katalyst
     module Sortable
       extend ActiveSupport::Concern
 
-      # Returns true when the given attribute is sortable.
+      refine ActiveRecord::Relation do
+        def sortable?
+          false
+        end
+      end
+
       def sortable?(attribute)
-        sorting&.supports?(collection, attribute)
+        collection.sortable?(attribute)
+      end
+
+      def sorting_state(attribute)
+        collection.sorting_state(attribute)
       end
 
       # Generates a url for applying/toggling sort for the given column.
@@ -17,8 +26,8 @@ module Katalyst
         # Implementation inspired by pagy's `pagy_url_for` helper.
         # Preserve any existing GET parameters
         # CAUTION: these parameters are not sanitised
-        sort = attribute && sorting.toggle(attribute)
-        params = if sort && !sort.eql?(sorting.default)
+        sort = attribute && collection.toggle_sort(attribute)
+        params = if sort && !sort.eql?(collection.default_sort)
                    request.GET.merge("sort" => sort).except("page")
                  else
                    request.GET.except("page", "sort")
