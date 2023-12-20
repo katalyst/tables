@@ -33,6 +33,7 @@ module Examples
     class Nested
       include ActiveModel::Model
       include ActiveModel::Attributes
+      include ActiveModel::Dirty
 
       attribute :custom, default: ""
 
@@ -49,7 +50,7 @@ module Examples
     attribute :nested, default: -> { Nested.new }
 
     def nested=(attributes)
-      nested.attributes = attributes
+      super(Nested.new(attributes))
     end
 
     def self.permitted_params
@@ -57,7 +58,7 @@ module Examples
     end
 
     def filter
-      self.items = items.filter_by(nested) unless nested.attributes.empty?
+      self.items = items.filter_by(nested) if nested.changed?
     end
   end
 end

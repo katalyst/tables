@@ -40,7 +40,8 @@ module Katalyst
                    **html_attributes)
       @collection = collection
 
-      # sorting: instance of Katalyst::Tables::Backend::SortForm. If not provided will be inferred from the collection.
+      # sorting: instance of Katalyst::Tables::Collection::SortForm.
+      # If not provided will be inferred from the collection.
       @sorting = sorting || html_attributes.delete(:sort) # backwards compatibility with old `sort` option
 
       # header: true means render the header row, header: false means no header row, if a hash, passes as options

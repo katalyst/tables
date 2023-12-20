@@ -22,7 +22,7 @@ module Katalyst
         end
 
         def initialize(sorting: config.sorting, **options)
-          @sorting = Backend::SortForm.parse(sorting) if sorting
+          @sorting = SortForm.parse(sorting) if sorting
 
           super(sort: sorting, **options) # set default sort based on config
         end
@@ -31,7 +31,7 @@ module Katalyst
           return unless @sorting
 
           # update internal proxy
-          @sorting = Backend::SortForm.parse(value, default: attribute_was(:sort))
+          @sorting = SortForm.parse(value, default: attribute_was(:sort))
 
           # update attribute based on normalized value
           super(@sorting.to_param)

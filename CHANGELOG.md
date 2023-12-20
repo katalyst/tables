@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+- Internal refactor of filters to make it easier to add custom extensions
+  and define nested attributes.
+
 ## [2.3.0]
 
 - Remove support for Ruby < 3.0 (no longer used at Katalyst)

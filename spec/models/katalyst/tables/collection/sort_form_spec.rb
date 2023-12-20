@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Katalyst::Tables::Backend::SortForm do
+RSpec.describe Katalyst::Tables::Collection::SortForm do
   # base config: sort specified but not supported
   subject(:form) { described_class.new(**order) }
 

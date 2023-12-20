@@ -24,9 +24,23 @@ module Katalyst
       end
 
       def row_partial(row, record = nil)
-        partial = @partial || model_name&.param_key&.to_s
-        as      = @as || model_name&.param_key&.to_sym
-        render(partial: partial, variants: [:row], formats: [:html], locals: { as => record, row: row })
+        @partial ||= partial_path
+        @as      ||= template_name
+        render(partial: @partial, variants: [:row], formats: [:html], locals: { @as => record, row: row })
+      end
+
+      def partial_path
+        # Collection::Base overwrites param_key for form_with compatibility
+        items.model_name.param_key.to_s
+      end
+
+      def template_name
+        # Collection::Base overwrites param_key for form_with compatibility
+        items.model_name.param_key.to_sym
+      end
+
+      def items
+        collection.respond_to?(:items) ? collection.items : collection
       end
     end
   end

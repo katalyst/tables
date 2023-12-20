@@ -9,6 +9,10 @@ module Katalyst
     module Backend
       extend ActiveSupport::Concern
 
+      # @deprecated backwards compatibility
+      class SortForm < Katalyst::Tables::Collection::SortForm
+      end
+
       # Sort the given collection by params[:sort], which is set when a user
       # interacts with a column header in a frontend table view.
       #

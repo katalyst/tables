@@ -2,7 +2,7 @@
 
 module Katalyst
   module Tables
-    module Backend
+    module Collection
       # A FormObject (model) representing the sort state of controller for a given
       # collection/parameter.
       class SortForm
@@ -37,8 +37,8 @@ module Katalyst
         # @param column [String, Symbol]
         # @return [true, false]
         def supports?(collection, column)
-          collection.respond_to?(:"order_by_#{column}") ||
-            collection.model.has_attribute?(column.to_s)
+          scope_for(collection).respond_to?(:"order_by_#{column}") ||
+            model_for(collection).has_attribute?(column.to_s)
         end
 
         # Returns the current sort behaviour of the given column, for use as a
@@ -87,6 +87,14 @@ module Katalyst
 
         def clear!
           self.column = self.direction = nil
+        end
+
+        def scope_for(collection)
+          collection.is_a?(Core) ? collection.items : collection
+        end
+
+        def model_for(collection)
+          scope_for(collection).model
         end
       end
     end
