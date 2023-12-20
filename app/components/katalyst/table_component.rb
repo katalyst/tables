@@ -30,7 +30,7 @@ module Katalyst
     # - `header`: whether to render the header row (defaults to true, supports options)
     # - `caption`: whether to render the caption (defaults to true, supports options)
     # - `object_name`: the name of the object to use for partial rendering (defaults to collection.model_name.i18n_key)
-    # - `partial`: the name of the partial to use for rendering each row (defaults to collection.model_name.param_key)
+    # - `partial`: the name of the partial to use for rendering each row (defaults to to_partial_path on the object)
     # - `as`: the name of the local variable to use for rendering each row (defaults to collection.model_name.param_key)
     # In addition to these options, standard HTML attributes can be passed which will be added to the table tag.
     def initialize(collection:,

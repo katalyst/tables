@@ -27,12 +27,11 @@ FactoryBot.define do
       values     = attributes[:values]
 
       allow(collection).to receive_messages(reorder: collection, model: model, model_name: model.model_name)
-      allow(collection).to receive(:count) do
-        values.count
-      end
-      allow(collection).to receive(:empty?) do
-        values.empty?
-      end
+      allow(collection).to(receive(:count)) { values.count }
+      allow(collection).to(receive(:empty?)) { values.empty? }
+      allow(collection).to(receive(:any?)) { values.any? }
+      allow(collection).to(receive(:new)) { build(:resource) }
+      allow(collection).to(receive(:first)) { values.first }
       allow(collection).to receive(:offset) do |i|
         values.replace(values.slice(i..-1))
         collection
