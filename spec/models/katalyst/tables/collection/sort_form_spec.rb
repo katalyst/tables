@@ -1,21 +1,24 @@
 # frozen_string_literal: true
 
+require "rails_helper"
+
 RSpec.describe Katalyst::Tables::Collection::SortForm do
   # base config: sort specified but not supported
   subject(:form) { described_class.new(**order) }
 
+  let(:collection) { build(:collection, items: items) }
   let(:items) { build(:relation) }
   let(:order) { { column: "col", direction: "asc" } }
 
   describe "#supports?" do
-    it { is_expected.not_to be_support(items, :col) }
+    it { is_expected.not_to be_support(collection, :col) }
 
     it_behaves_like "when collection has attribute" do
-      it { is_expected.to be_support(items, :col) }
+      it { is_expected.to be_support(collection, :col) }
     end
 
     it_behaves_like "when collection has scope" do
-      it { is_expected.to be_support(items, :col) }
+      it { is_expected.to be_support(collection, :col) }
     end
   end
 

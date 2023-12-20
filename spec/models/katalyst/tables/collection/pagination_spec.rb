@@ -1,0 +1,136 @@
+# frozen_string_literal: true
+
+require "rails_helper"
+
+RSpec.describe Katalyst::Tables::Collection::Pagination do
+  subject(:collection) { base.new.with_params(params) }
+
+  let(:base) { Katalyst::Tables::Collection::Base }
+  let(:items) { build(:relation, count: 50) }
+  let(:params) { ActionController::Parameters.new }
+
+  it { is_expected.not_to be_filtered }
+  it { is_expected.to have_attributes(to_params: {}) }
+
+  it "does not paginate by default" do
+    expect(collection.apply(items).items).to have_attributes(count: 50)
+  end
+
+  context "with unchanged defaults" do
+    let(:params) { ActionController::Parameters.new(page: "1") }
+
+    it { is_expected.not_to be_filtered }
+    it { is_expected.to have_attributes(to_params: {}) }
+  end
+
+  context "with page" do
+    let(:params) { ActionController::Parameters.new(page: "2") }
+
+    it { is_expected.not_to be_filtered }
+    it { is_expected.to have_attributes(to_params: { "page" => 2 }) }
+  end
+
+  context "with pagination config" do
+    subject(:collection) do
+      Class.new(base) do
+        config.paginate = true
+      end.new
+    end
+
+    it "applies pagination" do
+      expect(collection.apply(items).items).to have_attributes(count: 20)
+    end
+  end
+
+  context "with pagination item count config" do
+    subject(:collection) do
+      Class.new(base) do
+        config.paginate = { items: 10 }
+      end.new
+    end
+
+    it "applies pagination" do
+      expect(collection.apply(items).items).to have_attributes(count: 10)
+    end
+
+    it "does not mutate class options" do
+      collection.apply(items)
+      expect(collection.config.paginate).not_to include(page: anything)
+    end
+  end
+
+  context "with pagination options" do
+    subject(:collection) { base.new(paginate: true) }
+
+    it "applies pagination" do
+      expect(collection.apply(items).items).to have_attributes(count: 20)
+    end
+  end
+
+  context "with pagy options" do
+    subject(:collection) { base.new(paginate: { items: 10 }) }
+
+    it "applies options" do
+      expect(collection.apply(items).items).to have_attributes(count: 10)
+    end
+  end
+
+  context "with pagination params" do
+    subject(:collection) { base.new(paginate: true).with_params(params) }
+
+    let(:params) { ActionController::Parameters.new(page: 2) }
+
+    it "accepts page param" do
+      expect(collection.apply(items)).to have_attributes(page: 2)
+    end
+
+    it "passes param to pagy" do
+      expect(collection.apply(items).pagination).to have_attributes(page: 2)
+    end
+
+    it "applies pagination" do
+      collection.apply(items)
+      expect(items).to have_received(:offset).with(20)
+    end
+  end
+
+  describe "#filtered?" do
+    subject(:collection) do
+      Examples::SearchCollection.new(sorting: "name", paginate: true).with_params(params)
+    end
+
+    let(:params) { ActionController::Parameters.new }
+
+    it { is_expected.not_to be_filtered }
+
+    context "with page" do
+      let(:params) { ActionController::Parameters.new(page: "2") }
+
+      it { is_expected.not_to be_filtered }
+    end
+  end
+
+  describe "#to_params" do
+    subject(:collection) do
+      klass = Class.new(base)
+      klass.attribute(:search, :string, default: "")
+      klass.new(sorting: "name", paginate: true).with_params(params)
+    end
+
+    let(:params) { ActionController::Parameters.new }
+
+    it { is_expected.to have_attributes(to_params: {}) }
+
+    context "with page" do
+      let(:params) { ActionController::Parameters.new(page: "2") }
+
+      it { is_expected.to have_attributes(to_params: { "page" => 2 }) }
+    end
+
+    context "with unchanged defaults" do
+      let(:params) { ActionController::Parameters.new(page: "1") }
+
+      it { is_expected.to have_attributes(to_params: {}) }
+    end
+  end
+end

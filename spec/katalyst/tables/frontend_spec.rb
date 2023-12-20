@@ -4,12 +4,12 @@ require "rails_helper"
 
 RSpec.describe Katalyst::Tables::Frontend do
   let(:template) { Test::Template.new }
-  let(:items) { build(:relation) }
+  let(:collection) { build(:collection) }
 
   delegate :table_with, to: :template
 
   it "creates a bare table" do
-    expect(table_with(collection: items) { "" }).to match_html(<<~HTML)
+    expect(table_with(collection: collection) { "" }).to match_html(<<~HTML)
       <table>
         <thead><tr></tr></thead>
         <tbody></tbody>
@@ -19,7 +19,7 @@ RSpec.describe Katalyst::Tables::Frontend do
 
   context "when html options are provided to table_with" do
     subject(:table) do
-      table_with(collection: items, **Test::HTML_ATTRIBUTES) { "" }
+      table_with(collection: collection, **Test::HTML_ATTRIBUTES) { "" }
     end
 
     it "passes html_options to table tag" do
@@ -33,7 +33,7 @@ RSpec.describe Katalyst::Tables::Frontend do
   end
 
   context "when header: false" do
-    subject(:table) { table_with(collection: items, header: false) { "" } }
+    subject(:table) { table_with(collection: collection, header: false) { "" } }
 
     it "removes the header" do
       expect(table).to match_html(<<~HTML)
@@ -45,7 +45,7 @@ RSpec.describe Katalyst::Tables::Frontend do
   end
 
   context "when a column is provided" do
-    subject(:table) { table_with(collection: items) { |row| row.cell :col_name } }
+    subject(:table) { table_with(collection: collection) { |row| row.cell :col_name } }
 
     it "renders a column header" do
       expect(table).to match_html(<<~HTML)
@@ -62,7 +62,7 @@ RSpec.describe Katalyst::Tables::Frontend do
   end
 
   context "when model name is available" do
-    subject(:table) { table_with(collection: items, object_name: "my_model") { |row| row.cell :col } }
+    subject(:table) { table_with(collection: collection, object_name: "my_model") { |row| row.cell :col } }
 
     before do
       allow_any_instance_of(Katalyst::Tables::HeaderCellComponent)
@@ -86,11 +86,11 @@ RSpec.describe Katalyst::Tables::Frontend do
   context "when sorting is provided" do
     subject(:table) do
       template.with_request_url("/resource?s=q&page=2") do
-        table_with(collection: items, sorting: sorting) { |row| row.cell :name }
+        table_with(collection: collection) { |row| row.cell :name }
       end
     end
 
-    let(:sorting) { Katalyst::Tables::Backend::SortForm.new }
+    let(:collection) { build(:collection, sorting: "title asc") }
 
     it "adds sort links" do
       expect(table).to match_html(<<~HTML)
@@ -108,8 +108,8 @@ RSpec.describe Katalyst::Tables::Frontend do
 
   context "when html options are passed to header row" do
     subject(:table) do
-      table_with(collection: items) do |row|
-        row.options(**Test::HTML_ATTRIBUTES) if row.header?
+      table_with(collection: collection) do |row|
+        row.html_attributes = Test::HTML_ATTRIBUTES if row.header?
         row.cell :name
       end
     end
@@ -130,7 +130,7 @@ RSpec.describe Katalyst::Tables::Frontend do
 
   context "when html options are passed to header cell" do
     subject(:table) do
-      table_with(collection: items) do |row|
+      table_with(collection: collection) do |row|
         row.cell :name, **(row.header? ? Test::HTML_ATTRIBUTES : {})
       end
     end
@@ -152,12 +152,12 @@ RSpec.describe Katalyst::Tables::Frontend do
 
   context "with collection data" do
     subject(:table) do
-      table_with(collection: items) do |row|
+      table_with(collection: collection) do |row|
         row.cell :name
       end
     end
 
-    let(:items) { build(:relation, count: 1) }
+    let(:collection) { build(:relation, count: 1) }
 
     it "adds html options to header row tag" do
       expect(table).to match_html(<<~HTML)
@@ -179,13 +179,13 @@ RSpec.describe Katalyst::Tables::Frontend do
 
   context "when html options are passed to body row" do
     subject(:table) do
-      table_with(collection: items) do |row|
-        row.options(**Test::HTML_ATTRIBUTES) if row.body?
+      table_with(collection: collection) do |row|
+        row.html_attributes = Test::HTML_ATTRIBUTES if row.body?
         row.cell :name
       end
     end
 
-    let(:items) { build(:relation, count: 1) }
+    let(:collection) { build(:relation, count: 1) }
 
     it "adds html options to body row tag" do
       expect(table).to match_html(<<~HTML)
@@ -207,12 +207,12 @@ RSpec.describe Katalyst::Tables::Frontend do
 
   context "when html options are passed to body cell" do
     subject(:table) do
-      table_with(collection: items) do |row|
+      table_with(collection: collection) do |row|
         row.cell :name, **(row.body? ? Test::HTML_ATTRIBUTES : {})
       end
     end
 
-    let(:items) { build(:relation, count: 1) }
+    let(:collection) { build(:relation, count: 1) }
 
     it "adds html options to body cell tag" do
       expect(table).to match_html(<<~HTML)
@@ -234,14 +234,14 @@ RSpec.describe Katalyst::Tables::Frontend do
 
   context "when body cell takes a block" do
     subject(:table) do
-      table_with(collection: items) do |row|
+      table_with(collection: collection) do |row|
         row.cell :name do |cell|
           template.link_to(cell.value, "/resource")
         end
       end
     end
 
-    let(:items) { build(:relation, count: 1) }
+    let(:collection) { build(:relation, count: 1) }
 
     it "adds html options to body cell tag" do
       expect(table).to match_html(<<~HTML)
@@ -263,12 +263,12 @@ RSpec.describe Katalyst::Tables::Frontend do
 
   context "with a custom table builder" do
     subject(:table) do
-      table_with(collection: items, component: CustomTableComponent) do |row|
+      table_with(collection: collection, component: CustomTableComponent) do |row|
         row.cell :name
       end
     end
 
-    let(:items) { build(:relation, count: 1) }
+    let(:collection) { build(:relation, count: 1) }
 
     it "adds custom classes to all tags" do
       expect(table).to match_html(<<~HTML)
@@ -290,7 +290,7 @@ RSpec.describe Katalyst::Tables::Frontend do
 
   context "with a custom table builder from the controller" do
     subject(:table) do
-      table_with(collection: items) { nil }
+      table_with(collection: collection) { nil }
     end
 
     it "adds custom classes to all tags" do
@@ -310,7 +310,7 @@ RSpec.describe Katalyst::Tables::Frontend do
 
   context "with a custom builder that adds methods" do
     subject(:table) do
-      table_with(collection: items, component: ActionTableComponent) do |row|
+      table_with(collection: collection, component: ActionTableComponent) do |row|
         row.cell(:name)
         row.actions do |cell|
           cell.action("Edit", :edit) +
@@ -319,7 +319,7 @@ RSpec.describe Katalyst::Tables::Frontend do
       end
     end
 
-    let(:items) { build(:relation, count: 1) }
+    let(:collection) { build(:relation, count: 1) }
 
     it "generates actions column" do
       expect(table).to match_html(<<~HTML)
