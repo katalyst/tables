@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [2.4.0]
+
 - Internal refactor of filters to make it easier to add custom extensions
   and define nested attributes.
 
