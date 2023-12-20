@@ -3,6 +3,8 @@
 class ApplicationController < ActionController::Base
   include Katalyst::Tables::Backend
 
+  helper Katalyst::Tables::Frontend
+
   def show
     head :no_content
   end

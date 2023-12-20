@@ -15,7 +15,7 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent do
   let(:sorting) { nil }
 
   let(:rendered) do
-    with_request_url("/resource") do
+    with_request_url("/resources") do
       render_inline(cell)
     end
   end
@@ -43,7 +43,7 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent do
 
     it "renders with sort link" do
       expect(rendered).to match_html(<<~HTML)
-        <th><a href="/resource?sort=name+asc">Name</a></th>
+        <th><a href="/resources?sort=name+asc">Name</a></th>
       HTML
     end
 
@@ -62,7 +62,7 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent do
 
       it "adds status to data attribute" do
         expect(rendered).to match_html(<<~HTML)
-          <th data-sort="desc"><a href="/resource?sort=name+asc">Name</a></th>
+          <th data-sort="desc"><a href="/resources?sort=name+asc">Name</a></th>
         HTML
       end
     end
@@ -75,7 +75,7 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent do
       it "does not cobber other options" do
         expect(rendered).to match_html(<<~HTML)
           <th data-other data-sort="asc">
-            <a href="/resource?sort=name+desc">Name</a>
+            <a href="/resources?sort=name+desc">Name</a>
           </th>
         HTML
       end
@@ -86,7 +86,7 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent do
 
       it "adds status to data attribute" do
         expect(rendered).to match_html(<<~HTML)
-          <th data-sort="desc"><a href="/resource">Name</a></th>
+          <th data-sort="desc"><a href="/resources">Name</a></th>
         HTML
       end
     end

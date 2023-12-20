@@ -85,7 +85,7 @@ RSpec.describe Katalyst::Tables::Frontend do
 
   context "when sorting is provided" do
     subject(:table) do
-      template.with_request_url("/resource?s=q&page=2") do
+      template.with_request_url("/resources?s=q&page=2") do
         table_with(collection: collection) { |row| row.cell :name }
       end
     end
@@ -97,7 +97,7 @@ RSpec.describe Katalyst::Tables::Frontend do
         <table>
           <thead>
             <tr>
-              <th><a href="/resource?s=q&sort=name+asc">Name</a></th>
+              <th><a href="/resources?s=q&sort=name+asc">Name</a></th>
             </tr>
           </thead>
           <tbody></tbody>

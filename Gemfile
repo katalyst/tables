@@ -12,6 +12,7 @@ gem "factory_bot"
 gem "nokogiri"
 gem "pagy"
 gem "rails"
+gem "rails-controller-testing"
 gem "rake"
 gem "rspec-rails"
 gem "rubocop-katalyst", require: false

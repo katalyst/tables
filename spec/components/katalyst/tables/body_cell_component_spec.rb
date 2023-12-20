@@ -35,7 +35,9 @@ RSpec.describe Katalyst::Tables::BodyCellComponent do
   end
 
   context "with boolean values" do
-    let(:record) { build(:resource, name: false) }
+    subject(:cell) { described_class.new(table, record, :active) }
+
+    let(:record) { build(:resource, active: false) }
 
     it "renders as a string" do
       expect(render_inline(cell)).to match_html(<<~HTML)
