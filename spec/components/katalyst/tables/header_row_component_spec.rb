@@ -31,7 +31,7 @@ RSpec.describe Katalyst::Tables::HeaderRowComponent do
 
   it "supports `options` from block" do
     expect(render_inline(row) do |row|
-      row.options(id: "BLOCK", data: { block: "" })
+      row.html_attributes = { id: "BLOCK", data: { block: "" } }
     end).to match_html(<<~HTML)
       <tr id="BLOCK" data-block=""></tr>
     HTML

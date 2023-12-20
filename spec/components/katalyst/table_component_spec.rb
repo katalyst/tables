@@ -147,7 +147,7 @@ RSpec.describe Katalyst::TableComponent do
   context "when html attributes are passed to header row" do
     let(:table) do
       render_inline(component) do |row|
-        row.options(**Test::HTML_ATTRIBUTES) if row.header?
+        row.html_attributes = Test::HTML_ATTRIBUTES if row.header?
         row.cell :name
       end
     end
@@ -218,7 +218,7 @@ RSpec.describe Katalyst::TableComponent do
   context "when html attributes are passed to body row" do
     let(:table) do
       render_inline(component) do |row|
-        row.options(**Test::HTML_ATTRIBUTES) if row.body?
+        row.html_attributes = Test::HTML_ATTRIBUTES if row.body?
         row.cell :name
       end
     end
@@ -292,6 +292,24 @@ RSpec.describe Katalyst::TableComponent do
           </tbody>
         </table>
       HTML
+    end
+
+    context "when collection is empty" do
+      let(:items) { build(:relation, count: 0) }
+
+      it "still finds the partial" do
+        expect(table).to match_html(<<~HTML)
+          <table>
+            <thead>
+              <tr>
+                <th>Resource partial</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        HTML
+      end
     end
   end
 

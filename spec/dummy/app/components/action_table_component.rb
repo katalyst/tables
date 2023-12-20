@@ -6,7 +6,7 @@ class ActionTableComponent < Katalyst::TableComponent
   config.body_cell  = "ActionBodyCell"
 
   def call
-    options(class: "action-table")
+    self.html_attributes = { class: "action-table" }
     super
   end
 
