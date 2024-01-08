@@ -52,7 +52,7 @@ export default class OrderableListController extends Controller {
 
     // reindex all items based on their new positions
     this.tablesOrderableItemOutlets.forEach((item, index) =>
-      item.updateIndex(index)
+      item.updateIndex(index),
     );
 
     // save the changes
@@ -104,7 +104,7 @@ export default class OrderableListController extends Controller {
         this.element,
         this.dragItem.row,
         event,
-        this.animate
+        this.animate,
       );
     });
   };
@@ -119,7 +119,7 @@ export default class OrderableListController extends Controller {
       this.dragState.updateScroll(
         this.element,
         this.dragItem.row,
-        this.animate
+        this.animate,
       );
     });
   };
@@ -179,7 +179,7 @@ export default class OrderableListController extends Controller {
     if (!this.isDragging) return null;
 
     return this.tablesOrderableItemOutlets.find(
-      (item) => item.id === this.dragState.targetId
+      (item) => item.id === this.dragState.targetId,
     );
   }
 
@@ -191,7 +191,7 @@ export default class OrderableListController extends Controller {
    */
   get #currentItems() {
     return this.tablesOrderableItemOutlets.toSorted(
-      (a, b) => a.comparisonIndex - b.comparisonIndex
+      (a, b) => a.comparisonIndex - b.comparisonIndex,
     );
   }
 
@@ -203,7 +203,7 @@ export default class OrderableListController extends Controller {
    */
   #targetItem(element) {
     return this.tablesOrderableItemOutlets.find(
-      (item) => item.element === element
+      (item) => item.element === element,
     );
   }
 
