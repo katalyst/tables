@@ -20,27 +20,24 @@ module Katalyst
       private
 
       def row_proc
-        @row_proc ||= @__vc_render_in_block || method(:row_partial)
+        if @row_proc
+          @row_proc
+        elsif @__vc_render_in_block
+          @row_proc = @__vc_render_in_block
+        else
+          @row_proc = Proc.new do |row, object|
+            row_renderer.render_row(row, object, view_context)
+          end
+        end
       end
 
-      def row_partial(row, record = nil)
-        @partial ||= partial_path
-        @as      ||= template_name
-        render(partial: @partial, variants: [:row], formats: [:html], locals: { @as => record, row: row })
-      end
-
-      def partial_path
-        # Collection::Base overwrites param_key for form_with compatibility
-        items.model_name.param_key.to_s
-      end
-
-      def template_name
-        # Collection::Base overwrites param_key for form_with compatibility
-        items.model_name.param_key.to_sym
-      end
-
-      def items
-        collection.respond_to?(:items) ? collection.items : collection
+      def row_renderer
+        @row_renderer ||= RowRenderer.new(@lookup_context,
+                                          collection: collection,
+                                          as:         @as,
+                                          partial:    @partial,
+                                          variants:   [:row],
+                                          formats:    [:html])
       end
     end
   end

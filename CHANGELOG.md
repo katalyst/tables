@@ -1,5 +1,13 @@
 ## [Unreleased]
 
+- Breaking change: use Rails' object lookup path to find row partials
+  Previously: Nested::ResourceController would have looked for Nested::Model in
+  the controller directory:
+    app/views/nested/resources/_nested_model.html+row.erb
+  After this change, uses Rails' polymorphic partials logic and looks in the
+  model views directory:
+    app/views/nested/models/_model.html+row.erb
+
 ## [2.4.0]
 
 - Internal refactor of filters to make it easier to add custom extensions
