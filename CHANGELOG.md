@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [2.5.0]
+
 - Breaking change: use Rails' object lookup path to find row partials
   Previously: Nested::ResourceController would have looked for Nested::Model in
   the controller directory:
