@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    katalyst-tables (2.4.0)
+    katalyst-tables (2.5.0)
       katalyst-html-attributes
       view_component
 
