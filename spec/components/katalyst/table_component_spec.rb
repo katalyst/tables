@@ -306,11 +306,13 @@ RSpec.describe Katalyst::TableComponent do
           <thead>
             <tr>
               <th>Resource partial</th>
+              <th class="active">Active</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr id="new_resource">
               <td>Resource 1</td>
+              <td class="active">No</td>
             </tr>
           </tbody>
         </table>
@@ -326,10 +328,10 @@ RSpec.describe Katalyst::TableComponent do
             <thead>
               <tr>
                 <th>Resource partial</th>
+                <th class="active">Active</th>
               </tr>
             </thead>
-            <tbody>
-            </tbody>
+            <tbody></tbody>
           </table>
         HTML
       end
@@ -346,6 +348,7 @@ RSpec.describe Katalyst::TableComponent do
             <thead>
               <tr>
                 <th>Resource partial</th>
+                <th class="active">Active</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -365,11 +368,13 @@ RSpec.describe Katalyst::TableComponent do
             <thead>
               <tr>
                 <th>Resource partial</th>
+                <th class="active">Active</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
+              <tr id="new_resource">
                 <td>Resource 1</td>
+                <td class="active">No</td>
               </tr>
             </tbody>
           </table>

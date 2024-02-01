@@ -1,0 +1,13 @@
+<%= form_with(method: :patch,
+              id:     id,
+              class:  "tables--selection--form",
+              data:   { controller: form_controller },
+              html:   { hidden: "" }) do |form| %>
+  <p class="tables--selection--summary">
+    <span data-<%= form_target("count") %>>0</span>
+    <span data-<%= form_target("singular") %> hidden><%= @table.collection.model_name.singular %></span>
+    <span data-<%= form_target("plural") %>><%= @table.collection.model_name.plural %></span>
+    selected
+  </p>
+  <%= content %>
+<% end %>

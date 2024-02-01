@@ -2,6 +2,7 @@
 
 Rails.application.routes.draw do
   resources :resources, only: %i[index]
+  put "resources/active", to: "resources#activate"
 
   namespace :admin do
     resources :resources, only: %i[index]

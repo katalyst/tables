@@ -1,1 +1,6 @@
-<%= table_with collection: %>
+<%= render table.selection do %>
+  <%= tag.button "Download", formaction: "/resources.csv", formmethod: "GET" %>
+  <%= tag.button "Activate", formaction: "/resources/active", formmethod: "PUT" %>
+<% end %>
+
+<%= render table %>

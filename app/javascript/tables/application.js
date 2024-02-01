@@ -1,7 +1,9 @@
 import TurboCollectionController from "./turbo/collection_controller";
-import ItemController from "./orderable/item_controller";
-import ListController from "./orderable/list_controller";
-import FormController from "./orderable/form_controller";
+import OrderableItemController from "./orderable/item_controller";
+import OrderableListController from "./orderable/list_controller";
+import OrderableFormController from "./orderable/form_controller";
+import SelectionFormController from "./selection/form_controller";
+import SelectionItemController from "./selection/item_controller";
 
 const Definitions = [
   {
@@ -10,15 +12,23 @@ const Definitions = [
   },
   {
     identifier: "tables--orderable--item",
-    controllerConstructor: ItemController,
+    controllerConstructor: OrderableItemController,
   },
   {
     identifier: "tables--orderable--list",
-    controllerConstructor: ListController,
+    controllerConstructor: OrderableListController,
   },
   {
     identifier: "tables--orderable--form",
-    controllerConstructor: FormController,
+    controllerConstructor: OrderableFormController,
+  },
+  {
+    identifier: "tables--selection--form",
+    controllerConstructor: SelectionFormController,
+  },
+  {
+    identifier: "tables--selection--item",
+    controllerConstructor: SelectionItemController,
   },
 ];
 
