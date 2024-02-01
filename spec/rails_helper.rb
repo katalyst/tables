@@ -10,7 +10,6 @@ require "rspec/rails"
 
 require "view_component/test_helpers"
 require "view_component/system_test_helpers"
-require "capybara/rspec"
 
 RSpec.configure do |config|
   config.include ViewComponent::TestHelpers, type: :component
@@ -19,5 +18,6 @@ RSpec.configure do |config|
 
   RSpec::Rails::DIRECTORY_MAPPINGS[:component] = %w[spec components]
 
+  config.use_transactional_fixtures = true
   config.infer_spec_type_from_file_location!
 end
