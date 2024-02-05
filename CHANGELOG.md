@@ -1,5 +1,8 @@
 ## [Unreleased]
 
+- Added table row selection
+  - See [[docs/selectable.md]] for examples
+
 ## [2.5.0]
 
 - Breaking change: use Rails' object lookup path to find row partials
