@@ -6,7 +6,7 @@ module Katalyst
       include Tables::TurboReplaceable
 
       def initialize(id:, **options)
-        super(id: id, **options)
+        super(id:, **options)
       end
 
       def id

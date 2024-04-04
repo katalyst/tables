@@ -8,7 +8,7 @@ module Nested
       collection = Katalyst::Tables::Collection::Base.with_params(params.except(:parent_id))
                      .apply(@parent.children)
 
-      render locals: { collection: collection }
+      render locals: { collection: }
     end
 
     def set_parent

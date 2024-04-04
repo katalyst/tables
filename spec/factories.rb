@@ -27,7 +27,7 @@ FactoryBot.define do
       model      = attributes[:model]
       values     = attributes[:values]
 
-      allow(collection).to receive_messages(reorder: collection, model: model, model_name: model.model_name)
+      allow(collection).to receive_messages(reorder: collection, model:, model_name: model.model_name)
       allow(collection).to(receive(:count)) { values.count }
       allow(collection).to(receive(:empty?)) { values.empty? }
       allow(collection).to(receive(:any?)) { values.any? }
@@ -54,7 +54,7 @@ FactoryBot.define do
   end
 
   factory :collection, class: "Katalyst::Tables::Collection::Base" do
-    items { association :relation, count: count }
+    items { association :relation, count: }
     transient do
       count { 0 }
     end
@@ -65,7 +65,7 @@ FactoryBot.define do
       paginate = attributes.delete(:paginate)
       params   = ActionController::Parameters.new(attributes)
 
-      new(sorting: sorting, paginate: paginate).with_params(params).apply(items)
+      new(sorting:, paginate:).with_params(params).apply(items)
     end
   end
 end

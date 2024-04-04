@@ -73,7 +73,7 @@ module Katalyst
         def selection
           id     = @record.public_send(@table.selection.primary_key)
           params = {
-            id: id,
+            id:,
           }
           cell(:_selection,
                class: "selection",

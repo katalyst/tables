@@ -18,7 +18,7 @@ module Katalyst
 
         @id = id
 
-        super(collection: collection, header: header, id: id, **options)
+        super(collection:, header:, id:, **options)
       end
 
       private

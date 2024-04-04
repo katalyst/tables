@@ -4,9 +4,9 @@ module Katalyst
   module Tables
     # View Helper for generating HTML tables. Include in your ApplicationHelper, or similar.
     module Frontend
-      def table_with(collection:, component: nil, **options, &block)
+      def table_with(collection:, component: nil, **, &)
         component ||= default_table_component_class
-        render(component.new(collection: collection, **options), &block)
+        render(component.new(collection:, **), &)
       end
 
       private

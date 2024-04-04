@@ -21,8 +21,8 @@ module Katalyst
         column, direction = params[:sort]&.split
         direction         = "asc" unless SortForm::DIRECTIONS.include?(direction)
 
-        SortForm.new(column:    column,
-                     direction: direction)
+        SortForm.new(column:,
+                     direction:)
           .apply(collection)
       end
 

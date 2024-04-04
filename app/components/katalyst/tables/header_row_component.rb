@@ -24,8 +24,8 @@ module Katalyst
         end
       end
 
-      def cell(attribute, **options, &block)
-        with_column(@table.header_cell_component.new(@table, attribute, link: @link_attributes, **options), &block)
+      def cell(attribute, **, &)
+        with_column(@table.header_cell_component.new(@table, attribute, link: @link_attributes, **), &)
       end
 
       def header?

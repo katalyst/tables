@@ -119,7 +119,7 @@ module Katalyst
         end
 
         def call
-          form_with(id: id, url: url, method: :patch, data: { controller: FORM_CONTROLLER }) do |form|
+          form_with(id:, url:, method: :patch, data: { controller: FORM_CONTROLLER }) do |form|
             form.button(hidden: "")
           end
         end

@@ -11,20 +11,20 @@ class ActionTableComponent < Katalyst::TableComponent
   end
 
   class ActionHeaderRow < Katalyst::Tables::HeaderRowComponent
-    def actions(&block)
-      cell(:actions, class: "actions", label: "", &block)
+    def actions(&)
+      cell(:actions, class: "actions", label: "", &)
     end
   end
 
   class ActionBodyRow < Katalyst::Tables::BodyRowComponent
-    def actions(&block)
-      cell(:actions, class: "actions", &block)
+    def actions(&)
+      cell(:actions, class: "actions", &)
     end
   end
 
   class ActionBodyCell < Katalyst::Tables::BodyCellComponent
     def action(label, href, **opts)
-      content_tag :a, label, { href: href }.merge(opts)
+      content_tag :a, label, { href: }.merge(opts)
     end
   end
 end

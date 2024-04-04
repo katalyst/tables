@@ -57,8 +57,8 @@ end
 
 module RSpec
   module Matchers
-    def match_html(expected_html, **options)
-      HTMLMatcher.new(expected_html, **options)
+    def match_html(expected_html, **)
+      HTMLMatcher.new(expected_html, **)
     end
   end
 end

@@ -5,7 +5,7 @@ module Admin
     def index
       collection = Katalyst::Tables::Collection::Base.with_params(params).apply(Resource.all)
 
-      render locals: { collection: collection }
+      render locals: { collection: }
     end
   end
 end

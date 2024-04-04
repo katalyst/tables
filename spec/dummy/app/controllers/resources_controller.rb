@@ -5,13 +5,13 @@ require "csv"
 class ResourcesController < ApplicationController
   def index
     collection = Collection.with_params(params).apply(Resource.all)
-    table      = Katalyst::Turbo::TableComponent.new(id: helpers.dom_id(Resource, "list"), collection: collection)
+    table      = Katalyst::Turbo::TableComponent.new(id: helpers.dom_id(Resource, "list"), collection:)
     table.extend(Katalyst::Tables::Selectable)
     table.with_selection
 
     respond_to do |format|
       format.turbo_stream { render table } if self_referred?
-      format.html { render locals: { table: table } }
+      format.html { render locals: { table: } }
       format.csv do
         render(body: CSV.generate do |csv|
           csv << %w[id name]
@@ -35,7 +35,7 @@ class ResourcesController < ApplicationController
     attribute :id, default: -> { [] }
 
     def filter
-      self.items = items.where(id: id) if id.any?
+      self.items = items.where(id:) if id.any?
     end
   end
 end

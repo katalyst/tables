@@ -7,7 +7,7 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent do
 
   let(:table) do
     instance_double(Katalyst::TableComponent).tap do |table|
-      allow(table).to receive_messages(sorting: sorting, object_name: "resource", collection: items)
+      allow(table).to receive_messages(sorting:, object_name: "resource", collection: items)
     end
   end
   let(:items) { build(:relation) }

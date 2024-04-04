@@ -33,7 +33,7 @@ module Katalyst
 
       def row_renderer
         @row_renderer ||= RowRenderer.new(@lookup_context,
-                                          collection: collection,
+                                          collection:,
                                           as:         @as,
                                           partial:    @partial,
                                           variants:   [:row],

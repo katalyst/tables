@@ -16,7 +16,7 @@ module Katalyst
 
           default = SortForm.parse(default).to_param if default.present?
 
-          SortForm.new(column: column, direction: direction, default: default)
+          SortForm.new(column:, direction:, default:)
         end
 
         def initialize(column: nil, direction: nil, default: nil)

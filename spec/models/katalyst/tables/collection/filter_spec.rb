@@ -55,7 +55,7 @@ RSpec.describe Katalyst::Tables::Collection::Filter do
     it "applies filtering then sort then pagination" do # rubocop:disable RSpec/MultipleExpectations
       items = spy(ActiveRecord::Relation) # rubocop:disable RSpec/VerifiedDoubles
       model = spy(Resource) # rubocop:disable RSpec/VerifiedDoubles
-      allow(items).to receive_messages(model: model, count: 50)
+      allow(items).to receive_messages(model:, count: 50)
       allow(model).to receive(:has_attribute?).and_return(true)
 
       collection.apply(items)

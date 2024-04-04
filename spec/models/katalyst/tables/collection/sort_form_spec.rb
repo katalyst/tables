@@ -6,7 +6,7 @@ RSpec.describe Katalyst::Tables::Collection::SortForm do
   # base config: sort specified but not supported
   subject(:form) { described_class.new(**order) }
 
-  let(:collection) { build(:collection, items: items) }
+  let(:collection) { build(:collection, items:) }
   let(:items) { build(:relation) }
   let(:order) { { column: "col", direction: "asc" } }
 

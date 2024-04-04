@@ -3,10 +3,10 @@
 require "rails_helper"
 
 RSpec.describe Katalyst::TableComponent do
-  subject(:component) { described_class.new(collection: collection) }
+  subject(:component) { described_class.new(collection:) }
 
   let(:table) { render_inline(component) { "" } }
-  let(:collection) { build(:collection, items: items) }
+  let(:collection) { build(:collection, items:) }
   let(:items) { build(:relation) }
 
   it "creates a bare table" do
@@ -19,7 +19,7 @@ RSpec.describe Katalyst::TableComponent do
   end
 
   context "when html attributes are provided" do
-    subject(:component) { described_class.new(collection: collection, **Test::HTML_ATTRIBUTES) }
+    subject(:component) { described_class.new(collection:, **Test::HTML_ATTRIBUTES) }
 
     it "passes html_options to table tag" do
       expect(table).to match_html(<<~HTML)
@@ -32,7 +32,7 @@ RSpec.describe Katalyst::TableComponent do
   end
 
   context "when header: false" do
-    subject(:component) { described_class.new(collection: collection, header: false) }
+    subject(:component) { described_class.new(collection:, header: false) }
 
     it "removes the header" do
       expect(table).to match_html(<<~HTML)
@@ -65,7 +65,7 @@ RSpec.describe Katalyst::TableComponent do
   end
 
   context "when model name is available" do
-    subject(:component) { described_class.new(collection: collection) }
+    subject(:component) { described_class.new(collection:) }
 
     let(:table) do
       render_inline(component) do |row|
@@ -119,7 +119,7 @@ RSpec.describe Katalyst::TableComponent do
   end
 
   context "when sorting is provided" do
-    subject(:component) { described_class.new(collection: items, sorting: sorting) }
+    subject(:component) { described_class.new(collection: items, sorting:) }
 
     let(:sorting) { Katalyst::Tables::Backend::SortForm.new }
 
@@ -398,7 +398,7 @@ RSpec.describe Katalyst::TableComponent do
 
   context "with custom partial options" do
     let(:table) do
-      render_inline(described_class.new(collection: collection, partial: "custom", as: :foobar))
+      render_inline(described_class.new(collection:, partial: "custom", as: :foobar))
     end
 
     let(:items) { build(:relation, count: 1) }
@@ -422,7 +422,7 @@ RSpec.describe Katalyst::TableComponent do
   end
 
   context "with a custom table builder" do
-    subject(:component) { CustomTableComponent.new(collection: collection) }
+    subject(:component) { CustomTableComponent.new(collection:) }
 
     let(:table) do
       render_inline(component) do |row|
@@ -451,7 +451,7 @@ RSpec.describe Katalyst::TableComponent do
   end
 
   context "with a custom builder that adds methods" do
-    subject(:component) { ActionTableComponent.new(collection: collection) }
+    subject(:component) { ActionTableComponent.new(collection:) }
 
     let(:table) do
       render_inline(component) do |row|

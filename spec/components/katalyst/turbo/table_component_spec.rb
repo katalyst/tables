@@ -3,7 +3,7 @@
 require "rails_helper"
 
 RSpec.describe Katalyst::Turbo::TableComponent do
-  subject(:component) { described_class.new(collection: collection, id: "table") }
+  subject(:component) { described_class.new(collection:, id: "table") }
 
   let(:table) do
     with_request_url("/resources") do
