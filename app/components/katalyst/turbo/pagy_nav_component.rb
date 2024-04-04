@@ -6,17 +6,17 @@ module Katalyst
       include Tables::TurboReplaceable
 
       def initialize(id:, **options)
-        super(pagy_id: id, **options)
+        super(id: id, **options)
       end
 
       def id
-        pagy_options[:pagy_id]
+        pagy_options[:id]
       end
 
       private
 
       def pagy_options
-        super.merge(link_extra: "data-turbo-stream")
+        super.merge(anchor_string: "data-turbo-stream")
       end
     end
   end
