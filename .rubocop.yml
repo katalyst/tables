@@ -2,6 +2,7 @@ require:
   - rubocop-capybara
   - rubocop-katalyst
   - rubocop-factory_bot
+  - rubocop-rspec_rails
 
 AllCops:
   NewCops: enable

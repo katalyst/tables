@@ -22,16 +22,16 @@ module Katalyst
         end
 
         def initialize(sorting: config.sorting, **options)
-          @sorting = SortForm.parse(sorting) if sorting
+          @sorting = SortForm.parse(sorting, default: sorting) if sorting
 
-          super(sort: sorting, **options) # set default sort based on config
+          super(sort: @sorting.to_param, **options) # set default sort based on config
         end
 
         def sort=(value)
           return unless @sorting
 
           # update internal proxy
-          @sorting = SortForm.parse(value, default: attribute_was(:sort))
+          @sorting = SortForm.parse(value, default: @sorting.default)
 
           # update attribute based on normalized value
           super(@sorting.to_param)

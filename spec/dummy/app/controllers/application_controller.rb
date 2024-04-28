@@ -4,8 +4,7 @@ class ApplicationController < ActionController::Base
   include Katalyst::Tables::Backend
 
   helper Katalyst::Tables::Frontend
+  helper Pagy::Frontend
 
-  def show
-    head :no_content
-  end
+  def show; end
 end

@@ -6,14 +6,14 @@ RSpec.describe Katalyst::Tables::Collection::Pagination do
   subject(:collection) { base.new.with_params(params) }
 
   let(:base) { Katalyst::Tables::Collection::Base }
-  let(:items) { build(:relation, count: 50) }
+  let(:items) { Person.all }
   let(:params) { ActionController::Parameters.new }
 
   it { is_expected.not_to be_filtered }
   it { is_expected.to have_attributes(to_params: {}) }
 
   it "does not paginate by default" do
-    expect(collection.apply(items).items).to have_attributes(count: 50)
+    expect(collection.apply(items)).to have_attributes(count: 0, pagination: nil)
   end
 
   context "with unchanged defaults" do
@@ -38,19 +38,26 @@ RSpec.describe Katalyst::Tables::Collection::Pagination do
     end
 
     it "applies pagination" do
-      expect(collection.apply(items).items).to have_attributes(count: 20)
+      allow(items).to receive(:count).and_return(50)
+      expect(collection.apply(items).pagination).to have_attributes(page: 1, items: 20, count: 50)
     end
   end
 
   context "with pagination item count config" do
     subject(:collection) do
       Class.new(base) do
-        config.paginate = { items: 10 }
+        config.paginate = { items: 5 }
       end.new
     end
 
+    before { create_list(:person, 6) }
+
     it "applies pagination" do
-      expect(collection.apply(items).items).to have_attributes(count: 10)
+      expect(collection.apply(items).items).to have_attributes(count: 5)
+    end
+
+    it "updates pagination vars" do
+      expect(collection.apply(items).pagination).to have_attributes(page: 1, items: 5, count: 6)
     end
 
     it "does not mutate class options" do
@@ -63,15 +70,17 @@ RSpec.describe Katalyst::Tables::Collection::Pagination do
     subject(:collection) { base.new(paginate: true) }
 
     it "applies pagination" do
-      expect(collection.apply(items).items).to have_attributes(count: 20)
+      allow(items).to receive(:count).and_return(50)
+      expect(collection.apply(items).pagination).to have_attributes(page: 1, items: 20, count: 50)
     end
   end
 
   context "with pagy options" do
-    subject(:collection) { base.new(paginate: { items: 10 }) }
+    subject(:collection) { base.new(paginate: { items: 5 }) }
 
     it "applies options" do
-      expect(collection.apply(items).items).to have_attributes(count: 10)
+      allow(items).to receive(:count).and_return(50)
+      expect(collection.apply(items).pagination).to have_attributes(page: 1, items: 5, count: 50)
     end
   end
 
@@ -80,15 +89,20 @@ RSpec.describe Katalyst::Tables::Collection::Pagination do
 
     let(:params) { ActionController::Parameters.new(page: 2) }
 
+    before do
+      allow(items).to receive(:count).and_return(50)
+    end
+
     it "accepts page param" do
       expect(collection.apply(items)).to have_attributes(page: 2)
     end
 
     it "passes param to pagy" do
-      expect(collection.apply(items).pagination).to have_attributes(page: 2)
+      expect(collection.apply(items).pagination).to have_attributes(page: 2, items: 20, count: 50)
     end
 
     it "applies pagination" do
+      allow(items).to receive_messages(count: 50, offset: items)
       collection.apply(items)
       expect(items).to have_received(:offset).with(20)
     end

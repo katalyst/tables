@@ -5,8 +5,12 @@ require "rails_helper"
 RSpec.describe Katalyst::Tables::Collection::Sorting do
   subject(:collection) { base.new.with_params(params) }
 
+  before do
+    allow(items).to receive(:reorder).and_return(items)
+  end
+
   let(:base) { Katalyst::Tables::Collection::Base }
-  let(:items) { build(:relation, count: 50) }
+  let(:items) { Person.all }
   let(:params) { ActionController::Parameters.new }
 
   it { is_expected.not_to be_filtered }
@@ -55,14 +59,14 @@ RSpec.describe Katalyst::Tables::Collection::Sorting do
   context "with sort url params" do
     subject(:collection) { base.new(sorting: "name").with_params(params) }
 
-    let(:params) { ActionController::Parameters.new(sort: "index desc") }
+    let(:params) { ActionController::Parameters.new(sort: "name desc") }
 
     it { is_expected.not_to be_filtered }
-    it { is_expected.to have_attributes(to_params: { "sort" => "index desc" }) }
+    it { is_expected.to have_attributes(to_params: { "sort" => "name desc" }) }
 
     it "applies specified sort" do
       collection.apply(items)
-      expect(items).to have_received(:reorder).with("index" => "desc")
+      expect(items).to have_received(:reorder).with("name" => "desc")
     end
   end
 

@@ -5,11 +5,40 @@ require "rails_helper"
 RSpec.describe Katalyst::TableComponent do
   subject(:component) { described_class.new(collection:) }
 
-  let(:table) { render_inline(component) { "" } }
-  let(:collection) { build(:collection, items:) }
-  let(:items) { build(:relation) }
+  let(:table) { render_inline(component) { |row| row.cell(:name) } }
+  let(:collection) { build(:collection, count: 1) }
 
-  it "creates a bare table" do
+  it "renders tables" do
+    expect(table).to match_html(<<~HTML)
+      <table>
+        <thead><tr><th>Name</th></tr></thead>
+        <tbody>
+          <tr><td>Person 1</td></tr>
+        </tbody>
+      </table>
+    HTML
+  end
+
+  it "supports minimal tables without header or caption" do
+    table = render_inline(described_class.new(collection: [], caption: false, header: false))
+    expect(table).to match_html(<<~HTML)
+      <table>
+        <tbody></tbody>
+      </table>
+    HTML
+  end
+
+  it "accepts html_attributes" do
+    table = render_inline(described_class.new(collection: [], caption: false, header: false, **Test::HTML_ATTRIBUTES))
+    expect(table).to match_html(<<~HTML)
+      <table id="ID" class="CLASS" style="style" aria-label="LABEL" data-foo="bar">
+        <tbody></tbody>
+      </table>
+    HTML
+  end
+
+  it "renders a header row" do
+    table = render_inline(described_class.new(collection: [], caption: false, header: true))
     expect(table).to match_html(<<~HTML)
       <table>
         <thead><tr></tr></thead>
@@ -18,64 +47,25 @@ RSpec.describe Katalyst::TableComponent do
     HTML
   end
 
-  context "when html attributes are provided" do
-    subject(:component) { described_class.new(collection:, **Test::HTML_ATTRIBUTES) }
-
-    it "passes html_options to table tag" do
-      expect(table).to match_html(<<~HTML)
-        <table id="ID" class="CLASS" style="style" aria-label="LABEL" data-foo="bar">
-          <thead><tr></tr></thead>
-          <tbody></tbody>
-        </table>
-      HTML
-    end
-  end
-
-  context "when header: false" do
-    subject(:component) { described_class.new(collection:, header: false) }
-
-    it "removes the header" do
-      expect(table).to match_html(<<~HTML)
-        <table>
-          <tbody></tbody>
-        </table>
-      HTML
-    end
-  end
-
-  context "when a column is provided" do
-    let(:table) do
-      render_inline(component) do |row|
-        row.cell :name
-      end
-    end
-
-    it "renders a column header" do
-      expect(table).to match_html(<<~HTML)
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      HTML
-    end
+  it "renders caption for empty collections" do
+    table = render_inline(described_class.new(collection: build(:collection, count: 0))) { |row| row.cell(:name) }
+    expect(table).to match_html(<<~HTML)
+      <table>
+        <caption align="bottom">
+          No people found.
+        </caption>
+        <thead>
+          <tr><th>Name</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    HTML
   end
 
   context "when model name is available" do
-    subject(:component) { described_class.new(collection:) }
-
-    let(:table) do
-      render_inline(component) do |row|
-        row.cell :name
-      end
-    end
-
     before do
       allow_any_instance_of(Katalyst::Tables::HeaderCellComponent)
-        .to receive(:translate).with("activerecord.attributes.resource.name", any_args)
+        .to receive(:translate).with("activerecord.attributes.person.name", any_args)
               .and_return("TRANSLATED")
     end
 
@@ -87,17 +77,19 @@ RSpec.describe Katalyst::TableComponent do
               <th>TRANSLATED</th>
             </tr>
           </thead>
-          <tbody></tbody>
+          <tbody>
+            <tr><td>Person 1</td></tr>
+          </tbody>
         </table>
       HTML
     end
   end
 
   context "when sorting is enabled" do
-    let(:collection) { build(:collection, sorting: true) }
+    let(:collection) { build(:collection, count: 1, sorting: "name asc") }
 
     let(:table) do
-      with_request_url("/resources?s=q&page=2") do
+      with_request_url("/people?s=q&page=2") do
         render_inline(component) do |row|
           row.cell :name
         end
@@ -109,62 +101,12 @@ RSpec.describe Katalyst::TableComponent do
         <table>
           <thead>
             <tr>
-              <th><a href="/resources?s=q&sort=name+asc">Name</a></th>
+              <th data-sort="asc"><a href="/people?s=q&sort=name+desc">Name</a></th>
             </tr>
           </thead>
-          <tbody></tbody>
-        </table>
-      HTML
-    end
-  end
-
-  context "when sorting is provided" do
-    subject(:component) { described_class.new(collection: items, sorting:) }
-
-    let(:sorting) { Katalyst::Tables::Backend::SortForm.new }
-
-    let(:table) do
-      with_request_url("/resources?s=q&page=2") do
-        render_inline(component) do |row|
-          row.cell :name
-        end
-      end
-    end
-
-    it "adds sort links" do
-      expect(table).to match_html(<<~HTML)
-        <table>
-          <thead>
-            <tr>
-              <th><a href="/resources?s=q&sort=name+asc">Name</a></th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      HTML
-    end
-  end
-
-  context "when default is provided" do
-    let(:table) do
-      with_request_url("/resources?s=q&page=2") do
-        render_inline(component) do |row|
-          row.cell :name
-        end
-      end
-    end
-
-    let(:collection) { build(:collection, sorting: "name asc") }
-
-    it "adds sort links" do
-      expect(table).to match_html(<<~HTML)
-        <table>
-          <thead>
-            <tr>
-              <th data-sort="asc"><a href="/resources?s=q&sort=name+desc">Name</a></th>
-            </tr>
-          </thead>
-          <tbody></tbody>
+          <tbody>
+            <tr><td>Person 1</td></tr>
+          </tbody>
         </table>
       HTML
     end
@@ -186,7 +128,9 @@ RSpec.describe Katalyst::TableComponent do
               <th>Name</th>
             </tr>
           </thead>
-          <tbody></tbody>
+          <tbody>
+            <tr><td>Person 1</td></tr>
+          </tbody>
         </table>
       HTML
     end
@@ -208,33 +152,7 @@ RSpec.describe Katalyst::TableComponent do
             </tr>
           </thead>
           <tbody>
-          </tbody>
-        </table>
-      HTML
-    end
-  end
-
-  context "with collection data" do
-    let(:table) do
-      render_inline(component) do |row|
-        row.cell :name
-      end
-    end
-
-    let(:items) { build(:relation, count: 1) }
-
-    it "adds html options to header row tag" do
-      expect(table).to match_html(<<~HTML)
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Resource 1</td>
-            </tr>
+            <tr><td>Person 1</td></tr>
           </tbody>
         </table>
       HTML
@@ -249,8 +167,6 @@ RSpec.describe Katalyst::TableComponent do
       end
     end
 
-    let(:items) { build(:relation, count: 1) }
-
     it "adds html options to body row tag" do
       expect(table).to match_html(<<~HTML)
         <table>
@@ -261,7 +177,7 @@ RSpec.describe Katalyst::TableComponent do
           </thead>
           <tbody>
             <tr id="ID" aria-label="LABEL" class="CLASS" style="style" data-foo="bar">
-              <td>Resource 1</td>
+              <td>Person 1</td>
             </tr>
           </tbody>
         </table>
@@ -276,8 +192,6 @@ RSpec.describe Katalyst::TableComponent do
       end
     end
 
-    let(:items) { build(:relation, count: 1) }
-
     it "adds html options to body cell tag" do
       expect(table).to match_html(<<~HTML)
         <table>
@@ -288,7 +202,7 @@ RSpec.describe Katalyst::TableComponent do
           </thead>
           <tbody>
             <tr>
-              <td id="ID" aria-label="LABEL" class="CLASS" style="style" data-foo="bar">Resource 1</td>
+              <td id="ID" aria-label="LABEL" class="CLASS" style="style" data-foo="bar">Person 1</td>
             </tr>
           </tbody>
         </table>
@@ -298,7 +212,7 @@ RSpec.describe Katalyst::TableComponent do
 
   context "when partial is inferred" do
     let(:table) { render_inline(component) }
-    let(:items) { build(:relation, count: 1) }
+    let(:collection) { build(:collection, type: :resource, count: 1) }
 
     it "calls the partial to render rows" do
       expect(table).to match_html(<<~HTML)
@@ -310,7 +224,7 @@ RSpec.describe Katalyst::TableComponent do
             </tr>
           </thead>
           <tbody>
-            <tr id="new_resource">
+            <tr id="resource_1">
               <td>Resource 1</td>
               <td class="active">No</td>
             </tr>
@@ -320,31 +234,14 @@ RSpec.describe Katalyst::TableComponent do
     end
 
     context "when collection is empty" do
-      let(:items) { build(:relation, count: 0) }
+      let(:collection) { build(:collection, type: :resource, count: 0) }
 
       it "finds the partial from the collection" do
         expect(table).to match_html(<<~HTML)
           <table>
-            <thead>
-              <tr>
-                <th>Resource partial</th>
-                <th class="active">Active</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        HTML
-      end
-    end
-
-    context "when collection is an ActiveRecord::Relation" do
-      subject(:component) { described_class.new(collection: items) }
-
-      let(:items) { build(:relation, count: 0) }
-
-      it "finds the partial from the model" do
-        expect(table).to match_html(<<~HTML)
-          <table>
+            <caption align="bottom">
+              No resources found.
+            </caption>
             <thead>
               <tr>
                 <th>Resource partial</th>
@@ -360,7 +257,7 @@ RSpec.describe Katalyst::TableComponent do
     context "when collection is an array" do
       subject(:component) { described_class.new(collection: items, object_name: :resource) }
 
-      let(:items) { [build(:resource, index: 0)] }
+      let(:items) { build_list(:resource, 1) }
 
       it "finds the partial from the first row" do
         expect(table).to match_html(<<~HTML)
@@ -388,6 +285,9 @@ RSpec.describe Katalyst::TableComponent do
       it "renders empty headers as no partial is available" do
         expect(table).to match_html(<<~HTML)
           <table>
+            <caption align="bottom">
+              No records found.
+            </caption>
             <thead><tr></tr></thead>
             <tbody></tbody>
           </table>
@@ -401,7 +301,7 @@ RSpec.describe Katalyst::TableComponent do
       render_inline(described_class.new(collection:, partial: "custom", as: :foobar))
     end
 
-    let(:items) { build(:relation, count: 1) }
+    let(:collection) { build(:collection, type: :resource, count: 1) }
 
     it "calls the custom partial with correct local" do
       expect(table).to match_html(<<~HTML)
@@ -430,8 +330,6 @@ RSpec.describe Katalyst::TableComponent do
       end
     end
 
-    let(:items) { build(:relation, count: 1) }
-
     it "adds custom classes to all tags" do
       expect(table).to match_html(<<~HTML)
         <table class="custom-table">
@@ -442,7 +340,7 @@ RSpec.describe Katalyst::TableComponent do
           </thead>
           <tbody>
             <tr class="custom-body-row">
-              <td class="custom-body-cell">Resource 1</td>
+              <td class="custom-body-cell">Person 1</td>
             </tr>
           </tbody>
         </table>
@@ -463,8 +361,6 @@ RSpec.describe Katalyst::TableComponent do
       end
     end
 
-    let(:items) { build(:relation, count: 1) }
-
     it "generates actions column" do
       expect(table).to match_html(<<~HTML)
         <table class="action-table">
@@ -476,7 +372,7 @@ RSpec.describe Katalyst::TableComponent do
           </thead>
           <tbody>
             <tr>
-              <td>Resource 1</td>
+              <td>Person 1</td>
               <td class="actions">
                 <a href="edit">Edit</a>
                 <a href="delete" method="delete">Delete</a>

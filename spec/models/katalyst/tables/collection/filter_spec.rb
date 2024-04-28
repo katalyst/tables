@@ -13,7 +13,7 @@ RSpec.describe Katalyst::Tables::Collection::Filter do
     end.new(sorting: "name", paginate: true).with_params(params)
   end
 
-  let(:items) { build(:relation, count: 50) }
+  let(:items) { Person.all }
   let(:params) { ActionController::Parameters.new }
 
   it { is_expected.not_to be_filtered }

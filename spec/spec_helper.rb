@@ -22,4 +22,8 @@ RSpec.configure do |config|
     FactoryBot.find_definitions
     FactoryBot::Evaluator.include RSpec::Mocks::ExampleMethods
   end
+
+  config.before do
+    FactoryBot.rewind_sequences
+  end
 end

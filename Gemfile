@@ -5,7 +5,7 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in katalyst-tables.gemspec
 gemspec
 
-gem "erb_lint", "~> 0.5.0", require: false
+gem "erb_lint", require: false
 gem "factory_bot"
 gem "importmap-rails"
 gem "nokogiri"

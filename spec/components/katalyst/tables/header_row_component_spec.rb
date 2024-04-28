@@ -11,7 +11,7 @@ RSpec.describe Katalyst::Tables::HeaderRowComponent do
       allow(table).to receive(:header_cell_component).and_return(Katalyst::Tables::HeaderCellComponent)
     end
   end
-  let(:items) { build(:relation) }
+  let(:items) { Person.all }
   let(:sorting) { nil }
 
   it "renders an empty row" do

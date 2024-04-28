@@ -24,7 +24,7 @@ module Katalyst
       end
 
       def plural_human_model_name
-        human = @table.model_name&.human || @table.object_name.to_s.humanize
+        human = @table.model_name&.human || @table.object_name&.to_s&.humanize || "record"
         human.pluralize.downcase
       end
 

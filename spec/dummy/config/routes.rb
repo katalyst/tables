@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :people, only: %i[index]
   resources :resources, only: %i[index]
   put "resources/active", to: "resources#activate"
 
@@ -13,4 +14,6 @@ Rails.application.routes.draw do
       resources :children, only: %i[index]
     end
   end
+
+  root to: "application#show"
 end

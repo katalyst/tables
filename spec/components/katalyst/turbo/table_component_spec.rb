@@ -8,10 +8,10 @@ RSpec.describe Katalyst::Turbo::TableComponent do
   let(:table) do
     with_request_url("/resources") do
       vc_test_request.headers["Accept"] = format
-      render_inline(component) { "" }
+      render_inline(component) { |row| row.cell :name }
     end
   end
-  let(:collection) { build(:collection) }
+  let(:collection) { build(:collection, count: 1) }
   let(:format) { "text/html" }
 
   before do
@@ -21,14 +21,14 @@ RSpec.describe Katalyst::Turbo::TableComponent do
   it "creates a bare table" do
     expect(table).to match_html(<<~HTML)
       <table id="table" data-controller="tables--turbo--collection" data-tables--turbo--collection-query-value="">
-        <thead><tr></tr></thead>
-        <tbody></tbody>
+        <thead><tr><th>Name</th></tr></thead>
+        <tbody><tr><td>Person 1</td></tr></tbody>
       </table>
     HTML
   end
 
   context "with query params" do
-    let(:collection) { build(:collection, sorting: "name", paginate: true, sort: "name desc") }
+    let(:collection) { build(:collection, sorting: "name", paginate: true, sort: "name desc", count: 1) }
 
     it "creates a bare table" do
       expect(table).to match_html(<<~HTML)
@@ -36,15 +36,15 @@ RSpec.describe Katalyst::Turbo::TableComponent do
                data-controller="tables--turbo--collection"
                data-tables--turbo--collection-sort-value="name desc"
                data-tables--turbo--collection-query-value="sort=name+desc">
-          <thead><tr></tr></thead>
-          <tbody></tbody>
+          <thead><tr><th data-sort="desc"><a data-turbo-stream="" href="/resources">Name</a></th></tr></thead>
+          <tbody><tr><td>Person 1</td></tr></tbody>
         </table>
       HTML
     end
   end
 
   context "with query params matching defaults" do
-    let(:collection) { build(:collection, sorting: "name", paginate: true, sort: "name asc", page: 1) }
+    let(:collection) { build(:collection, sorting: "name", paginate: true, sort: "name asc", page: 1, count: 1) }
 
     it "creates a bare table" do
       expect(table).to match_html(<<~HTML)
@@ -52,8 +52,8 @@ RSpec.describe Katalyst::Turbo::TableComponent do
                data-controller="tables--turbo--collection"
                data-tables--turbo--collection-sort-value="name asc"
                data-tables--turbo--collection-query-value="">
-          <thead><tr></tr></thead>
-          <tbody></tbody>
+          <thead><tr><th data-sort="asc"><a data-turbo-stream="" href="/resources?sort=name+desc">Name</a></th></tr></thead>
+          <tbody><tr><td>Person 1</td></tr></tbody>
         </table>
       HTML
     end
@@ -67,8 +67,8 @@ RSpec.describe Katalyst::Turbo::TableComponent do
         <turbo-stream action="replace" target="table">
           <template>
             <table id="table" data-controller="tables--turbo--collection" data-tables--turbo--collection-query-value="">
-              <thead><tr></tr></thead>
-              <tbody></tbody>
+              <thead><tr><th>Name</th></tr></thead>
+              <tbody><tr><td>Person 1</td></tr></tbody>
             </table>
           </template>
         </turbo-stream>
