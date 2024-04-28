@@ -10,24 +10,42 @@ module Katalyst
 
         attr_accessor :column, :direction, :default
 
-        def self.parse(param, default: nil)
-          column, direction = param.to_s.split
-          direction         = "asc" unless DIRECTIONS.include?(direction)
-
-          default = SortForm.parse(default).to_param if default.present?
-
-          SortForm.new(column:, direction:, default:)
+        def self.normalize(param)
+          new(param:).to_param
         end
 
-        def initialize(column: nil, direction: nil, default: nil)
+        def self.parse(param, **args)
+          new(param:, **args)
+        end
+
+        def initialize(param: nil, column: nil, direction: nil, default: nil)
+          if param.present?
+            column, direction = param.to_s.split
+            direction         = "asc" unless DIRECTIONS.include?(direction)
+          end
+
           self.column    = column
           self.direction = direction
-          self.default   = default
+          self.default   = SortForm.normalize(default) if default
         end
 
         def to_param
           "#{column} #{direction}"
         end
+
+        def default?
+          to_param == default.to_param
+        end
+
+        def hash
+          to_param.hash
+        end
+
+        def eql?(other)
+          to_param == other.to_param
+        end
+
+        alias to_s to_param
 
         # Returns true if the given collection supports sorting on the given
         # column. A column supports sorting if it is a database column or if

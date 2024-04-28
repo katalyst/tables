@@ -337,7 +337,7 @@ DEPENDENCIES
   capybara
   compare-xml
   cuprite
-  erb_lint (~> 0.5.0)
+  erb_lint
   factory_bot
   importmap-rails
   katalyst-tables!

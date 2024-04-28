@@ -12,7 +12,7 @@ RSpec.describe Admin::ResourcesController do
       expect(response).to have_rendered("admin/resources/index")
     end
 
-    it "renders the resource partial" do
+    it "renders the admin resource partial" do
       expect(response).to have_rendered("admin/resources/_resource")
     end
   end

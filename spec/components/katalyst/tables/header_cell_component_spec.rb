@@ -10,8 +10,8 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent do
       allow(table).to receive_messages(sorting:, object_name: "resource", collection: items)
     end
   end
-  let(:items) { build(:relation) }
-  let(:record) { build(:resource, name: "VALUE") }
+  let(:items) { Person.all }
+  let(:record) { build(:person, name: "VALUE") }
   let(:sorting) { nil }
 
   let(:rendered) do

@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe Katalyst::Tables::Collection::Base do
   subject(:collection) { described_class.new }
 
-  let(:items) { build(:relation, count: 50) }
+  let(:items) { Person.all }
 
   it { is_expected.not_to be_filtered }
   it { is_expected.to have_attributes(to_params: {}) }

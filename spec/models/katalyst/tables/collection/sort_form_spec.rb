@@ -6,29 +6,27 @@ RSpec.describe Katalyst::Tables::Collection::SortForm do
   # base config: sort specified but not supported
   subject(:form) { described_class.new(**order) }
 
-  let(:collection) { build(:collection, items:) }
-  let(:items) { build(:relation) }
-  let(:order) { { column: "col", direction: "asc" } }
+  let(:collection) { Katalyst::Tables::Collection::Base.new(sort: "name asc").apply(items) }
+  let(:items) { Person.all }
+  let(:order) { { column: "name", direction: "asc" } }
 
   describe "#supports?" do
-    it { is_expected.not_to be_support(collection, :col) }
+    it { is_expected.not_to be_support(collection, :unknown) }
+    it("supports attributes") { is_expected.to be_support(collection, :name) }
 
-    it_behaves_like "when collection has attribute" do
-      it { is_expected.to be_support(collection, :col) }
-    end
-
-    it_behaves_like "when collection has scope" do
-      it { is_expected.to be_support(collection, :col) }
+    it "supports scopes" do
+      allow(Person).to receive(:order_by_col).and_return(Person.all)
+      expect(form).to be_support(items, :col)
     end
   end
 
   describe "#status" do
-    it { expect(form.status("col")).to eq "asc" }
+    it { expect(form.status("name")).to eq "asc" }
 
     context "with desc" do
-      let(:order) { { column: "col", direction: "desc" } }
+      let(:order) { { column: "name", direction: "desc" } }
 
-      it { expect(form.status("col")).to eq "desc" }
+      it { expect(form.status("name")).to eq "desc" }
     end
 
     context "with another column" do
@@ -39,18 +37,18 @@ RSpec.describe Katalyst::Tables::Collection::SortForm do
   end
 
   describe "#toggle" do
-    it { expect(form.toggle("col")).to eq("col desc") }
+    it { expect(form.toggle("name")).to eq("name desc") }
 
     context "with desc" do
-      let(:order) { { column: "col", direction: "desc" } }
+      let(:order) { { column: "name", direction: "desc" } }
 
-      it { expect(form.toggle("col")).to eq("col asc") }
+      it { expect(form.toggle("name")).to eq("name asc") }
     end
 
     context "with another column" do
       let(:order) { { column: "other", direction: "asc" } }
 
-      it { expect(form.toggle("col")).to eq("col asc") }
+      it { expect(form.toggle("name")).to eq("name asc") }
     end
   end
 
@@ -65,52 +63,47 @@ RSpec.describe Katalyst::Tables::Collection::SortForm do
       let(:order) { { column: nil, direction: "asc" } }
 
       it "does not sort collection" do
+        allow(items).to receive(:reorder).and_return(items)
         sort
         expect(items).not_to have_received(:reorder)
       end
-
-      it "returns sorted" do
-        expect(sorted).to be items
-      end
     end
 
-    it_behaves_like "when collection has scope" do
-      it "sorts with scope" do
+    context "when sorting by scope" do
+      let(:order) { { column: "col", direction: "asc" } }
+
+      it "calls scope" do
+        allow(items).to receive(:order_by_col).and_return(items)
         sort
         expect(items).to have_received(:order_by_col).with(:asc)
       end
+    end
 
-      it "returns sorted" do
-        expect(sorted).to be items
-      end
+    context "when sorting by scope descending" do
+      let(:order) { { column: "col", direction: "desc" } }
 
-      context "when direction is provided" do
-        let(:order) { { column: "col", direction: "desc" } }
-
-        it "sorts by desc" do
-          sort
-          expect(items).to have_received(:order_by_col).with(:desc)
-        end
+      it "sorts by desc" do
+        allow(items).to receive(:order_by_col).and_return(items)
+        sort
+        expect(items).to have_received(:order_by_col).with(:desc)
       end
     end
 
-    it_behaves_like "when collection has attribute" do
+    context "when sorting by attribute" do
       it "sorts with reorder" do
+        allow(items).to receive(:reorder).and_return(items)
         sort
-        expect(items).to have_received(:reorder).with("col" => "asc")
+        expect(items).to have_received(:reorder).with("name" => "asc")
       end
+    end
 
-      it "returns sorted" do
-        expect(sorted).to be items
-      end
+    context "when sorting by attribute descending" do
+      let(:order) { { column: "name", direction: "desc" } }
 
-      context "when direction is provided" do
-        let(:order) { { column: "col", direction: "desc" } }
-
-        it "sorts by desc" do
-          sort
-          expect(items).to have_received(:reorder).with("col" => "desc")
-        end
+      it "sorts by desc" do
+        allow(items).to receive(:reorder).and_return(items)
+        sort
+        expect(items).to have_received(:reorder).with("name" => "desc")
       end
     end
   end

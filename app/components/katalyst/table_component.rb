@@ -36,7 +36,7 @@ module Katalyst
     def initialize(collection:,
                    sorting: nil,
                    header: true,
-                   caption: false,
+                   caption: true,
                    **html_attributes)
       @collection = collection
 

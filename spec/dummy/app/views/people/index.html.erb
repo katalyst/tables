@@ -1,0 +1,25 @@
+<% content_for(:head) do %>
+  <meta name="turbo-refresh-method" content="morph">
+  <meta name="turbo-refresh-scroll" content="preserve">
+<% end %>
+
+<h1>People</h1>
+<%= link_to "Home", root_path %>
+
+<%= form_with model: @people, method: :get, data: {
+      controller:    "search",
+      action:        "input->search#update",
+      search_target: "form",
+      turbo_action:  "replace",
+    } do |form| %>
+  <%= form.label :search %>
+  <%= form.text_field :search, type: :search, data: { search_target: "input" } %>
+  <%= form.hidden_field :sort unless @people.sorting.default? %>
+  <%= form.submit "Filter", hidden: "" %>
+<% end %>
+
+<%= table_with(collection: @people) do |row| %>
+  <% row.cell :name %>
+<% end %>
+
+<%== pagy_nav(@people.pagination) %>
