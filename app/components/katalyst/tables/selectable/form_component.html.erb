@@ -1,7 +1,9 @@
 <%= form_with(method: :patch,
               id:,
               class:  "tables--selection--form",
-              data:   { controller: form_controller },
+              data:   { controller:      form_controller,
+                        turbo_action:    "replace",
+                        turbo_permanent: "" },
               html:   { hidden: "" }) do |form| %>
   <p class="tables--selection--summary">
     <span data-<%= form_target("count") %>>0</span>
