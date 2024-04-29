@@ -3,6 +3,18 @@
 require "capybara/cuprite"
 require "capybara/rspec"
 
+module WaitForTurbo
+  def wait_for_form_submission
+    Timeout.timeout(Capybara.default_max_wait_time) do
+      loop until form_submission_complete?
+    end
+  end
+
+  def form_submission_complete?
+    page.evaluate_script("Turbo.navigator.formSubmission.state === 'stopped'")
+  end
+end
+
 Capybara.default_driver = Capybara.javascript_driver = :cuprite
 Capybara.register_driver(:cuprite) do |app|
   Capybara::Cuprite::Driver.new(app)
@@ -16,4 +28,6 @@ RSpec.configure do |config|
   config.prepend_before(:all, type: :system) do
     driven_by :cuprite, screen_size: [1920, 1080], options: { headless: true, inspector: false }
   end
+
+  config.include WaitForTurbo, type: :system
 end

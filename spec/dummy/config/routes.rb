@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  resources :faqs, only: %i[index] do
+    patch :order, on: :collection
+  end
   resources :people, only: %i[index]
   resources :resources, only: %i[index]
   put "resources/active", to: "resources#activate"

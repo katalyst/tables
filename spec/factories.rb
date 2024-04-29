@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
+  factory :faq do
+    sequence(:question) { |i| "FAQ #{i}" }
+    sequence(:answer) { |i| "Answer #{i}" }
+  end
+
   factory :person do
     sequence(:name) { |i| "Person #{i}" }
   end
