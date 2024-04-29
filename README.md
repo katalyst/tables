@@ -279,6 +279,7 @@ for a collection.
 The following extensions are available:
 
 * [Orderable](docs/orderable.md) - adds bulk-update for 'ordinal' columns via dragging rows in the table.
+* [Selectable](docs/selectable.md) - adds bulk-action support for rows in the table.
 
 ## Customization
 
