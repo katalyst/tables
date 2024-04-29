@@ -3,7 +3,7 @@
 The Selectable extension adds the ability to select multiple rows in the table
 and apply bulk actions to the selected entries.
 
-The extension can be enabled on a specific table instance of mixed in to a
+The extension can be enabled on a specific table instance or mixed in to a
 table component class. In either case, the extension will add new functionality
 to the table component and any nested row components, plus a component to show
 the selection status and keep track of selected items between re-renders that
@@ -74,14 +74,11 @@ end
 # resources_controller.rb
 class ResourcesController < ApplicationController
   def index
-    collection = Collection.with_params(params).apply(Resource.all)
-    table      = Katalyst::TableComponent.new(collection: collection)
-    table.extend(Katalyst::Tables::Selectable)
-    table.with_selection
-
+    @collection = Collection.with_params(params).apply(Resource.all)
+    
     respond_to do |format|
-      format.html { render locals: { table: table } }
-      format.csv { render body: generate_csv_from_collection(collection) }
+      format.html { render locals: { collection: @collection } }
+      format.csv { render body: generate_csv_from_collection(@collection) }
     end
   end
   
@@ -112,20 +109,22 @@ end
 ### Views
 In the index, render the table selection form and the table separately:
 ```erb
+<% table = Katalyst::TableComponent.new(collection: collection)
+   table.extend(Katalyst::Tables::Selectable)
+   table.with_selection %>
+   
 <%= table.selection do |form| %>
   <%= tag.button "Download", formaction: resources_path(format: :csv), formmethod: "GET" %>
   <%= tag.button "Activate", formaction: activate_resources_path, formmethod: "PUT" %>
 <% end %>
-
-<%= render table %>
-```
-
-In the row partial, set the row selection:
-```erb
-<% row.selection %>
-
-<% row.cell :name, label: "Resource partial" %>
-<% row.cell :active do |cell| %>
-  <%= cell.value ? "Yes" : "No" %>
+    
+<%= render table do |row| %>
+  <% row.selection %>
+  
+  <% row.cell :name, label: "Resource partial" %>
+  <% row.cell :active do |cell| %>
+    <%= cell.value ? "Yes" : "No" %>
+  <% end %>
 <% end %>
 ```
+

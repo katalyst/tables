@@ -3,7 +3,7 @@
 The Orderable extension adds the ability to bulk-update an 'order' column for
 model instances from an index table view.
 
-The extension can be enabled on a specific table instance of mixed in to a
+The extension can be enabled on a specific table instance or mixed in to a
 table component class. In either case, the extension will add new functionality
 to the table component and any nested row components, plus a hidden form 
 component that needs to be rendered in the page separately.
@@ -80,12 +80,7 @@ end
 ### Controller
 ```ruby
 def index
-    collection = Collection.new.with_params(params).apply(Model.all)
-    table      = Katalyst::TableComponent.new(collection:)
-    table.extend(Katalyst::Table::Orderable)
-    table.with_orderable(url: order_models_path)
-
-    render locals: { table: table }
+   @collection = Collection.new.with_params(params).apply(Model.all)
 end
 
 def order
@@ -101,10 +96,15 @@ end
 ### View
 
 ```erb
+<% table = Katalyst::TableComponent.new(collection:)
+   table.extend(Katalyst::Table::Orderable)
+   table.with_orderable(url: order_models_path) %>
+    
 <%= render table do |row| %>
   <% row.ordinal %>
   <% row.cell :name %>
 <% end %>
+
 <%= render table.orderable %>
 ```
 
@@ -128,7 +128,8 @@ class ModelTableComponent < Katalyst::TableComponent
   
   def call
     # in the include scenario, orderable is a standard component slot
-    render_parent_to_string + orderable.to_s
+    concat(render_parent)
+    concat(orderable)
   end
 end
 ```
@@ -141,12 +142,14 @@ You can also use orderable to add drag-and-drop ordering for an association.
 In this example we use a component but the same approach can be used with
 the extend method as above.
 
-# TODO: This example is not yet complete. Copy from latest Fringe version.
+
+In this example, we're assuming that the model has a nested images association
+and supports nested attributes via update. We're also assuming that the images
+table is providing a default stable sort based on the `ordinal` attribute.
 
 ```ruby
 class ImagesTableComponent < Katalyst::Turbo::TableComponent
   include Katalyst::Tables::Orderable
-  include KpopHelper
 
   def initialize(model)
     @model = model
@@ -160,12 +163,9 @@ class ImagesTableComponent < Katalyst::Turbo::TableComponent
     with_orderable(url:, scope:)
   end
   
-  def new_image_url
-    [:new, @model, :image]
-  end
-  
-  def turbo_stream_response?
-    response.media_type.eql?("text/vnd.turbo-stream.html")
+  def call
+     concat(render_parent)
+     concat(orderable)
   end
   
   private
@@ -174,30 +174,9 @@ class ImagesTableComponent < Katalyst::Turbo::TableComponent
     [@model]
   end
   
+  # Utilize accepts_nested_attributes_for to handle the update of image order
   def scope
     "#{@model.model_name.param_key}[images_attributes]"
   end
 end
 ```
-
-```erb
-<%= turbo_stream.kpop.dismiss if turbo_stream_response? %>
-<%= render_parent %>
-<% unless turbo_stream_response? %>
-  <div class="actions-group">
-    <%= kpop_link_to("Add Image", new_image_url, class: "button button--secondary") %>
-  </div>
-  <%= orderable %>
-<% end %>
-```
-
-In this example, we're assuming that the model has a nested images association
-and supports nested attributes via update. We're also assuming that the images
-table is providing a default stable sort based on the `ordinal` attribute.
-
-This example uses turbo for in-place updates and `katalyst-kpop` for creating in
-a modal, but these features are not required for the example.
-
-For Katalyst developers, this example is based on the Adelaide Fringe
-Merchandise model which has nested Gallery Images. Merchandise demonstrates both
-an index ordinal table and a nested attributes ordinal table.
