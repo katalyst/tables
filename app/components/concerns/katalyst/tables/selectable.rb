@@ -82,6 +82,7 @@ module Katalyst
                  "#{ITEM_CONTROLLER}-params-value"              => params.to_json,
                  "#{ITEM_CONTROLLER}-#{FORM_CONTROLLER}-outlet" => "##{@table.selection.id}",
                  action:                                        "change->#{ITEM_CONTROLLER}#change",
+                 turbo_permanent:                               "",
                }) do
             tag.input(type: :checkbox)
           end

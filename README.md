@@ -274,29 +274,6 @@ for a collection.
 <%= render Katalyst::Tables::PagyNavComponent.new(collection: @people) %>
 ```
 
-## Turbo streams
-
-This gem provides turbo stream entry points for table and pagy_nav. These are
-identical in the options they support, but they require ids, and they will
-automatically render turbo stream replace tags when rendered as part of a turbo
-stream response.
-
-To take full advantage of this feature, we suggest you build the component in
-your controller and pass it to the view. This allows you to use the same
-controller for both HTML and turbo responses.
-
-```ruby
-def index
-  collection = ApplicationCollection.new.with_params(params).apply(People.all)
-  table = Katalyst::Turbo::TableComponent.new(collection:, id: "people")
-  
-  respond_to do |format|
-    format.turbo_stream { render table } if self_referred?
-    format.html { render locals: { table: table } }
-  end
-end
-```
-
 ## Extensions
 
 The following extensions are available:

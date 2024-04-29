@@ -141,6 +141,8 @@ You can also use orderable to add drag-and-drop ordering for an association.
 In this example we use a component but the same approach can be used with
 the extend method as above.
 
+# TODO: This example is not yet complete. Copy from latest Fringe version.
+
 ```ruby
 class ImagesTableComponent < Katalyst::Turbo::TableComponent
   include Katalyst::Tables::Orderable

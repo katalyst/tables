@@ -75,12 +75,11 @@ end
 class ResourcesController < ApplicationController
   def index
     collection = Collection.with_params(params).apply(Resource.all)
-    table      = Katalyst::Turbo::TableComponent.new(collection: collection)
+    table      = Katalyst::TableComponent.new(collection: collection)
     table.extend(Katalyst::Tables::Selectable)
     table.with_selection
 
     respond_to do |format|
-      format.turbo_stream { render table } if self_referred?
       format.html { render locals: { table: table } }
       format.csv { render body: generate_csv_from_collection(collection) }
     end

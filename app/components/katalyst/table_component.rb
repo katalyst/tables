@@ -55,6 +55,10 @@ module Katalyst
       super(**html_attributes)
     end
 
+    def id
+      html_attributes[:id]
+    end
+
     def caption?
       @caption.present?
     end
