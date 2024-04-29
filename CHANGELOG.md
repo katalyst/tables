@@ -1,4 +1,9 @@
-## [Unreleased]
+## [3.0.0]
+- Breaking change: remove Turbo Streams from table and pagination components, focus preservation is handled via Turbo Morph
+- Improve spec coverage
+- Update examples in [README](README.md) and [docs](/docs) to reflect changes
+
+## [2.6.0]
 
 - Added table row selection
   - See [[docs/selectable.md]] for examples
