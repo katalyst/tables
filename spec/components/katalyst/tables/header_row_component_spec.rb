@@ -36,6 +36,7 @@ RSpec.describe Katalyst::Tables::HeaderRowComponent do
       row.date(:created_at)
       row.datetime(:created_at)
       row.number(:count)
+      row.currency(:count)
     end).to match_html(<<~HTML)
       <tr>
         <th>Name</th>
@@ -43,6 +44,7 @@ RSpec.describe Katalyst::Tables::HeaderRowComponent do
         <th class="type-date">Created at</th>
         <th class="type-datetime">Created at</th>
         <th class="type-number">Count</th>
+        <th class="type-currency">Count</th>
       </tr>
     HTML
   end

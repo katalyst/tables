@@ -61,6 +61,20 @@ module Katalyst
         def number(method, **attributes, &)
           with_column(Body::NumberComponent.new(@table, @record, method, **attributes), &)
         end
+
+        # Generates a column from numeric values rendered using `number_to_currency`.
+        #
+        # @param method [Symbol] the method to call on the record
+        # @param options [Hash] options to be passed to `number_to_currency`
+        # @param attributes [Hash] HTML attributes to be added to the cell tag
+        # @param block [Proc] optional block to alter the cell content
+        # @return [void]
+        #
+        # @example Render a currency column for the price of a product
+        #   <% row.currency :price %> # => <td>$3.50</td>
+        def currency(method, options: {}, **attributes, &)
+          with_column(Body::CurrencyComponent.new(@table, @record, method, options:, **attributes), &)
+        end
       end
     end
   end

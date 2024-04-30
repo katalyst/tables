@@ -40,12 +40,14 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
       row.date(:created_at)
       row.datetime(:created_at)
       row.number(:count)
+      row.currency(:count)
     end).to match_html(<<~HTML)
       <tr>
         <td>Yes</td>
         <td title="#{I18n.l(record.created_at.to_date, format: :table)}">Today</td>
         <td title="#{I18n.l(record.created_at.to_datetime, format: :table)}">Less than a minute ago</td>
         <td class="type-number">1</td>
+        <td class="type-currency">$0.01</td>
       </tr>
     HTML
   end
