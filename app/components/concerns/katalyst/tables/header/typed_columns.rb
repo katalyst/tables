@@ -35,6 +35,21 @@ module Katalyst
         def date(method, **attributes, &)
           with_column(Header::DateComponent.new(@table, method, link: @link_attributes, **attributes), &)
         end
+
+        # Renders a datetime column header
+        # @param method [Symbol] the method to call on the record to get the value
+        # @param attributes [Hash] additional arguments are applied as html attributes to the th element
+        # @option attributes [String] :label (nil) The label options to display in the header
+        # @option attributes [Hash] :link ({}) The link options for the sorting link
+        #
+        # @example Render a datetime column header
+        #  <% row.datetime :created_at %> # => <th>Created at</th>
+        #
+        # @example Render a datetime column header with a custom label
+        #  <% row.datetime :created_at, label: "Published at" %> # => <th>Published at</th>
+        def datetime(method, **attributes, &)
+          with_column(Header::DateTimeComponent.new(@table, method, link: @link_attributes, **attributes), &)
+        end
       end
     end
   end

@@ -38,8 +38,9 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
     expect(render_row do |row|
       row.boolean(:active)
       row.date(:created_at)
+      row.datetime(:created_at)
     end).to match_html(<<~HTML)
-      <tr><td>Yes</td><td title="#{I18n.l(record.created_at.to_date, format: :table)}">Today</td></tr>
+      <tr><td>Yes</td><td title="#{I18n.l(record.created_at.to_date, format: :table)}">Today</td><td title="#{I18n.l(record.created_at.to_datetime, format: :table)}">Less than a minute ago</td></tr>
     HTML
   end
 
