@@ -29,6 +29,15 @@ RSpec.describe Katalyst::Tables::HeaderRowComponent do
     HTML
   end
 
+  it "renders typed cells" do
+    expect(render_inline(row) do |row|
+      row.cell(:name)
+      row.boolean(:active)
+    end).to match_html(<<~HTML)
+      <tr><th>Name</th><th class="type-boolean">Active</th></tr>
+    HTML
+  end
+
   it "supports `options` from block" do
     expect(render_inline(row) do |row|
       row.html_attributes = { id: "BLOCK", data: { block: "" } }
