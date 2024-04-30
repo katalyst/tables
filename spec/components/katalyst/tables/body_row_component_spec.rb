@@ -6,7 +6,7 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
   subject(:row) { described_class.new(table, record) }
 
   let(:table) { instance_double(Katalyst::TableComponent) }
-  let(:record) { build(:resource, name: "VALUE", active: true) }
+  let(:record) { create(:resource, name: "VALUE", active: true) }
 
   before do
     allow(table).to receive(:body_cell_component).and_return(Katalyst::Tables::BodyCellComponent)
@@ -37,8 +37,9 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
   it "renders typed cells" do
     expect(render_row do |row|
       row.boolean(:active)
+      row.date(:created_at)
     end).to match_html(<<~HTML)
-      <tr><td>Yes</td></tr>
+      <tr><td>Yes</td><td title="#{I18n.l(record.created_at.to_date, format: :table)}">Today</td></tr>
     HTML
   end
 
