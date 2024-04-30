@@ -1,0 +1,111 @@
+@use "ordinal" as *;
+@use "typed-columns";
+
+$grey: #f0ecf3 !default;
+
+$table-header-color: transparent !default;
+$row-border-color: $grey !default;
+$row-height: 48px !default;
+$cell-spacing: 0.5rem !default;
+
+$width-small: 6rem !default;
+$width-medium: 12rem !default;
+$width-large: 16rem !default;
+
+table {
+  --row-height: #{$row-height};
+  --cell-spacing: #{$cell-spacing};
+  --table-header-color: #{$table-header-color};
+  --row-border-color: #{$row-border-color};
+
+  --width-small: #{$width-small};
+  --width-medium: #{$width-medium};
+  --width-large: #{$width-large};
+}
+
+table {
+  border: none;
+  table-layout: fixed;
+  border-collapse: collapse;
+  text-align: left;
+  width: 100%;
+
+  thead {
+    background: var(--table-header-color);
+  }
+
+  tr {
+    height: var(--row-height);
+    line-height: var(--row-height);
+  }
+
+  th,
+  td {
+    border: none;
+    box-shadow: inset 0px -1px 0px var(--row-border-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: top;
+    white-space: nowrap;
+    background-color: white;
+    padding-right: var(--cell-spacing);
+
+    &:last-child {
+      padding-right: 0;
+    }
+
+    > a {
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      text-decoration: none;
+    }
+
+    > img,
+    > a > img {
+      max-height: 3rem;
+      padding: 0;
+    }
+
+    > .trix-content {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  th {
+    font-weight: bold;
+  }
+
+  thead a.ascending:after,
+  [data-sort="asc"] a::after {
+    display: inline-block;
+    content: " ";
+    position: relative;
+    margin-left: 1rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 13'%3E%3Cpath d='M.541 0l11.125 12.573a.5.5 0 00.749 0L23.541 0h-23z' fill='%23000' fill-rule='evenodd'/%3E%3C/svg%3E");
+    background-size: 14px 14px;
+    height: 14px;
+    width: 14px;
+    top: 0;
+    transform: rotate(180deg);
+  }
+
+  thead a.descending:after,
+  [data-sort="desc"] a::after {
+    display: inline-block;
+    content: " ";
+    position: relative;
+    margin-left: 1rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 13'%3E%3Cpath d='M.541 0l11.125 12.573a.5.5 0 00.749 0L23.541 0h-23z' fill='%23000' fill-rule='evenodd'/%3E%3C/svg%3E");
+    background-size: 14px 14px;
+    height: 14px;
+    width: 14px;
+    top: 4px;
+  }
+
+  caption {
+    margin: 2rem 0;
+  }
+}
