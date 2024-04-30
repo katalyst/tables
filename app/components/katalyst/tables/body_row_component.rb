@@ -4,6 +4,7 @@ module Katalyst
   module Tables
     class BodyRowComponent < ViewComponent::Base # :nodoc:
       include Katalyst::HtmlAttributes
+      include Body::TypedColumns
 
       renders_many :columns, ->(component) { component }
 
