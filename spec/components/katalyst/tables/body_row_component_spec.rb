@@ -6,7 +6,7 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
   subject(:row) { described_class.new(table, record) }
 
   let(:table) { instance_double(Katalyst::TableComponent) }
-  let(:record) { create(:resource, name: "VALUE", active: true) }
+  let(:record) { create(:resource, name: "VALUE", active: true, count: 1) }
 
   before do
     allow(table).to receive(:body_cell_component).and_return(Katalyst::Tables::BodyCellComponent)
@@ -39,8 +39,14 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
       row.boolean(:active)
       row.date(:created_at)
       row.datetime(:created_at)
+      row.number(:count)
     end).to match_html(<<~HTML)
-      <tr><td>Yes</td><td title="#{I18n.l(record.created_at.to_date, format: :table)}">Today</td><td title="#{I18n.l(record.created_at.to_datetime, format: :table)}">Less than a minute ago</td></tr>
+      <tr>
+        <td>Yes</td>
+        <td title="#{I18n.l(record.created_at.to_date, format: :table)}">Today</td>
+        <td title="#{I18n.l(record.created_at.to_datetime, format: :table)}">Less than a minute ago</td>
+        <td class="type-number">1</td>
+      </tr>
     HTML
   end
 
