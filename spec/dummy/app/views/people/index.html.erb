@@ -24,6 +24,7 @@
   <% row.date :created_at, relative: person&.active %>
   <% row.datetime :created_at %>
   <% row.number :id %>
+  <% row.currency :id, label: "Currency" %>
 <% end %>
 
 <%== pagy_nav(@people.pagination) %>
