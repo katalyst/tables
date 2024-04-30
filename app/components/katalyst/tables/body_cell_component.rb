@@ -18,7 +18,7 @@ module Katalyst
 
       def before_render
         # fallback if no content block is given
-        with_content(value.to_s) unless content?
+        with_content(rendered_value) unless content?
       end
 
       def call
@@ -34,6 +34,14 @@ module Katalyst
 
       def value
         @record.public_send(@attribute)
+      end
+
+      def rendered_value
+        value.to_s
+      end
+
+      def to_s
+        value.to_s
       end
 
       def inspect
