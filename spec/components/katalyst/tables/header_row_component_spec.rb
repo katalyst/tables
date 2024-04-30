@@ -33,8 +33,9 @@ RSpec.describe Katalyst::Tables::HeaderRowComponent do
     expect(render_inline(row) do |row|
       row.cell(:name)
       row.boolean(:active)
+      row.date(:created_at)
     end).to match_html(<<~HTML)
-      <tr><th>Name</th><th class="type-boolean">Active</th></tr>
+      <tr><th>Name</th><th class="type-boolean">Active</th><th class="type-date">Created at</th></tr>
     HTML
   end
 

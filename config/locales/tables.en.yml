@@ -1,4 +1,7 @@
 en:
+  date:
+    formats:
+      table: "%e %B %Y"
   katalyst:
     tables:
       orderable:

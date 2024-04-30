@@ -18,9 +18,10 @@
   <%= form.submit "Filter", hidden: "" %>
 <% end %>
 
-<%= table_with(collection: @people) do |row| %>
+<%= table_with(collection: @people) do |row, person| %>
   <% row.cell :name %>
   <% row.boolean :active %>
+  <% row.date :created_at, relative: person&.active %>
 <% end %>
 
 <%== pagy_nav(@people.pagination) %>
