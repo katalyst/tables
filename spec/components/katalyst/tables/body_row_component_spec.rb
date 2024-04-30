@@ -6,7 +6,7 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
   subject(:row) { described_class.new(table, record) }
 
   let(:table) { instance_double(Katalyst::TableComponent) }
-  let(:record) { build(:resource, name: "VALUE") }
+  let(:record) { build(:resource, name: "VALUE", active: true) }
 
   before do
     allow(table).to receive(:body_cell_component).and_return(Katalyst::Tables::BodyCellComponent)
@@ -31,6 +31,14 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
       row.cell(:name)
     end).to match_html(<<~HTML)
       <tr><td>VALUE</td><td>VALUE</td></tr>
+    HTML
+  end
+
+  it "renders typed cells" do
+    expect(render_row do |row|
+      row.boolean(:active)
+    end).to match_html(<<~HTML)
+      <tr><td>Yes</td></tr>
     HTML
   end
 
