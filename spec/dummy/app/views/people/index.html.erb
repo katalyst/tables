@@ -23,6 +23,7 @@
   <% row.boolean :active %>
   <% row.date :created_at, relative: person&.active %>
   <% row.datetime :created_at %>
+  <% row.number :id %>
 <% end %>
 
 <%== pagy_nav(@people.pagination) %>

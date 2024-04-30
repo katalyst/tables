@@ -35,8 +35,15 @@ RSpec.describe Katalyst::Tables::HeaderRowComponent do
       row.boolean(:active)
       row.date(:created_at)
       row.datetime(:created_at)
+      row.number(:count)
     end).to match_html(<<~HTML)
-      <tr><th>Name</th><th class="type-boolean">Active</th><th class="type-date">Created at</th><th class="type-datetime">Created at</th></tr>
+      <tr>
+        <th>Name</th>
+        <th class="type-boolean">Active</th>
+        <th class="type-date">Created at</th>
+        <th class="type-datetime">Created at</th>
+        <th class="type-number">Count</th>
+      </tr>
     HTML
   end
 

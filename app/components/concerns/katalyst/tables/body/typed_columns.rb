@@ -48,6 +48,19 @@ module Katalyst
         def datetime(method, format: :table, **attributes, &)
           with_column(Body::DateTimeComponent.new(@table, @record, method, format:, **attributes), &)
         end
+
+        # Generates a column from numeric values formatted appropriately.
+        #
+        # @param method [Symbol] the method to call on the record
+        # @param attributes [Hash] HTML attributes to be added to the cell tag
+        # @param block [Proc] optional block to alter the cell content
+        # @return [void]
+        #
+        # @example Render the number of comments on a post
+        #   <% row.number :comment_count %> # => <td>0</td>
+        def number(method, **attributes, &)
+          with_column(Body::NumberComponent.new(@table, @record, method, **attributes), &)
+        end
       end
     end
   end

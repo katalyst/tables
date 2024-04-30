@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_30_012522) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_30_061810) do
   create_table "faqs", force: :cascade do |t|
     t.string "question"
     t.string "answer"
@@ -46,6 +46,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_30_012522) do
     t.integer "index"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "count"
   end
 
   add_foreign_key "nested_children", "parents"
