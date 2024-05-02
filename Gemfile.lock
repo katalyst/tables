@@ -128,6 +128,8 @@ GEM
     erubi (1.12.0)
     factory_bot (6.4.6)
       activesupport (>= 5.0.0)
+    faker (3.3.1)
+      i18n (>= 1.8.11, < 2)
     ferrum (0.14)
       addressable (~> 2.5)
       concurrent-ruby (~> 1.1)
@@ -347,6 +349,7 @@ DEPENDENCIES
   dartsass-rails
   erb_lint
   factory_bot
+  faker
   importmap-rails
   katalyst-tables!
   nokogiri
