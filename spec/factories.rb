@@ -13,6 +13,10 @@ FactoryBot.define do
   factory :resource do
     sequence(:index) { |i| i }
     name { "Resource #{index}" }
+
+    trait :with_image do
+      image { Rack::Test::UploadedFile.new(Rails.root.join("../fixtures/images/dummy.png"), "image/png") }
+    end
   end
 
   factory :parent do

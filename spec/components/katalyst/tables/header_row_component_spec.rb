@@ -38,6 +38,7 @@ RSpec.describe Katalyst::Tables::HeaderRowComponent do
       row.number(:count)
       row.currency(:count)
       row.link(:id)
+      row.attachment(:image)
     end).to match_html(<<~HTML)
       <tr>
         <th>Name</th>
@@ -47,6 +48,7 @@ RSpec.describe Katalyst::Tables::HeaderRowComponent do
         <th class="type-number">Count</th>
         <th class="type-currency">Count</th>
         <th class="type-link">Id</th>
+        <th class="type-attachment">Image</th>
       </tr>
     HTML
   end
