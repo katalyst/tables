@@ -31,4 +31,13 @@ RSpec.describe "people/index" do
       expect(rendered).to have_css("caption", text: "No people found.")
     end
   end
+
+  context "when there are more than 5 results" do
+    let(:people) { create_list(:person, 10) }
+
+    it "renders pagination options" do
+      render
+      expect(rendered).to have_css("a[data-turbo-action='replace']", text: "2")
+    end
+  end
 end

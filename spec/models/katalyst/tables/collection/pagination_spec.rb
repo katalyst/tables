@@ -16,6 +16,10 @@ RSpec.describe Katalyst::Tables::Collection::Pagination do
     expect(collection.apply(items)).to have_attributes(count: 0, pagination: nil)
   end
 
+  it "applies default pagination options" do
+    expect(collection.apply(items).paginate_options).to eql({ anchor_string: "data-turbo-action=\"replace\"" })
+  end
+
   context "with unchanged defaults" do
     let(:params) { ActionController::Parameters.new(page: "1") }
 
@@ -76,11 +80,15 @@ RSpec.describe Katalyst::Tables::Collection::Pagination do
   end
 
   context "with pagy options" do
-    subject(:collection) { base.new(paginate: { items: 5 }) }
+    subject(:collection) { base.new(paginate: { items: 5, anchor_string: "test" }) }
 
     it "applies options" do
       allow(items).to receive(:count).and_return(50)
       expect(collection.apply(items).pagination).to have_attributes(page: 1, items: 5, count: 50)
+    end
+
+    it "changes default options" do
+      expect(collection.apply(items).paginate_options).to eql({ anchor_string: "test", items: 5 })
     end
   end
 
