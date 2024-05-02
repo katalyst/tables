@@ -43,7 +43,7 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent do
 
     it "renders with sort link" do
       expect(rendered).to match_html(<<~HTML)
-        <th><a href="/resources?sort=name+asc">Name</a></th>
+        <th><a href="/resources?sort=name+asc" data-turbo-action="replace">Name</a></th>
       HTML
     end
 
@@ -62,7 +62,7 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent do
 
       it "adds status to data attribute" do
         expect(rendered).to match_html(<<~HTML)
-          <th data-sort="desc"><a href="/resources?sort=name+asc">Name</a></th>
+          <th data-sort="desc"><a href="/resources?sort=name+asc" data-turbo-action="replace">Name</a></th>
         HTML
       end
     end
@@ -75,7 +75,7 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent do
       it "does not cobber other options" do
         expect(rendered).to match_html(<<~HTML)
           <th data-other data-sort="asc">
-            <a href="/resources?sort=name+desc">Name</a>
+            <a href="/resources?sort=name+desc" data-turbo-action="replace">Name</a>
           </th>
         HTML
       end
@@ -86,7 +86,7 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent do
 
       it "adds status to data attribute" do
         expect(rendered).to match_html(<<~HTML)
-          <th data-sort="desc"><a href="/resources">Name</a></th>
+          <th data-sort="desc"><a href="/resources" data-turbo-action="replace">Name</a></th>
         HTML
       end
     end
@@ -127,6 +127,18 @@ RSpec.describe Katalyst::Tables::HeaderCellComponent do
       # this behaviour is intentional – assumes block is for body rendering, not header
       expect(rendered { "BLOCK" }).to match_html(<<~HTML)
         <th>Name</th>
+      HTML
+    end
+  end
+
+  context "when link attributes given" do
+    subject(:cell) { described_class.new(table, :name, link: { data: { turbo_action: "forward" } }) }
+
+    let(:sorting) { Katalyst::Tables::Backend::SortForm.new }
+
+    it "renders the passed options" do
+      expect(rendered).to match_html(<<~HTML)
+        <th><a href="/resources?sort=name+asc" data-turbo-action="forward">Name</a></th>
       HTML
     end
   end
