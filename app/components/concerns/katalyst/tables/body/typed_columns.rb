@@ -75,6 +75,22 @@ module Katalyst
         def currency(method, options: {}, **attributes, &)
           with_column(Body::CurrencyComponent.new(@table, @record, method, options:, **attributes), &)
         end
+
+        # Generates a column containing HTML markup.
+        #
+        # @param method [Symbol] the method to call on the record
+        # @param attributes [Hash] HTML attributes to be added to the cell tag
+        # @param block [Proc] optional block to alter the cell content
+        # @return [void]
+        #
+        # @note This method assumes that the method returns HTML-safe content.
+        #   If the content is not HTML-safe, it will be escaped.
+        #
+        # @example Render a description column containing HTML markup
+        #   <% row.rich_text :description %> # => <td><em>Emphasis</em></td>
+        def rich_text(method, **attributes, &)
+          with_column(Body::RichTextComponent.new(@table, @record, method, **attributes), &)
+        end
       end
     end
   end

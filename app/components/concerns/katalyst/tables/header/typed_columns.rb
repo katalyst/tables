@@ -80,6 +80,21 @@ module Katalyst
         def currency(method, **attributes, &)
           with_column(Header::CurrencyComponent.new(@table, method, link: @link_attributes, **attributes), &)
         end
+
+        # Renders a rich text column header
+        # @param method [Symbol] the method to call on the record to get the value
+        # @param attributes [Hash] additional arguments are applied as html attributes to the th element
+        # @option attributes [String] :label (nil) The label options to display in the header
+        # @option attributes [Hash] :link ({}) The link options for the sorting link
+        #
+        # @example Render a rich text header
+        #  <% row.rich_text :content %> # => <th>Content</th>
+        #
+        # @example Render a rich text column header with a custom label
+        #  <% row.currency :content, label: "Content!" %> # => <th>Content!</th>
+        def rich_text(method, **attributes, &)
+          with_column(Header::RichTextComponent.new(@table, method, link: @link_attributes, **attributes), &)
+        end
       end
     end
   end
