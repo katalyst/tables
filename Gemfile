@@ -21,6 +21,10 @@ gem "sqlite3", "~> 1.7"
 gem "stimulus-rails"
 gem "turbo-rails"
 
+group :development, :test do
+  gem "faker"
+end
+
 group :test do
   gem "capybara", require: false
   gem "compare-xml"
