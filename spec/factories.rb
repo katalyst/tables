@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :faq do
     sequence(:question) { |i| "FAQ #{i}" }
-    sequence(:answer) { |i| "Answer #{i}" }
+    answer { Faker::HTML.sandwich }
   end
 
   factory :person do

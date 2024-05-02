@@ -52,6 +52,20 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
     HTML
   end
 
+  context "with a rich text model" do
+    let(:record) { create(:faq) }
+
+    it "renders typed cells" do
+      expect(render_row do |row|
+        row.rich_text(:answer)
+      end).to match_html(<<~HTML)
+        <tr>
+          <td title="#{record.answer.to_plain_text}">#{record.answer}</td>
+        </tr>
+      HTML
+    end
+  end
+
   it "supports `options` from block" do
     expect(render_row do |row|
       row.html_attributes = { id: "BLOCK", data: { block: "" } }

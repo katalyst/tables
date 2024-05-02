@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe "orderable" do
   before do
     %i[first second third].each_with_index do |n, i|
-      create(:faq, question: n, ordinal: i)
+      create(:faq, question: n, answer: n, ordinal: i)
     end
   end
 
