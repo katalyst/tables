@@ -91,6 +91,27 @@ module Katalyst
         def rich_text(method, **attributes, &)
           with_column(Body::RichTextComponent.new(@table, @record, method, **attributes), &)
         end
+
+        # Generates a column that links to the record's show page (by default).
+        #
+        # @param method [Symbol] the method to call on the record
+        # @param link [Hash] options to be passed to the link_to helper
+        # @option opts [Hash, Array, String, Symbol] :url ([:admin, object]) options for url_for,
+        # or a symbol to be passed to the route helper
+        # @param attributes [Hash] HTML attributes to be added to the cell tag
+        # @param block [Proc] optional block to alter the cell content
+        # @return [void]
+        #
+        # @example Render a column containing the record's title, linked to its show page
+        #   <% row.link :title %> # => <td><a href="/admin/post/15">About us</a></td>
+        # @example Render a column containing the record's title, linked to its edit page
+        #   <% row.link :title, url: :edit_admin_post_path do |cell| %>
+        #      Edit <%= cell %>
+        #   <% end %>
+        #   # => <td><a href="/admin/post/15/edit">Edit About us</a></td>
+        def link(method, url: @record, link: {}, **attributes, &)
+          with_column(Body::LinkComponent.new(@table, @record, method, url:, link:, **attributes), &)
+        end
       end
     end
   end
