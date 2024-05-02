@@ -3,6 +3,8 @@
 require "rails_helper"
 
 RSpec.describe Katalyst::Tables::BodyRowComponent do
+  include Rails.application.routes.url_helpers
+
   subject(:row) { described_class.new(table, record) }
 
   let(:table) { instance_double(Katalyst::TableComponent) }
@@ -41,6 +43,7 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
       row.datetime(:created_at)
       row.number(:count)
       row.currency(:count)
+      row.link(:id)
     end).to match_html(<<~HTML)
       <tr>
         <td>Yes</td>
@@ -48,6 +51,7 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
         <td title="#{I18n.l(record.created_at.to_datetime, format: :table)}">Less than a minute ago</td>
         <td class="type-number">1</td>
         <td class="type-currency">$0.01</td>
+        <td><a href="/resources/#{record.id}">#{record.id}</a></td>
       </tr>
     HTML
   end
