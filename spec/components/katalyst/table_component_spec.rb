@@ -101,7 +101,7 @@ RSpec.describe Katalyst::TableComponent do
         <table>
           <thead>
             <tr>
-              <th data-sort="asc"><a href="/people?s=q&sort=name+desc">Name</a></th>
+              <th data-sort="asc"><a href="/people?s=q&sort=name+desc" data-turbo-action="replace">Name</a></th>
             </tr>
           </thead>
           <tbody>

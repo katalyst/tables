@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+using Katalyst::HtmlAttributes::HasHtmlAttributes
+
 module Katalyst
   module Tables
     class HeaderCellComponent < ViewComponent::Base # :nodoc:
@@ -21,7 +23,7 @@ module Katalyst
       def call
         tag.th(**html_attributes) do
           if sortable?(@attribute)
-            link_to(value, sort_url(@attribute), **@link_attributes)
+            link_to(value, sort_url(@attribute), **link_attributes)
           else
             value
           end
@@ -54,6 +56,10 @@ module Katalyst
       alias_method :options, :html_attributes=
 
       private
+
+      def link_attributes
+        { data: { turbo_action: "replace" } }.merge_html(@link_attributes)
+      end
 
       def default_html_attributes
         return {} unless sorting&.supports?(collection, @attribute)
