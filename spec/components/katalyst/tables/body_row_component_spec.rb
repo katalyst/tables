@@ -8,7 +8,7 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
   subject(:row) { described_class.new(table, record) }
 
   let(:table) { instance_double(Katalyst::TableComponent) }
-  let(:record) { create(:resource, name: "VALUE", active: true, count: 1) }
+  let(:record) { create(:resource, :with_image, name: "VALUE", active: true, count: 1) }
 
   before do
     allow(table).to receive(:body_cell_component).and_return(Katalyst::Tables::BodyCellComponent)
@@ -54,6 +54,12 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
         <td><a href="/resources/#{record.id}">#{record.id}</a></td>
       </tr>
     HTML
+  end
+
+  it "renders attachment cells" do
+    expect(render_row do |row|
+      row.attachment(:image)
+    end).to have_css("td > img[src*='dummy.png']")
   end
 
   context "with a rich text model" do

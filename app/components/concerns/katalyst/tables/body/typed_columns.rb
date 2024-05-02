@@ -112,6 +112,20 @@ module Katalyst
         def link(method, url: @record, link: {}, **attributes, &)
           with_column(Body::LinkComponent.new(@table, @record, method, url:, link:, **attributes), &)
         end
+
+        # Generates a column that renders an ActiveStorage attachment as a downloadable link.
+        #
+        # @param method [Symbol] the method to call on the record
+        # @param variant [Symbol] the variant to use when rendering the image (default :thumb)
+        # @param attributes [Hash] HTML attributes to be added to the cell tag
+        # @param block [Proc] optional block to alter the cell content
+        # @return [void]
+        #
+        # @example Render a column containing a download link to the record's background image
+        #   <% row.attachment :background %> # => <td><a href="...">background.png</a></td>
+        def attachment(method, variant: :thumb, **attributes, &)
+          with_column(Body::AttachmentComponent.new(@table, @record, method, variant:, **attributes), &)
+        end
       end
     end
   end
