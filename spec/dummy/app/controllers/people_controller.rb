@@ -6,7 +6,7 @@ class PeopleController < ApplicationController
   end
 
   class Collection < Katalyst::Tables::Collection::Base
-    config.paginate = { anchor_string: "data-turbo-action=\"replace\"", items: 5 }
+    config.paginate = { items: 5 }
     config.sorting = :name
 
     attribute :search, default: -> { "" }

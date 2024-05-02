@@ -35,7 +35,14 @@ module Katalyst
         end
 
         def paginate_options
-          @paginate.is_a?(Hash) ? @paginate : {}
+          opts = @paginate.is_a?(Hash) ? @paginate : {}
+          opts = opts.dup
+          opts[:anchor_string] ||= anchor_string
+          opts
+        end
+
+        def anchor_string
+          "data-turbo-action=\"replace\""
         end
 
         class Paginate # :nodoc:
