@@ -37,6 +37,12 @@ module Katalyst
         true
       end
 
+      def default_html_attributes
+        return {} unless @table.generate_ids?
+
+        { id: dom_id(@record) }
+      end
+
       def inspect
         "#<#{self.class.name} record: #{record.inspect}>"
       end

@@ -11,7 +11,7 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
   let(:record) { create(:resource, :with_image, name: "VALUE", active: true, count: 1) }
 
   before do
-    allow(table).to receive(:body_cell_component).and_return(Katalyst::Tables::BodyCellComponent)
+    allow(table).to receive_messages(body_cell_component: Katalyst::Tables::BodyCellComponent, generate_ids?: true)
   end
 
   # simulate table passing its block to each row
@@ -23,7 +23,7 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
 
   it "renders an empty row" do
     expect(render_row).to match_html(<<~HTML)
-      <tr></tr>
+      <tr id="resource_1"></tr>
     HTML
   end
 
@@ -32,7 +32,7 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
       row.cell(:name)
       row.cell(:name)
     end).to match_html(<<~HTML)
-      <tr><td>VALUE</td><td>VALUE</td></tr>
+      <tr id="resource_1"><td>VALUE</td><td>VALUE</td></tr>
     HTML
   end
 
@@ -45,7 +45,7 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
       row.currency(:count)
       row.link(:id)
     end).to match_html(<<~HTML)
-      <tr>
+      <tr id="resource_1">
         <td>Yes</td>
         <td title="#{I18n.l(record.created_at.to_date, format: :table)}">Today</td>
         <td title="#{I18n.l(record.created_at.to_datetime, format: :table)}">Less than a minute ago</td>
@@ -69,7 +69,7 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
       expect(render_row do |row|
         row.rich_text(:answer)
       end).to match_html(<<~HTML)
-        <tr>
+        <tr id="faq_1">
           <td title="#{record.answer.to_plain_text}">#{record.answer}</td>
         </tr>
       HTML
@@ -88,7 +88,7 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
     expect(render_row do |row|
       row.cell(:name) { row.body?.inspect }
     end).to match_html(<<~HTML)
-      <tr><td>true</td></tr>
+      <tr id="resource_1"><td>true</td></tr>
     HTML
   end
 
@@ -96,7 +96,7 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
     expect(render_row do |row|
       row.cell(:name) { row.header?.inspect }
     end).to match_html(<<~HTML)
-      <tr><td>false</td></tr>
+      <tr id="resource_1"><td>false</td></tr>
     HTML
   end
 
@@ -104,7 +104,7 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
     expect(render_row do |row, record|
       row.cell(:name) { record.name }
     end).to match_html(<<~HTML)
-      <tr><td>VALUE</td></tr>
+      <tr id="resource_1"><td>VALUE</td></tr>
     HTML
   end
 end

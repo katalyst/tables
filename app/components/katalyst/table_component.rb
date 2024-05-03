@@ -29,6 +29,7 @@ module Katalyst
     # - `sorting`: the sorting to apply to the collection (defaults to collection.storing if available)
     # - `header`: whether to render the header row (defaults to true, supports options)
     # - `caption`: whether to render the caption (defaults to true, supports options)
+    # - `generate_ids`: whether to generate ids for each row (defaults to true)
     # - `object_name`: the name of the object to use for partial rendering (defaults to collection.model_name.i18n_key)
     # - `partial`: the name of the partial to use for rendering each row (defaults to to_partial_path on the object)
     # - `as`: the name of the local variable to use for rendering each row (defaults to collection.model_name.param_key)
@@ -37,6 +38,7 @@ module Katalyst
                    sorting: nil,
                    header: true,
                    caption: true,
+                   generate_ids: true,
                    **html_attributes)
       @collection = collection
 
@@ -51,6 +53,8 @@ module Katalyst
       # caption: true means render the caption, caption: false means no caption, if a hash, passes as options
       @caption         = caption
       @caption_options = (caption if caption.is_a?(Hash)) || {}
+
+      @generate_ids = generate_ids
 
       super(**html_attributes)
     end
@@ -83,6 +87,10 @@ module Katalyst
       return @sorting if @sorting.present?
 
       collection.sorting if collection.respond_to?(:sorting)
+    end
+
+    def generate_ids?
+      @generate_ids.present?
     end
 
     def inspect

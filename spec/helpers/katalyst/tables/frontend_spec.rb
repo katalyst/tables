@@ -11,7 +11,7 @@ RSpec.describe Katalyst::Tables::Frontend do
     expect(table_with(collection:) { |row| row.cell :name }).to match_html(<<~HTML)
       <table>
         <thead><tr><th>Name</th></tr></thead>
-        <tbody><tr><td>Person 1</td></tr></tbody>
+        <tbody><tr id="person_1"><td>Person 1</td></tr></tbody>
       </table>
     HTML
   end
@@ -25,7 +25,7 @@ RSpec.describe Katalyst::Tables::Frontend do
       expect(table).to match_html(<<~HTML)
         <table id="ID" class="CLASS" style="style" data-foo="bar" aria-label="LABEL">
           <thead><tr><th>Name</th></tr></thead>
-          <tbody><tr><td>Person 1</td></tr></tbody>
+          <tbody><tr id="person_1"><td>Person 1</td></tr></tbody>
         </table>
       HTML
     end
@@ -47,7 +47,7 @@ RSpec.describe Katalyst::Tables::Frontend do
             </tr>
           </thead>
           <tbody>
-            <tr class="custom-body-row">
+            <tr id="person_1" class="custom-body-row">
               <td class="custom-body-cell">Person 1</td>
             </tr>
           </tbody>
@@ -71,7 +71,7 @@ RSpec.describe Katalyst::Tables::Frontend do
             </tr>
           </thead>
           <tbody>
-            <tr class="custom-body-row">
+            <tr id="person_1" class="custom-body-row">
               <td class="custom-body-cell">Person 1</td>
             </tr>
           </tbody>

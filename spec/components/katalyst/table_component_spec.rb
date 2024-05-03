@@ -13,7 +13,7 @@ RSpec.describe Katalyst::TableComponent do
       <table>
         <thead><tr><th>Name</th></tr></thead>
         <tbody>
-          <tr><td>Person 1</td></tr>
+          <tr id="person_1"><td>Person 1</td></tr>
         </tbody>
       </table>
     HTML
@@ -78,7 +78,7 @@ RSpec.describe Katalyst::TableComponent do
             </tr>
           </thead>
           <tbody>
-            <tr><td>Person 1</td></tr>
+            <tr id="person_1"><td>Person 1</td></tr>
           </tbody>
         </table>
       HTML
@@ -105,7 +105,7 @@ RSpec.describe Katalyst::TableComponent do
             </tr>
           </thead>
           <tbody>
-            <tr><td>Person 1</td></tr>
+            <tr id="person_1"><td>Person 1</td></tr>
           </tbody>
         </table>
       HTML
@@ -129,7 +129,7 @@ RSpec.describe Katalyst::TableComponent do
             </tr>
           </thead>
           <tbody>
-            <tr><td>Person 1</td></tr>
+            <tr id="person_1"><td>Person 1</td></tr>
           </tbody>
         </table>
       HTML
@@ -152,7 +152,7 @@ RSpec.describe Katalyst::TableComponent do
             </tr>
           </thead>
           <tbody>
-            <tr><td>Person 1</td></tr>
+            <tr id="person_1"><td>Person 1</td></tr>
           </tbody>
         </table>
       HTML
@@ -201,7 +201,7 @@ RSpec.describe Katalyst::TableComponent do
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr id="person_1">
               <td id="ID" aria-label="LABEL" class="CLASS" style="style" data-foo="bar">Person 1</td>
             </tr>
           </tbody>
@@ -312,7 +312,7 @@ RSpec.describe Katalyst::TableComponent do
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr id="resource_1">
               <td>Resource 1</td>
             </tr>
           </tbody>
@@ -339,7 +339,7 @@ RSpec.describe Katalyst::TableComponent do
             </tr>
           </thead>
           <tbody>
-            <tr class="custom-body-row">
+            <tr id="person_1" class="custom-body-row">
               <td class="custom-body-cell">Person 1</td>
             </tr>
           </tbody>
@@ -371,7 +371,7 @@ RSpec.describe Katalyst::TableComponent do
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr id="person_1">
               <td>Person 1</td>
               <td class="actions">
                 <a href="edit">Edit</a>
