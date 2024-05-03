@@ -224,7 +224,7 @@ RSpec.describe Katalyst::TableComponent do
             </tr>
           </thead>
           <tbody>
-            <tr id="resource_1">
+            <tr>
               <td>Resource 1</td>
               <td class="active">No</td>
             </tr>
@@ -269,7 +269,7 @@ RSpec.describe Katalyst::TableComponent do
               </tr>
             </thead>
             <tbody>
-              <tr id="new_resource">
+              <tr>
                 <td>Resource 1</td>
                 <td class="active">No</td>
               </tr>

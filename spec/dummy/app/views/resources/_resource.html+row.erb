@@ -1,7 +1,5 @@
 <%# locals: { row:, resource: } %>
 
-<% row.html_attributes = { id: dom_id(resource) } if row.body? %>
-
 <% row.try(:selection) %>
 <% row.cell :name, label: "Resource partial" do %>
   <%= resource.name %>

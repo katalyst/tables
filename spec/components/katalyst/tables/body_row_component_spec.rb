@@ -107,4 +107,14 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
       <tr><td>VALUE</td></tr>
     HTML
   end
+
+  context "with dom id generation" do
+    subject(:row) { described_class.new(table, record).extend(Katalyst::Tables::Identifiable::BodyRow) }
+
+    it "generates a dom id" do
+      expect(render_row).to match_html(<<~HTML)
+        <tr id="resource_1"></tr>
+      HTML
+    end
+  end
 end

@@ -7,12 +7,11 @@
 <%= link_to "Home", root_path %>
 
 <% table = Katalyst::TableComponent.new(id: dom_id(Resource, "list"), collection: @faqs)
+   table.extend(Katalyst::Tables::Identifiable)
    table.extend(Katalyst::Tables::Orderable)
    table.with_orderable(url: order_faqs_path) %>
 
 <%= render table do |row, faq| %>
-  <% row.html_attributes = { id: dom_id(faq) } if row.body? %>
-
   <% row.ordinal %>
   <% row.cell :question %>
   <% row.cell :answer %>

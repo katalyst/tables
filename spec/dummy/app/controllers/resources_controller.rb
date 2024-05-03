@@ -5,12 +5,9 @@ require "csv"
 class ResourcesController < ApplicationController
   def index
     collection = Collection.with_params(params).apply(Resource.all)
-    table      = Katalyst::TableComponent.new(id: helpers.dom_id(Resource, "list"), collection:)
-    table.extend(Katalyst::Tables::Selectable)
-    table.with_selection
 
     respond_to do |format|
-      format.html { render locals: { table: } }
+      format.html { render locals: { collection: } }
       format.csv do
         render(body: CSV.generate do |csv|
           csv << %w[id name]

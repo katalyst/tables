@@ -3,6 +3,11 @@
   <meta name="turbo-refresh-scroll" content="preserve">
 <% end %>
 
+<% table = Katalyst::TableComponent.new(id: dom_id(Resource, "list"), collection:)
+   table.extend(Katalyst::Tables::Identifiable)
+   table.extend(Katalyst::Tables::Selectable)
+   table.with_selection %>
+
 <%= render table.selection do %>
   <%= tag.button "Download", formaction: "/resources.csv", formmethod: "GET" %>
   <%= tag.button "Activate", formaction: "/resources/active", formmethod: "PUT" %>
