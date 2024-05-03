@@ -76,6 +76,18 @@ table {
 
   th {
     font-weight: bold;
+
+    :where(&.width-s) {
+      width: var(--width-small);
+    }
+
+    :where(&.width-m) {
+      width: var(--width-medium);
+    }
+
+    :where(&.width-l) {
+      width: var(--width-large);
+    }
   }
 
   thead a.ascending:after,

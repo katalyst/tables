@@ -11,12 +11,13 @@ module Katalyst
 
       delegate :object_name, :collection, :sorting, to: :@table
 
-      def initialize(table, attribute, label: nil, link: {}, **html_attributes)
+      def initialize(table, attribute, label: nil, link: {}, width: nil, **html_attributes)
         super(**html_attributes)
 
         @table           = table
         @attribute       = attribute
         @value           = label
+        @width           = width
         @link_attributes = link
       end
 
@@ -57,11 +58,36 @@ module Katalyst
 
       private
 
+      def width_class
+        case @width
+        when :xs
+          "width-xs"
+        when :s
+          "width-s"
+        when :m
+          "width-m"
+        when :l
+          "width-l"
+        else
+          ""
+        end
+      end
+
       def link_attributes
         { data: { turbo_action: "replace" } }.merge_html(@link_attributes)
       end
 
       def default_html_attributes
+        sort_data.merge(width_data)
+      end
+
+      def width_data
+        return {} unless @width
+
+        { class: width_class }
+      end
+
+      def sort_data
         return {} unless sorting&.supports?(collection, @attribute)
 
         { data: { sort: sorting.status(@attribute) } }

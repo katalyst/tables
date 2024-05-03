@@ -98,4 +98,12 @@ RSpec.describe Katalyst::Tables::HeaderRowComponent do
       <tr><th>true</th></tr>
     HTML
   end
+
+  it "allows column widths" do
+    expect(render_inline(row) do |row|
+      row.cell(:name, width: :s)
+    end).to match_html(<<~HTML)
+      <tr><th class="width-s">Name</th></tr>
+    HTML
+  end
 end
