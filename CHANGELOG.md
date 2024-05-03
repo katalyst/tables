@@ -1,4 +1,4 @@
-## [3.0.0]
+## [3.0.0.beta1]
 - Breaking change: remove Turbo Streams from table and pagination components, focus preservation is handled via Turbo Morph
 - Improve spec coverage
 - Update examples in [README](README.md) and [docs](/docs) to reflect changes
