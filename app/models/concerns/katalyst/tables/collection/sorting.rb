@@ -14,27 +14,87 @@ module Katalyst
       module Sorting
         extend ActiveSupport::Concern
 
-        included do
-          config_accessor :sorting
-          attr_accessor :sorting
+        DIRECTIONS = %w[asc desc].freeze
 
+        module SortParams
+          refine Hash do
+            def to_param
+              "#{self[:column]} #{self[:direction]}"
+            end
+          end
+
+          refine String do
+            def to_param
+              to_h.to_param
+            end
+
+            def to_h
+              column, direction = split(/[ +]/, 2)
+              direction = "asc" unless DIRECTIONS.include?(direction)
+              { column:, direction: }
+            end
+          end
+        end
+
+        using SortParams
+
+        included do
           attribute :sort, :string
+
+          attr_reader :default_sort
         end
 
         def initialize(sorting: config.sorting, **options)
-          @sorting = SortForm.parse(sorting, default: sorting) if sorting
+          @default_sort = sorting.to_param if sorting.present?
 
-          super(sort: @sorting.to_param, **options) # set default sort based on config
+          super(sort: @default_sort, **options) # set default sort based on config
         end
 
+        def default_sort?
+          sort == @default_sort
+        end
+
+        # Returns true if the collection supports sorting on the given column.
+        # A column supports sorting if it is a database column or if
+        # the collection responds to `order_by_#{column}(direction)`.
+        #
+        # @param column [String, Symbol]
+        # @return [true, false]
+        def sortable?(column = nil)
+          if column.nil?
+            @default_sort.present?
+          else
+            items.respond_to?(:"order_by_#{column}") || items.model.has_attribute?(column.to_s)
+          end
+        end
+
+        # Set the current sort behaviour of the collection.
+        #
+        # @param value [String, Hash] "column direction", or { column:, direction: }
         def sort=(value)
-          return unless @sorting
+          super(value.to_param) if @default_sort
+        end
 
-          # update internal proxy
-          @sorting = SortForm.parse(value, default: @sorting.default)
+        # Returns the current sort behaviour of the given column, for use as a
+        # column heading class in the table view.
+        #
+        # @param column [String, Symbol] the table column as defined in table_with
+        # @return [String] the current sort behaviour of the given column
+        def sort_status(column)
+          current, direction = sort.to_h.values_at(:column, :direction)
+          direction if column.to_s == current
+        end
 
-          # update attribute based on normalized value
-          super(@sorting.to_param)
+        # Calculates the sort parameter to apply when the given column is toggled.
+        #
+        # @param column [String, Symbol]
+        # @return [String]
+        def toggle_sort(column)
+          current, direction = sort.to_h.values_at(:column, :direction)
+
+          return "#{column} asc" unless column.to_s == current
+
+          direction == "asc" ? "#{column} desc" : "#{column} asc"
         end
 
         class Sort # :nodoc:
@@ -44,15 +104,22 @@ module Katalyst
             @app = app
           end
 
-          def call(collection)
-            @collection                            = @app.call(collection)
-            @collection.sorting, @collection.items = @collection.sorting.apply(@collection.items) if @collection.sorting
-            @collection
-          end
+          using SortParams
 
-          # pagy shim
-          def params
-            @collection.attributes
+          def call(collection)
+            collection = @app.call(collection)
+
+            column, direction = collection.sort.to_h.values_at(:column, :direction)
+
+            return collection if column.nil?
+
+            if collection.items.respond_to?(:"order_by_#{column}")
+              collection.items = collection.items.reorder(nil).public_send(:"order_by_#{column}", direction.to_sym)
+            elsif collection.items.model.has_attribute?(column)
+              collection.items = collection.items.reorder(column => direction)
+            end
+
+            collection
           end
         end
       end

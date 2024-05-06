@@ -12,16 +12,17 @@ module Katalyst
   # ```
   class TableComponent < ViewComponent::Base
     include Katalyst::HtmlAttributes
-    include Tables::ConfigurableComponent
     include Tables::HasTableContent
+    include Tables::Sortable
 
     attr_reader :collection, :object_name
 
-    config_component :header_row, default: "Katalyst::Tables::HeaderRowComponent"
-    config_component :header_cell, default: "Katalyst::Tables::HeaderCellComponent"
-    config_component :body_row, default: "Katalyst::Tables::BodyRowComponent"
-    config_component :body_cell, default: "Katalyst::Tables::BodyCellComponent"
-    config_component :caption, default: "Katalyst::Tables::EmptyCaptionComponent"
+    renders_one :caption, Katalyst::Tables::EmptyCaptionComponent
+    renders_one :header_row, Katalyst::Tables::HeaderRowComponent
+    renders_many :body_rows, Katalyst::Tables::BodyRowComponent
+
+    define_html_attribute_methods(:thead_attributes)
+    define_html_attribute_methods(:tbody_attributes)
 
     # Construct a new table component. This entry point supports a large number
     # of options for customizing the table. The most common options are:
@@ -36,15 +37,18 @@ module Katalyst
                    header: true,
                    caption: true,
                    **html_attributes)
-      @collection = collection
+      @collection = normalize_collection(collection)
 
       # header: true means render the header row, header: false means no header row, if a hash, passes as options
-      @header         = header
-      @header_options = (header if header.is_a?(Hash)) || {}
+      @header_options = header
 
       # caption: true means render the caption, caption: false means no caption, if a hash, passes as options
-      @caption         = caption
-      @caption_options = (caption if caption.is_a?(Hash)) || {}
+      @caption_options = caption
+
+      @header_row_callbacks = []
+      @body_row_callbacks = []
+      @header_row_cell_callbacks = []
+      @body_row_cell_callbacks = []
 
       super(**html_attributes)
     end
@@ -53,37 +57,125 @@ module Katalyst
       html_attributes[:id]
     end
 
-    def caption?
-      @caption.present?
-    end
+    def before_render
+      super
 
-    def caption
-      caption_component&.new(self)
-    end
+      if @caption_options
+        options = (@caption_options.is_a?(Hash) ? @caption_options : {})
+        with_caption(self, **options)
+      end
 
-    def header?
-      @header.present?
-    end
+      if @header_options
+        options = @header_options.is_a?(Hash) ? @header_options : {}
+        with_header_row(**options) do |row|
+          @header_row_callbacks.each { |callback| callback.call(row, record) }
+          row_content(row, nil)
+        end
+      end
 
-    def header_row
-      header_row_component.new(self, **@header_options)
-    end
-
-    def body_row(record)
-      body_row_component.new(self, record)
-    end
-
-    def sorting
-      return @sorting if @sorting.present?
-
-      collection.sorting if collection.respond_to?(:sorting)
+      collection.each do |record|
+        with_body_row do |row|
+          @body_row_callbacks.each { |callback| callback.call(row, record) }
+          row_content(row, record)
+        end
+      end
     end
 
     def inspect
       "#<#{self.class.name} collection: #{collection.inspect}>"
     end
 
-    define_html_attribute_methods(:thead_attributes)
-    define_html_attribute_methods(:tbody_attributes)
+    delegate :header?, :body?, to: :@current_row
+
+    def row
+      @current_row
+    end
+
+    def record
+      @current_record
+    end
+
+    # When rendering a row we pass the table to the row instead of the row itself. This lets the table define the
+    # column entry points so it's easy to define column extensions in subclasses. When a user wants to set html
+    # attributes on the row, they will call `row.html_attributes = { ... }`, so we need to proxy that call to the
+    # current row (if set).
+    def html_attributes=(attributes)
+      if row.present?
+        row.html_attributes = attributes
+      else
+        @html_attributes = HtmlAttributes.options_to_html_attributes(attributes)
+      end
+    end
+
+    # Generates a column from values rendered as text.
+    #
+    # @param column [Symbol] the column's name, called as a method on the record
+    # @param label [String|nil] the label to use for the column header
+    # @param heading [boolean] if true, data cells will use `th` tags
+    # @param ** [Hash] HTML attributes to be added to column cells
+    # @param & [Proc] optional block to wrap the cell content
+    # @return [void]
+    #
+    # @example Render a generic text column for any value that supports `to_s`
+    #   <% row.cell :name %> # label => <th>Name</th>, data => <td>John Doe</td>
+    def cell(column, label: nil, heading: false, **, &)
+      with_cell(Tables::CellComponent.new(collection:, row:, column:, record:, label:, heading:, **), &)
+    end
+
+    # Is selection enabled for this table?
+    def selectable?
+      false
+    end
+
+    # Workaround for `ViewContext#select` method confusingly filling in for a missing Selectable concern.
+    # @see Katalyst::Tables::Selectable
+    def select
+      raise NotImplementedError, "This table does not include the Selectable concern"
+    end
+
+    private
+
+    # Extension point for subclasses and extensions to customize header row rendering.
+    def add_header_row_callback(&block)
+      @header_row_callbacks << block
+    end
+
+    # Extension point for subclasses and extensions to customize body row rendering.
+    def add_body_row_callback(&block)
+      @body_row_callbacks << block
+    end
+
+    # Extension point for subclasses and extensions to customize header row cell rendering.
+    def add_header_row_cell_callback(&block)
+      @header_row_cell_callbacks << block
+    end
+
+    # Extension point for subclasses and extensions to customize body row cell rendering.
+    def add_body_row_cell_callback(&block)
+      @body_row_cell_callbacks << block
+    end
+
+    # @internal proxy calls to row.with_cell and apply callbacks
+    def with_cell(cell, &)
+      if row.header?
+        @header_row_cell_callbacks.each { |callback| callback.call(cell) }
+        # note, block is silently dropped, it's not used for headers
+        @current_row.with_cell(cell)
+      else
+        @body_row_cell_callbacks.each { |callback| callback.call(cell) }
+        @current_row.with_cell(cell, &)
+      end
+    end
+
+    def normalize_collection(collection)
+      case collection
+      when Array
+        Tables::Collection::Array.new.apply(collection)
+      when ActiveRecord::Relation
+        Tables::Collection::Base.new.apply(collection)
+      else
+        collection
+      end
+    end
   end
 end

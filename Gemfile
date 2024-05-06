@@ -9,6 +9,7 @@ gem "dartsass-rails"
 gem "erb_lint", require: false
 gem "factory_bot"
 gem "importmap-rails"
+gem "katalyst-html-attributes", path: "../html-attributes"
 gem "nokogiri"
 gem "pagy"
 gem "propshaft"
@@ -23,6 +24,7 @@ gem "turbo-rails"
 
 group :development, :test do
   gem "faker"
+  gem "ostruct" # workaround for ruby-mine debugging
 end
 
 group :test do

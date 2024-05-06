@@ -18,7 +18,7 @@ module Katalyst
           def permitted_params
             _default_attributes.to_h.each_with_object([]) do |(k, v), h|
               h << case v
-                   when Array
+                   when ::Array
                      { k => [] }
                    else
                      k
@@ -37,6 +37,11 @@ module Katalyst
           super
 
           clear_changes_information
+        end
+
+        # Collections that do not include Sorting are never sortable.
+        def sortable?
+          false
         end
 
         def apply(items)

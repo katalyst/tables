@@ -4,29 +4,11 @@ module Katalyst
   module Tables
     class HeaderRowComponent < ViewComponent::Base # :nodoc:
       include Katalyst::HtmlAttributes
-      include Header::TypedColumns
 
-      renders_many :columns, ->(component) { component }
+      renders_many :cells, ->(cell) { cell }
 
-      def initialize(table, link: {})
-        super()
-
-        @table           = table
-        @link_attributes = link
-      end
-
-      def call
-        content # generate content before rendering
-
-        tag.tr(**html_attributes) do
-          columns.each do |column|
-            concat(column.to_s)
-          end
-        end
-      end
-
-      def cell(attribute, **, &)
-        with_column(@table.header_cell_component.new(@table, attribute, link: @link_attributes, **), &)
+      def before_render
+        content # ensure content is rendered so html_attributes can be set
       end
 
       def header?
@@ -38,7 +20,7 @@ module Katalyst
       end
 
       def inspect
-        "#<#{self.class.name} link_attributes: #{@link_attributes.inspect}>"
+        "#<#{self.class.name}>"
       end
     end
   end

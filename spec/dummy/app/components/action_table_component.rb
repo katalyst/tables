@@ -1,30 +1,21 @@
 # frozen_string_literal: true
 
 class ActionTableComponent < Katalyst::TableComponent
-  config.header_row = "ActionHeaderRow"
-  config.body_row   = "ActionBodyRow"
-  config.body_cell  = "ActionBodyCell"
-
-  def call
-    self.html_attributes = { class: "action-table" }
-    super
+  def actions(column = :_actions, label: "", heading: false, **, &)
+    with_cell(ActionsComponent.new(collection:, row:, column:, record:, label:, heading:, **), &)
   end
 
-  class ActionHeaderRow < Katalyst::Tables::HeaderRowComponent
-    def actions(&)
-      cell(:actions, class: "actions", label: "", &)
-    end
+  def default_html_attributes
+    { class: "action-table" }
   end
 
-  class ActionBodyRow < Katalyst::Tables::BodyRowComponent
-    def actions(&)
-      cell(:actions, class: "actions", &)
-    end
-  end
-
-  class ActionBodyCell < Katalyst::Tables::BodyCellComponent
+  class ActionsComponent < Katalyst::Tables::CellComponent
     def action(label, href, **opts)
       content_tag :a, label, { href: }.merge(opts)
+    end
+
+    def default_html_attributes
+      { class: "actions" }
     end
   end
 end

@@ -13,21 +13,30 @@ module Katalyst
         @as          = as
       end
 
+      def before_render
+        # move @__vc_render_in_block to @row_proc to avoid slot lookup attempting to call it
+        @row_proc = @__vc_render_in_block
+        @__vc_render_in_block = nil
+      end
+
       def model_name
         collection.model_name if collection.respond_to?(:model_name)
       end
 
       private
 
+      def row_content(row, record)
+        @current_row = row
+        @current_record = record
+        row_proc.call(self, record)
+      ensure
+        @current_row = nil
+        @current_record = nil
+      end
+
       def row_proc
-        if @row_proc
-          @row_proc
-        elsif @__vc_render_in_block
-          @row_proc = @__vc_render_in_block
-        else
-          @row_proc = Proc.new do |row, object|
-            row_renderer.render_row(row, object, view_context)
-          end
+        @row_proc ||= Proc.new do |table, object|
+          row_renderer.render_row(table, object, view_context)
         end
       end
 

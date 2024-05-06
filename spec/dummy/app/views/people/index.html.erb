@@ -14,7 +14,7 @@
     } do |form| %>
   <%= form.label :search %>
   <%= form.text_field :search, type: :search, data: { search_target: "input" } %>
-  <%= form.hidden_field :sort unless @people.sorting.default? %>
+  <%= form.hidden_field :sort unless @people.default_sort? %>
   <%= form.submit "Filter", hidden: "" %>
 <% end %>
 

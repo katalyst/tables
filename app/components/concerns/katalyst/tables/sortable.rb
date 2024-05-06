@@ -7,25 +7,59 @@ module Katalyst
     module Sortable
       extend ActiveSupport::Concern
 
-      # Returns true when the given attribute is sortable.
-      def sortable?(attribute)
-        sorting&.supports?(collection, attribute)
+      def initialize(**)
+        super(**)
+
+        @header_row_cell_callbacks << method(:add_sorting_to_cell) if collection.sortable?
       end
 
-      # Generates a url for applying/toggling sort for the given column.
-      def sort_url(attribute) # rubocop:disable Metrics/AbcSize
-        # Implementation inspired by pagy's `pagy_url_for` helper.
-        # Preserve any existing GET parameters
-        # CAUTION: these parameters are not sanitised
-        sort = attribute && sorting.toggle(attribute)
-        params = if sort && !sort.eql?(sorting.default)
-                   request.GET.merge("sort" => sort).except("page")
-                 else
-                   request.GET.except("page", "sort")
-                 end
-        query_string = params.empty? ? "" : "?#{Rack::Utils.build_nested_query(params)}"
+      private
 
-        "#{request.path}#{query_string}"
+      def add_sorting_to_cell(cell)
+        if collection.sortable?(cell.column)
+          cell.update_html_attributes(data: { sort: collection.sort_status(cell.column) })
+          cell.with_content_wrapper(SortableHeaderComponent.new(collection:, cell:))
+        end
+      end
+
+      class SortableHeaderComponent < ViewComponent::Base
+        include Katalyst::HtmlAttributes
+
+        attr_reader :collection, :cell
+
+        delegate :column, to: :cell
+
+        def initialize(collection:, cell:, **)
+          super(**)
+
+          @collection = collection
+          @cell = cell
+        end
+
+        def call
+          link_to(content, sort_url, **html_attributes)
+        end
+
+        # Generates a url for applying/toggling sort for the given column.
+        def sort_url
+          # rubocop:disable Metrics/AbcSize
+          # Implementation inspired by pagy's `pagy_url_for` helper.
+          # Preserve any existing GET parameters
+          # CAUTION: these parameters are not sanitised
+          sort = column && collection.toggle_sort(column)
+          params = if sort && !sort.eql?(collection.default_sort)
+                     request.GET.merge("sort" => sort).except("page")
+                   else
+                     request.GET.except("page", "sort")
+                   end
+          query_string = params.empty? ? "" : "?#{Rack::Utils.build_nested_query(params)}"
+
+          "#{request.path}#{query_string}"
+        end
+
+        def default_html_attributes
+          { data: { turbo_action: "replace" } }
+        end
       end
     end
   end
