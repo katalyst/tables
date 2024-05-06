@@ -11,6 +11,8 @@
    table.with_orderable(url: order_faqs_path) %>
 
 <%= render table do |row, faq| %>
+  <% row.html_attributes = { id: dom_id(faq) } if row.body? %>
+
   <% row.ordinal %>
   <% row.cell :question %>
   <% row.cell :answer %>
