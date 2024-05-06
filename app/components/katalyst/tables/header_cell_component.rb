@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-using Katalyst::HtmlAttributes::HasHtmlAttributes
-
 module Katalyst
   module Tables
     class HeaderCellComponent < ViewComponent::Base # :nodoc:
@@ -11,6 +9,8 @@ module Katalyst
 
       delegate :object_name, :collection, :sorting, to: :@table
 
+      define_html_attribute_methods :link_attributes
+
       def initialize(table, attribute, label: nil, link: {}, width: nil, **html_attributes)
         super(**html_attributes)
 
@@ -18,7 +18,8 @@ module Katalyst
         @attribute       = attribute
         @value           = label
         @width           = width
-        @link_attributes = link
+
+        self.link_attributes = link
       end
 
       def call
@@ -73,8 +74,8 @@ module Katalyst
         end
       end
 
-      def link_attributes
-        { data: { turbo_action: "replace" } }.merge_html(@link_attributes)
+      def default_link_attributes
+        { data: { turbo_action: "replace" } }
       end
 
       def default_html_attributes

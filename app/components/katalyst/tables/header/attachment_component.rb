@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-using Katalyst::HtmlAttributes::HasHtmlAttributes
-
 module Katalyst
   module Tables
     module Header
       class AttachmentComponent < HeaderCellComponent
+        using Katalyst::HtmlAttributes::HasHtmlAttributes
+
         def default_html_attributes
-          super.merge_html(class: "type-attachment")
+          { class: "type-attachment" }.merge_html(super)
         end
       end
     end

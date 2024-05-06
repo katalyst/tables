@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-using Katalyst::HtmlAttributes::HasHtmlAttributes
-
 module Katalyst
   module Tables
     module Header
       class RichTextComponent < HeaderCellComponent
+        using Katalyst::HtmlAttributes::HasHtmlAttributes
+
         def default_html_attributes
-          super.merge_html(class: "type-rich-text")
+          { class: "type-rich-text" }.merge_html(super)
         end
       end
     end

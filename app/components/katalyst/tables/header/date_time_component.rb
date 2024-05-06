@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-using Katalyst::HtmlAttributes::HasHtmlAttributes
-
 module Katalyst
   module Tables
     module Header
       class DateTimeComponent < HeaderCellComponent
+        using Katalyst::HtmlAttributes::HasHtmlAttributes
+
         def default_html_attributes
-          super.merge_html(class: "type-datetime")
+          { class: "type-datetime" }.merge_html(super)
         end
       end
     end

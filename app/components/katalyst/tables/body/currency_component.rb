@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-using Katalyst::HtmlAttributes::HasHtmlAttributes
-
 module Katalyst
   module Tables
     module Body
@@ -20,8 +18,10 @@ module Katalyst
           value.present? ? number_to_currency(value / 100.0, @options) : ""
         end
 
+        using Katalyst::HtmlAttributes::HasHtmlAttributes
+
         def default_html_attributes
-          super.merge_html(class: "type-currency")
+          { class: "type-currency" }.merge_html(super)
         end
       end
     end

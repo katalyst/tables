@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-using Katalyst::HtmlAttributes::HasHtmlAttributes
-
 module Katalyst
   module Tables
     module Body
@@ -9,17 +7,20 @@ module Katalyst
       # The link text is the value of the attribute
       # @see Koi::Tables::BodyRowComponent#link
       class LinkComponent < BodyCellComponent
+        define_html_attribute_methods :link_attributes
+
         def initialize(table, record, attribute, url:, link: {}, **options)
           super(table, record, attribute, **options)
 
           @url = url
-          @link_options = link
+
+          self.link_attributes = link
         end
 
         def call
           content # ensure content is set before rendering options
 
-          link = content.present? && url.present? ? link_to(content, url, @link_options) : content.to_s
+          link = content.present? && url.present? ? link_to(content, url, **link_attributes) : content.to_s
           content_tag(@type, link, **html_attributes)
         end
 
