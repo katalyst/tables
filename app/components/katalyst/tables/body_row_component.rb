@@ -40,9 +40,6 @@ module Katalyst
       def inspect
         "#<#{self.class.name} record: #{record.inspect}>"
       end
-
-      # Backwards compatibility with tables 1.0
-      alias_method :options, :html_attributes=
     end
   end
 end

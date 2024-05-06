@@ -91,8 +91,5 @@ module Katalyst
 
     define_html_attribute_methods(:thead_attributes)
     define_html_attribute_methods(:tbody_attributes)
-
-    # Backwards compatibility with tables 1.0
-    alias_method :options, :html_attributes=
   end
 end
