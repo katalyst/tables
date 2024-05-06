@@ -1,9 +1,5 @@
 <%# locals: { row:, resource: } %>
 
-<% row.try(:selection) %>
-<% row.cell :name, label: "Resource partial" do %>
-  <%= resource.name %>
-<% end %>
-<% row.cell :active, class: "active" do |cell| %>
-  <%= cell.value ? "Yes" : "No" %>
-<% end %>
+<% row.select if row.selectable? %>
+<% row.cell :name, label: "Resource partial" %>
+<% row.boolean :active, class: "active" %>

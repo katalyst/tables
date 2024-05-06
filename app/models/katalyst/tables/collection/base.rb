@@ -34,6 +34,10 @@ module Katalyst
           new.with_params(params)
         end
 
+        def model
+          items.model
+        end
+
         def model_name
           @model_name ||= items.model_name.dup.tap do |name|
             name.param_key = ""

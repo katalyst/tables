@@ -23,6 +23,7 @@ gem "turbo-rails"
 
 group :development, :test do
   gem "faker"
+  gem "ostruct" # workaround for ruby-mine debugging
 end
 
 group :test do

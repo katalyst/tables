@@ -4,29 +4,11 @@ module Katalyst
   module Tables
     class BodyRowComponent < ViewComponent::Base # :nodoc:
       include Katalyst::HtmlAttributes
-      include Body::TypedColumns
 
-      renders_many :columns, ->(component) { component }
+      renders_many :cells, ->(cell) { cell }
 
-      def initialize(table, record)
-        super()
-
-        @table  = table
-        @record = record
-      end
-
-      def call
-        content # generate content before rendering
-
-        tag.tr(**html_attributes) do
-          columns.each do |column|
-            concat(column.to_s)
-          end
-        end
-      end
-
-      def cell(attribute, **, &)
-        with_column(@table.body_cell_component.new(@table, @record, attribute, **), &)
+      def before_render
+        content # ensure content is rendered so html_attributes can be set
       end
 
       def header?
@@ -38,7 +20,7 @@ module Katalyst
       end
 
       def inspect
-        "#<#{self.class.name} record: #{record.inspect}>"
+        "#<#{self.class.name}>"
       end
     end
   end

@@ -2,11 +2,15 @@
 
 module Katalyst
   module Tables
-    module Body
+    module Cells
       # Shows Yes/No for boolean values
-      class BooleanComponent < BodyCellComponent
+      class BooleanComponent < CellComponent
         def rendered_value
           value ? "Yes" : "No"
+        end
+
+        def default_html_attributes
+          { class: "type-boolean" }
         end
       end
     end

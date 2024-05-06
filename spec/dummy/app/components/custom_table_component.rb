@@ -1,41 +1,25 @@
 # frozen_string_literal: true
 
 class CustomTableComponent < Katalyst::TableComponent
-  config.header_row = "CustomHeaderRow"
-  config.header_cell = "CustomHeaderCell"
-  config.body_row = "CustomBodyRow"
-  config.body_cell = "CustomBodyCell"
-
-  def call
-    self.html_attributes = { class: "custom-table" }
+  def initialize(*, **, &)
     super
-  end
 
-  class CustomHeaderRow < Katalyst::Tables::HeaderRowComponent
-    def call
-      self.html_attributes = { class: "custom-header-row" }
-      super
+    update_html_attributes(class: "custom-table")
+
+    add_header_row_callback do |row|
+      row.update_html_attributes(class: "custom-header-row")
     end
-  end
 
-  class CustomHeaderCell < Katalyst::Tables::HeaderCellComponent
-    def call
-      self.html_attributes = { class: "custom-header-cell" }
-      super
+    add_body_row_callback do |row|
+      row.update_html_attributes(class: "custom-body-row")
     end
-  end
 
-  class CustomBodyRow < Katalyst::Tables::BodyRowComponent
-    def call
-      self.html_attributes = { class: "custom-body-row" }
-      super
+    add_header_row_cell_callback do |cell|
+      cell.update_html_attributes(class: "custom-header-cell")
     end
-  end
 
-  class CustomBodyCell < Katalyst::Tables::BodyCellComponent
-    def call
-      self.html_attributes = { class: "custom-body-cell" }
-      super
+    add_body_row_cell_callback do |row|
+      row.update_html_attributes(class: "custom-body-cell")
     end
   end
 end

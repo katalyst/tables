@@ -38,7 +38,7 @@ RSpec.describe Katalyst::TableComponent do
   end
 
   it "renders a header row" do
-    table = render_inline(described_class.new(collection: [], caption: false, header: true))
+    table = render_inline(described_class.new(collection: [], caption: false, header: true)) { nil }
     expect(table).to match_html(<<~HTML)
       <table>
         <thead><tr></tr></thead>
@@ -62,11 +62,9 @@ RSpec.describe Katalyst::TableComponent do
     HTML
   end
 
-  context "when model name is available" do
+  context "when model is available" do
     before do
-      allow_any_instance_of(Katalyst::Tables::HeaderCellComponent)
-        .to receive(:translate).with("activerecord.attributes.person.name", any_args)
-              .and_return("TRANSLATED")
+      allow(Person).to receive(:human_attribute_name).with(:name).and_return("TRANSLATED")
     end
 
     it "translates column headers" do
@@ -220,13 +218,13 @@ RSpec.describe Katalyst::TableComponent do
           <thead>
             <tr>
               <th>Resource partial</th>
-              <th class="active">Active</th>
+              <th class="type-boolean active">Active</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td>Resource 1</td>
-              <td class="active">No</td>
+              <td class="type-boolean active">No</td>
             </tr>
           </tbody>
         </table>
@@ -245,7 +243,7 @@ RSpec.describe Katalyst::TableComponent do
             <thead>
               <tr>
                 <th>Resource partial</th>
-                <th class="active">Active</th>
+                <th class="type-boolean active">Active</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -265,13 +263,13 @@ RSpec.describe Katalyst::TableComponent do
             <thead>
               <tr>
                 <th>Resource partial</th>
-                <th class="active">Active</th>
+                <th class="type-boolean active">Active</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td>Resource 1</td>
-                <td class="active">No</td>
+                <td class="type-boolean active">No</td>
               </tr>
             </tbody>
           </table>
@@ -378,6 +376,42 @@ RSpec.describe Katalyst::TableComponent do
                 <a href="delete" method="delete">Delete</a>
               </td>
             </tr>
+          </tbody>
+        </table>
+      HTML
+    end
+  end
+
+  context "with a typed column" do
+    let(:table) { render_inline(component) { |row| row.boolean(:active) } }
+
+    it "renders boolean typed columns" do
+      expect(table).to match_html(<<~HTML)
+        <table>
+          <thead><tr><th class="type-boolean">Active</th></tr></thead>
+          <tbody>
+            <tr><td class="type-boolean">No</td></tr>
+          </tbody>
+        </table>
+      HTML
+    end
+  end
+
+  context "with a typed column passing a block" do
+    let(:table) do
+      render_inline(component) do |row|
+        row.boolean(:active) do |cell|
+          row.tag.span(cell)
+        end
+      end
+    end
+
+    it "renders boolean typed columns" do
+      expect(table).to match_html(<<~HTML)
+        <table>
+          <thead><tr><th class="type-boolean">Active</th></tr></thead>
+          <tbody>
+            <tr><td class="type-boolean"><span>No</span></td></tr>
           </tbody>
         </table>
       HTML
