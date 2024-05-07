@@ -26,7 +26,6 @@ module Katalyst
     # Construct a new table component. This entry point supports a large number
     # of options for customizing the table. The most common options are:
     # - `collection`: the collection to render
-    # - `sorting`: the sorting to apply to the collection (defaults to collection.storing if available)
     # - `header`: whether to render the header row (defaults to true, supports options)
     # - `caption`: whether to render the caption (defaults to true, supports options)
     # - `object_name`: the name of the object to use for partial rendering (defaults to collection.model_name.i18n_key)
@@ -34,15 +33,10 @@ module Katalyst
     # - `as`: the name of the local variable to use for rendering each row (defaults to collection.model_name.param_key)
     # In addition to these options, standard HTML attributes can be passed which will be added to the table tag.
     def initialize(collection:,
-                   sorting: nil,
                    header: true,
                    caption: true,
                    **html_attributes)
       @collection = collection
-
-      # sorting: instance of Katalyst::Tables::Collection::SortForm.
-      # If not provided will be inferred from the collection.
-      @sorting = sorting || html_attributes.delete(:sort) # backwards compatibility with old `sort` option
 
       # header: true means render the header row, header: false means no header row, if a hash, passes as options
       @header         = header
