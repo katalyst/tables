@@ -2,34 +2,9 @@
 
 module Katalyst
   module Tables
-    # Utilities for controllers that are generating collections for visualisation
-    # in a table view using Katalyst::Tables::Frontend.
-    #
-    # Provides `table_sort` for sorting based on column interactions (sort param).
+    # Configuration for controllers to specify which TableComponent should be used in associated views.
     module Backend
       extend ActiveSupport::Concern
-
-      # @deprecated backwards compatibility
-      class SortForm < Katalyst::Tables::Collection::SortForm
-      end
-
-      # Sort the given collection by params[:sort], which is set when a user
-      # interacts with a column header in a frontend table view.
-      #
-      # @return [[SortForm, ActiveRecord::Relation]]
-      def table_sort(collection)
-        column, direction = params[:sort]&.split
-        direction         = "asc" unless SortForm::DIRECTIONS.include?(direction)
-
-        SortForm.new(column:,
-                     direction:)
-          .apply(collection)
-      end
-
-      def self_referred?
-        request.referer.present? && URI.parse(request.referer).path == request.path
-      end
-      alias self_refered? self_referred?
 
       included do
         class_attribute :_default_table_component, instance_accessor: false
@@ -39,8 +14,7 @@ module Katalyst
         # Set the table component to be used as the default for all tables
         # in the views rendered by this controller and its subclasses.
         #
-        # ==== Parameters
-        # * <tt>component</tt> - Default table component, an instance of +Katalyst::TableComponent+
+        # @param component [Class] the table component class to use
         def default_table_component(component)
           self._default_table_component = component
         end
