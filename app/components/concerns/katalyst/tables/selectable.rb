@@ -10,13 +10,26 @@ module Katalyst
       FORM_CONTROLLER = "tables--selection--form"
       ITEM_CONTROLLER = "tables--selection--item"
 
-      # Adds the selection column to the table
-      def select(params = { id: @current_record&.id }, **html_attributes)
-        component = SelectComponent.new(self, @current_row, params, **html_attributes)
+      # Returns the default dom id for the selection form, uses the table's
+      # default id with '_selection' appended.
+      def self.default_form_id(collection)
+        "#{Identifiable::Defaults.default_table_id(collection)}_selection_form"
+      end
 
-        cell(:_select, label: "", **component.html_attributes) do
-          component.render_in(view_context)
-        end
+      # Adds the selection column to the table
+      #
+      # @param params [Hash] params to pass to the controller for selected rows
+      # @param form_id [String] id of the form element that will submit the selected row params
+      # @param ** [Hash] HTML attributes to be added to column cells
+      # @param & [Proc] optional block to alter the cell content
+      # @return [void]
+      #
+      # @example Render a select column
+      #   <% row.select %> # => <td><input type="checkbox" ...></td>
+      def select(params: { id: record&.id }, form_id: Selectable.default_form_id(collection), **, &)
+        with_cell(Cells::SelectComponent.new(
+                    collection:, row:, column: :_select, record:, label: "", heading: false, params:, form_id:, **,
+                  ), &)
       end
     end
   end

@@ -1,10 +1,4 @@
 en:
-  time:
-    formats:
-      table: "%e %B %Y, %l:%M%P"
-  date:
-    formats:
-      table: "%e %B %Y"
   katalyst:
     tables:
       orderable:

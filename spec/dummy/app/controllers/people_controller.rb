@@ -7,7 +7,7 @@ class PeopleController < ApplicationController
 
   class Collection < Katalyst::Tables::Collection::Base
     config.paginate = { items: 5 }
-    config.sorting = :name
+    config.sorting = "name asc"
 
     attribute :search, default: -> { "" }
 

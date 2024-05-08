@@ -1,3 +1,5 @@
+<%# locals: { collection: } %>
+
 <% content_for(:head) do %>
   <meta name="turbo-refresh-method" content="morph">
   <meta name="turbo-refresh-scroll" content="preserve">
@@ -6,15 +8,9 @@
 <h1>Faqs</h1>
 <%= link_to "Home", root_path %>
 
-<% table = Katalyst::TableComponent.new(id: dom_id(Resource, "list"), collection: @faqs)
-   table.extend(Katalyst::Tables::Identifiable)
-   table.extend(Katalyst::Tables::Orderable)
-   table.with_orderable(url: order_faqs_path) %>
-
-<%= render table do |row, faq| %>
+<%= table_with(collection:) do |row| %>
   <% row.ordinal %>
   <% row.cell :question %>
   <% row.cell :answer %>
 <% end %>
-
-<%= render table.orderable %>
+<%= table_orderable_with(collection:, url: order_faqs_path) %>

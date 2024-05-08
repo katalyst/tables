@@ -2,7 +2,8 @@
 
 FactoryBot.define do
   factory :faq do
-    sequence(:question) { |i| "FAQ #{i}" }
+    sequence(:ordinal)
+    question { "FAQ #{ordinal}" }
     answer { Faker::HTML.sandwich }
   end
 

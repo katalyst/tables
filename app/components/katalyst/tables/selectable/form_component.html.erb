@@ -4,11 +4,11 @@
               data:   { controller:      form_controller,
                         turbo_action:    "replace",
                         turbo_permanent: "" },
-              html:   { hidden: "" }) do |form| %>
+              html:   { action: false, hidden: "" }) do |form| %>
   <p class="tables--selection--summary">
     <span data-<%= form_target("count") %>>0</span>
-    <span data-<%= form_target("singular") %> hidden><%= @table.collection.model_name.singular %></span>
-    <span data-<%= form_target("plural") %>><%= @table.collection.model_name.plural %></span>
+    <span data-<%= form_target("singular") %> hidden><%= @collection.model_name.singular %></span>
+    <span data-<%= form_target("plural") %>><%= @collection.model_name.plural %></span>
     selected
   </p>
   <%= content %>

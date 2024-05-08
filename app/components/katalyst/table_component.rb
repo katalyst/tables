@@ -13,7 +13,12 @@ module Katalyst
   class TableComponent < ViewComponent::Base
     include Katalyst::HtmlAttributes
     include Tables::HasTableContent
-    include Tables::Sortable
+
+    # Load table extensions. This allows users to disable specific extensions
+    # if they want to implement alternatives, e.g. a different sorting UI.
+    Katalyst::Tables.config.component_extensions.each do |extension|
+      include extension.constantize
+    end
 
     attr_reader :collection, :object_name
 
@@ -26,17 +31,28 @@ module Katalyst
 
     # Construct a new table component. This entry point supports a large number
     # of options for customizing the table. The most common options are:
-    # - `collection`: the collection to render
-    # - `header`: whether to render the header row (defaults to true, supports options)
-    # - `caption`: whether to render the caption (defaults to true, supports options)
-    # - `object_name`: the name of the object to use for partial rendering (defaults to collection.model_name.i18n_key)
-    # - `partial`: the name of the partial to use for rendering each row (defaults to to_partial_path on the object)
-    # - `as`: the name of the local variable to use for rendering each row (defaults to collection.model_name.param_key)
+    # @param collection [Katalyst::Tables::Collection::Core] the collection to render
+    # @param header [Boolean] whether to render the header row (defaults to true, supports options)
+    # @param caption [Boolean,Hash] whether to render the caption (defaults to true, supports options)
+    # @param generate_ids [Boolean] whether to generate dom ids for the table and rows
+    #
+    # If no block is provided when the table is rendered then the table will look for a row partial:
+    # @param object_name [Symbol] the name of the object to use for partial rendering
+    #        (defaults to collection.model_name.i18n_key)
+    # @param partial [String] the name of the partial to use for rendering each row
+    #        (defaults to to_partial_path on the object)
+    # @param as [Symbol] the name of the local variable to use for rendering each row
+    #        (defaults to collection.model_name.param_key)
+    #
     # In addition to these options, standard HTML attributes can be passed which will be added to the table tag.
     def initialize(collection:,
                    header: true,
                    caption: true,
-                   **html_attributes)
+                   generate_ids: false,
+                   object_name: nil,
+                   partial: nil,
+                   as: nil,
+                   **)
       @collection = normalize_collection(collection)
 
       # header: true means render the header row, header: false means no header row, if a hash, passes as options
@@ -50,11 +66,7 @@ module Katalyst
       @header_row_cell_callbacks = []
       @body_row_cell_callbacks = []
 
-      super(**html_attributes)
-    end
-
-    def id
-      html_attributes[:id]
+      super(generate_ids:, object_name:, partial:, as:, **)
     end
 
     def before_render
@@ -114,17 +126,20 @@ module Katalyst
     # @param heading [boolean] if true, data cells will use `th` tags
     # @param ** [Hash] HTML attributes to be added to column cells
     # @param & [Proc] optional block to wrap the cell content
+    #
+    # If a block is provided, it will be called with the cell component as an argument.
+    # @yieldparam cell [Katalyst::Tables::CellComponent] the cell component
+    #
     # @return [void]
     #
     # @example Render a generic text column for any value that supports `to_s`
     #   <% row.cell :name %> # label => <th>Name</th>, data => <td>John Doe</td>
-    def cell(column, label: nil, heading: false, **, &)
+    def text(column, label: nil, heading: false, **, &)
       with_cell(Tables::CellComponent.new(
                   collection:, row:, column:, record:, label:, heading:, **,
                 ), &)
     end
-
-    alias_method :text, :cell
+    alias cell text
 
     # Generates a column from boolean values rendered as "Yes" or "No".
     #
@@ -133,6 +148,10 @@ module Katalyst
     # @param heading [boolean] if true, data cells will use `th` tags
     # @param ** [Hash] HTML attributes to be added to column cells
     # @param & [Proc] optional block to alter the cell content
+    #
+    # If a block is provided, it will be called with the boolean cell component as an argument.
+    # @yieldparam cell [Katalyst::Tables::Cells::BooleanComponent] the cell component
+    #
     # @return [void]
     #
     # @example Render a boolean column indicating whether the record is active
@@ -144,7 +163,7 @@ module Katalyst
     end
 
     # Generates a column from date values rendered using I18n.l.
-    # The default format is :default, but it can be overridden.
+    # The default format is :default, can be configured or overridden.
     #
     # @param column [Symbol] the column's name, called as a method on the record
     # @param label [String|nil] the label to use for the column header
@@ -152,19 +171,22 @@ module Katalyst
     # @param format [Symbol] the I18n date format to use when rendering
     # @param relative [Boolean] if true, the date may be shown as a relative date (if within 5 days)
     # @param ** [Hash] HTML attributes to be added to column cells
-    # @param & [Proc] optional block to alter the cell content
+    #
+    # If a block is provided, it will be called with the date cell component as an argument.
+    # @yieldparam cell [Katalyst::Tables::Cells::DateComponent] the cell component
+    #
     # @return [void]
     #
     # @example Render a date column describing when the record was created
     #   <% row.date :created_at %> # => <td>29 Feb 2024</td>
-    def date(column, label: nil, heading: false, format: :default, relative: true, **, &)
+    def date(column, label: nil, heading: false, format: Tables.config.date_format, relative: true, **, &)
       with_cell(Tables::Cells::DateComponent.new(
                   collection:, row:, column:, record:, label:, heading:, format:, relative:, **,
                 ), &)
     end
 
     # Generates a column from datetime values rendered using I18n.l.
-    # The default format is :default, but it can be overridden.
+    # The default format is :default, can be configured or overridden.
     #
     # @param column [Symbol] the column's name, called as a method on the record
     # @param label [String|nil] the label to use for the column header
@@ -173,11 +195,15 @@ module Katalyst
     # @param relative [Boolean] if true, the datetime may be(if today) shown as a relative date/time
     # @param ** [Hash] HTML attributes to be added to column cells
     # @param & [Proc] optional block to alter the cell content
+    #
+    # If a block is provided, it will be called with the date time cell component as an argument.
+    # @yieldparam cell [Katalyst::Tables::Cells::DateTimeComponent] the cell component
+    #
     # @return [void]
     #
     # @example Render a datetime column describing when the record was created
     #   <% row.datetime :created_at %> # => <td>29 Feb 2024, 5:00pm</td>
-    def datetime(column, label: nil, heading: false, format: :default, relative: true, **, &)
+    def datetime(column, label: nil, heading: false, format: Tables.config.datetime_format, relative: true, **, &)
       with_cell(Tables::Cells::DateTimeComponent.new(
                   collection:, row:, column:, record:, label:, heading:, format:, relative:, **,
                 ), &)
@@ -190,6 +216,10 @@ module Katalyst
     # @param heading [boolean] if true, data cells will use `th` tags
     # @param ** [Hash] HTML attributes to be added to column cells
     # @param & [Proc] optional block to alter the cell content
+    #
+    # If a block is provided, it will be called with the number cell component as an argument.
+    # @yieldparam cell [Katalyst::Tables::Cells::NumberComponent] the cell component
+    #
     # @return [void]
     #
     # @example Render the number of comments on a post
@@ -208,6 +238,10 @@ module Katalyst
     # @param options [Hash] options to be passed to `number_to_currency`
     # @param ** [Hash] HTML attributes to be added to column cells
     # @param & [Proc] optional block to alter the cell content
+    #
+    # If a block is provided, it will be called with the currency cell component as an argument.
+    # @yieldparam cell [Katalyst::Tables::Cells::CurrencyComponent] the cell component
+    #
     # @return [void]
     #
     # @example Render a currency column for the price of a product
@@ -225,6 +259,10 @@ module Katalyst
     # @param heading [boolean] if true, data cells will use `th` tags
     # @param ** [Hash] HTML attributes to be added to column cells
     # @param & [Proc] optional block to alter the cell content
+    #
+    # If a block is provided, it will be called with the rich text cell component as an argument.
+    # @yieldparam cell [Katalyst::Tables::Cells::RichTextComponent] the cell component
+    #
     # @return [void]
     #
     # @note This method assumes that the method returns HTML-safe content.
@@ -247,6 +285,10 @@ module Katalyst
     # @param link [Hash] options to be passed to the link_to helper
     # @param ** [Hash] HTML attributes to be added to column cells
     # @param & [Proc] optional block to alter the cell content
+    #
+    # If a block is provided, it will be called with the link cell component as an argument.
+    # @yieldparam cell [Katalyst::Tables::Cells::LinkComponent] the cell component
+    #
     # @return [void]
     #
     # @example Render a column containing the record's title, linked to its show page
@@ -271,6 +313,10 @@ module Katalyst
     # @param variant [Symbol] the variant to use when rendering the image (default :thumb)
     # @param ** [Hash] HTML attributes to be added to column cells
     # @param & [Proc] optional block to alter the cell content
+    #
+    # If a block is provided, it will be called with the attachment cell component as an argument.
+    # @yieldparam cell [Katalyst::Tables::Cells::AttachmentComponent] the cell component
+    #
     # @return [void]
     #
     # @example Render a column containing a download link to the record's background image
@@ -280,17 +326,6 @@ module Katalyst
       with_cell(Tables::Cells::AttachmentComponent.new(
                   collection:, row:, column:, record:, label:, heading:, variant:, **,
                 ), &)
-    end
-
-    # Is selection enabled for this table?
-    def selectable?
-      false
-    end
-
-    # Workaround for `ViewContext#select` method confusingly filling in for a missing Selectable concern.
-    # @see Katalyst::Tables::Selectable
-    def select
-      raise NotImplementedError, "This table does not include the Selectable concern"
     end
 
     private

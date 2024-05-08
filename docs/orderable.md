@@ -1,67 +1,42 @@
-# Orderable extension
+# Katalyst::Tables::Orderable
 
-The Orderable extension adds the ability to bulk-update an 'order' column for
-model instances from an index table view.
-
-The extension can be enabled on a specific table instance or mixed in to a
-table component class. In either case, the extension will add new functionality
-to the table component and any nested row components, plus a hidden form 
-component that needs to be rendered in the page separately.
+`Orderable` adds the ability to bulk-update an 'order' column for
+model instances from an index table view. Users can drag and
+drop rows within their table and the extension will automatically
+patch the configured URL with the new ordering data.
 
 ## Usage
 
-You can add the orderable extension to an existing table instance by calling
-extend on the table instance:
+The extension is included by default and can enabled for a specific table
+by adding an `ordinal` column:
 
-```ruby
-table      = Katalyst::TableComponent.new(collection:)
-table.extend(Katalyst::Table::Orderable)
+```erb
+<%= table_with(collection:) do |row| %>
+  <% row.ordinal %>
+  <% row.text :name %>
+<% end %>
 ```
-
-You can also include the extension in a table component class:
-
-```ruby
-class OrderedTableComponent < Katalyst::TableComponent
-  include Katalyst::Table::Orderable
-```
-
-In both cases, you will need to configure the orderable form that is generated
-for submitting changes to order data. This can be done by calling
-
-```ruby
-table.with_orderable(url: order_models_path)
-```
-
- * `url` is required, when a user interacts with the table elements, this URL
-   will be patched with any changes to order data.
- * `scope` is optional and defaults to `order[#{collection.model_name.plural}]`.
-   This is used as a prefix for the generated params. This is useful if, for
-   example, you want to use an existing update method that expects the params
-   in accepts_nested_attributes format.
-
-In your views, or row partials, you will also need to call `row.ordinal` to
-generate the ordinal column. This column provides a drag handle for the row
-and stores metadata for generating updates after drag events.
-
-By default, ordinal columns will expect and update the `ordinal` attribute on
-the given rows. You can override this by passing `attribute` to the row
-ordinal call. This is useful if you want to use a different attribute for
-sorting, such as `index`. You can also override the primary key attribute,
-which defaults to `id`, by passing `primary_key` to the row ordinal call.
 
 By default ordinal columns render a `⠿` icon to the cell. This can be configured
 by setting I18n for `katalyst.table.orderable.value`.
 
-When using the extension, the table will generate a hidden form component that
-also needs to be rendered into the page. This form is identified by its ID, so
-it can be placed anywhere within the page. You can see some examples below.
+You will also need to create a hidden form for holding and submitting changes
+to the ordinal data when the user interacts with the table:
+
+```erb
+<%= table_orderable_with(collection:, url: order_models_path) %>
+```
+
+ * `url` is required, when a user interacts with the table elements, this URL
+   will be patched with any changes to order data.
 
 ## Index tables
 
 Orderable can be used to add drag-and-drop ordering to an index table. The
-minimal example looks like this:
+minimal example for a controller that supports saving ordinal index table data looks like this:
 
 ### Routes
+
 ```ruby
 resources :models do
   patch :order, on: :collection
@@ -80,103 +55,92 @@ end
 ### Controller
 ```ruby
 def index
-   @collection = Collection.new.with_params(params).apply(Model.all)
+   render locals: { collection: Model.all }
 end
 
 def order
-  order_params = params.require(:order).permit(models: [:id, :ordinal])
   order_params[:models].each do |id, attrs|
     Model.find(id).update(attrs)
   end
   
   redirect_back(fallback_location: models_path, status: :see_other)
 end
+
+private
+
+def order_params
+   params.require(:order).permit(models: [:ordinal])
+end
 ```
 
 ### View
 
 ```erb
-<% table = Katalyst::TableComponent.new(collection:)
-   table.extend(Katalyst::Table::Orderable)
-   table.with_orderable(url: order_models_path) %>
-    
-<%= render table do |row| %>
+<%= table_with(collection:) do |row| %>
   <% row.ordinal %>
   <% row.cell :name %>
 <% end %>
-
-<%= render table.orderable %>
+<%= table_orderable_with(collection:, url: order_models_path) %>
 ```
-
-This style of table can also be constructed by including `Orderable` into a
-table component class that inherits from `Katalyst::TableComponent`. This could
-look like:
-
-### Component
-```ruby
-class ModelTableComponent < Katalyst::TableComponent
-  include Katalyst::Table::Orderable
-
-  def initialize(collection:)
-    super
-  end
-  
-  def before_render
-    # note that path construction requires a controller context
-    with_orderable(url: order_models_path)
-  end
-  
-  def call
-    # in the include scenario, orderable is a standard component slot
-    concat(render_parent)
-    concat(orderable)
-  end
-end
-```
-
-You can render the form manually or via the component, both shown above. 
 
 ## Nested association tables
 
-You can also use orderable to add drag-and-drop ordering for an association.
+You can also use Orderable to add drag-and-drop ordering for an association.
 In this example we use a component but the same approach can be used with
 the extend method as above.
-
 
 In this example, we're assuming that the model has a nested images association
 and supports nested attributes via update. We're also assuming that the images
 table is providing a default stable sort based on the `ordinal` attribute.
 
-```ruby
-class ImagesTableComponent < Katalyst::Turbo::TableComponent
-  include Katalyst::Tables::Orderable
+### Routes
 
-  def initialize(model)
-    @model = model
-  
-    collection = Katalyst::Tables::Collection::Base.new.apply(model.images)
-  
-    super(collection:, id: "images", caption: true)
-  end
-  
-  def before_render
-    with_orderable(url:, scope:)
-  end
-  
-  def call
-     concat(render_parent)
-     concat(orderable)
-  end
-  
-  private
-  
-  def url
-    [@model]
-  end
-  
-  # Utilize accepts_nested_attributes_for to handle the update of image order
-  def scope
-    "#{@model.model_name.param_key}[images_attributes]"
-  end
+```ruby
+resources :galleries
+```
+
+### Model
+```ruby
+class Gallery < ApplicationRecord
+   has_many :images
+   accepts_nested_attributes_for :images
 end
+
+class Image < ApplicationRecord 
+  belongs_to :gallery
+   
+  attribute :orderable, :integer
+  
+  default_scope { order(orderable: :asc) }
+end
+```
+
+### Controller
+```ruby
+def show
+   @gallery = Gallery.find(params[:id])
+end
+
+def update
+   @gallery = Gallery.find(params[:id])
+   @gallery.update(gallery_params)
+
+   redirect_to @gallery, status: :see_other
+end
+
+private
+
+def gallery_params
+  params.require(:gallery).permit(images: [:ordinal])
+end
+```
+
+### View
+
+```erb
+<%= table_with(collection: gallery.images) do |row| %>
+  <% row.ordinal %>
+  <% row.cell :name %>
+<% end %>
+<%= table_orderable_with(collection:, url: @gallery, scope: "gallery[image_attributes]") %>
 ```

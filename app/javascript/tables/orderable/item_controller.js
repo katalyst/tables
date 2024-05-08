@@ -48,6 +48,15 @@ export default class OrderableRowController extends Controller {
     this.index = index;
   }
 
+  /** Retrieve params for use in the form */
+  params(scope) {
+    const { id_name, id_value, index_name } = this.paramsValue;
+    return [
+      { name: `${scope}[${id_value}][${id_name}]`, value: this.id },
+      { name: `${scope}[${id_value}][${index_name}]`, value: this.index },
+    ];
+  }
+
   /**
    * Restore any visual changes made during drag and remove the drag state.
    */

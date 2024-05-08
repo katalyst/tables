@@ -11,122 +11,52 @@ module Katalyst
       ITEM_CONTROLLER = "tables--orderable--item"
       LIST_CONTROLLER = "tables--orderable--list"
 
-      using Katalyst::HtmlAttributes::HasHtmlAttributes
-
-      # Support for inclusion in a table component class
-      # Adds an `orderable` slot and component configuration
-      included do
-        # Add `orderable` slot to table component
-        config_component :orderable, default: "Katalyst::Tables::Orderable::FormComponent"
-        renders_one(:orderable, lambda do |**attrs|
-          orderable_component.new(table: self, **attrs)
-        end)
+      # Returns the default dom id for the selection form, uses the table's
+      # default id with '_selection' appended.
+      def self.default_form_id(collection)
+        "#{Identifiable::Defaults.default_table_id(collection)}_order_form"
       end
 
-      # Support for extending a table component instance
-      # Adds methods to the table component instance
-      def self.extended(table)
-        table.extend(TableMethods)
-
-        # ensure row components support orderable column calls
-        table.send(:add_orderable_columns)
+      # Generate a form input 'name' for param updates for a given record and attribute.
+      def self.default_scope(collection)
+        "order[#{collection.model_name.plural}]"
       end
 
-      def initialize(**attributes)
-        super
-
-        # ensure row components support orderable column calls
-        add_orderable_columns
+      # Generate a nested scope for for param updates for a given record and attribute.
+      # Will be concatenated with the form's scope in the browser.
+      def self.record_scope(id, attribute)
+        "[#{id}][#{attribute}]"
       end
 
-      def tbody_attributes
-        return super unless orderable?
+      # Generates a column for the user to drag and drop to reorder data rows.
+      #
+      # @param column [Symbol] the value to update when the user reorders the rows
+      # @param primary_key [Symbol] key for identifying rows that have changed in params (:id by default)
+      # @param ** [Hash] HTML attributes to be added to column cells
+      # @param & [Proc] optional block to wrap the cell content
+      # @return [void]
+      #
+      # @example Render a generic text column for any value that supports `to_s`
+      #   <% row.cell :name %> # label => <th>Name</th>, data => <td>John Doe</td>
+      def ordinal(column = :ordinal, primary_key: :id, **, &)
+        initialize_orderable if row.header?
 
-        super.merge_html(
-          { data: { controller: LIST_CONTROLLER,
-                    action: <<~ACTIONS.squish,
-                      mousedown->#{LIST_CONTROLLER}#mousedown
-                    ACTIONS
-                    "#{LIST_CONTROLLER}-#{FORM_CONTROLLER}-outlet" => "##{orderable.id}",
-                    "#{LIST_CONTROLLER}-#{ITEM_CONTROLLER}-outlet" => "td.ordinal" } },
-        )
+        with_cell(Cells::OrdinalComponent.new(
+                    collection:, row:, column:, record:, label: "", heading: false, primary_key:, **,
+                  ), &)
       end
 
       private
 
-      # Add `orderable` columns to row components
-      def add_orderable_columns
-        header_row_component.include(HeaderRow)
-        body_row_component.include(BodyRow)
-      end
-
-      # Methods required to emulate a slot when extending an existing table.
-      module TableMethods
-        def with_orderable(**attrs)
-          @orderable = FormComponent.new(table: self, **attrs)
-
-          self
-        end
-
-        def orderable?
-          @orderable.present?
-        end
-
-        def orderable
-          @orderable
-        end
-      end
-
-      module HeaderRow # :nodoc:
-        def ordinal(attribute = :ordinal, **)
-          cell(attribute, class: "ordinal", label: "")
-        end
-      end
-
-      module BodyRow # :nodoc:
-        def ordinal(attribute = :ordinal, primary_key: :id)
-          id = @record.public_send(primary_key)
-          params = {
-            id_name:     @table.orderable.record_scope(id, primary_key),
-            id_value:    id,
-            index_name:  @table.orderable.record_scope(id, attribute),
-            index_value: @record.public_send(attribute),
-          }
-          cell(attribute, class: "ordinal", draggable: true, data: {
-                 controller:                        ITEM_CONTROLLER,
-                 "#{ITEM_CONTROLLER}-params-value": params.to_json,
-               }) { t("katalyst.tables.orderable.value") }
-        end
-      end
-
-      class FormComponent < ViewComponent::Base # :nodoc:
-        attr_reader :id, :url, :scope
-
-        def initialize(table:,
-                       url:,
-                       id: "#{table.id}-orderable-form",
-                       scope: "order[#{table.collection.model_name.plural}]")
-          super
-
-          @table = table
-          @id = id
-          @url = url
-          @scope = scope
-        end
-
-        def record_scope(id, attribute)
-          "#{scope}[#{id}][#{attribute}]"
-        end
-
-        def call
-          form_with(id:, url:, method: :patch, data: { controller: FORM_CONTROLLER }) do |form|
-            form.button(hidden: "")
-          end
-        end
-
-        def inspect
-          "#<#{self.class.name} id: #{id.inspect}, url: #{url.inspect}, scope: #{scope.inspect}>"
-        end
+      def initialize_orderable
+        update_tbody_attributes(
+          data: {
+            controller: LIST_CONTROLLER,
+            action: "mousedown->#{LIST_CONTROLLER}#mousedown",
+            "#{LIST_CONTROLLER}-#{FORM_CONTROLLER}-outlet" => "##{Orderable.default_form_id(collection)}",
+            "#{LIST_CONTROLLER}-#{ITEM_CONTROLLER}-outlet" => "td.ordinal",
+          },
+        )
       end
     end
   end

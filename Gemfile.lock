@@ -109,6 +109,7 @@ GEM
     concurrent-ruby (1.2.3)
     connection_pool (2.4.1)
     crass (1.0.6)
+    csv (3.3.0)
     cuprite (0.15)
       capybara (~> 3.0)
       ferrum (~> 0.14.0)
@@ -349,6 +350,7 @@ PLATFORMS
 DEPENDENCIES
   capybara
   compare-xml
+  csv
   cuprite
   dartsass-rails
   erb_lint

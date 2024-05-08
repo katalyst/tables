@@ -5,6 +5,7 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in katalyst-tables.gemspec
 gemspec
 
+gem "csv"
 gem "dartsass-rails"
 gem "erb_lint", require: false
 gem "factory_bot"

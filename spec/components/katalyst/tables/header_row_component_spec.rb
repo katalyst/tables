@@ -11,7 +11,7 @@ RSpec.describe Katalyst::Tables::HeaderRowComponent do
   let(:row) { rendered.at_css("thead tr") }
 
   context "with an empty table" do
-    let(:rendered) { render_inline(table) { |row| } }
+    let(:rendered) { render_inline(table) { nil } }
 
     it "renders an empty row" do
       expect(row).to match_html(<<~HTML)
@@ -36,7 +36,7 @@ RSpec.describe Katalyst::Tables::HeaderRowComponent do
 
   context "with dom id generation" do
     let(:table) do
-      Katalyst::TableComponent.new(collection:).extend(Katalyst::Tables::Identifiable)
+      Katalyst::TableComponent.new(collection:, generate_ids: true)
     end
     let(:collection) do
       create_list(:person, 1)

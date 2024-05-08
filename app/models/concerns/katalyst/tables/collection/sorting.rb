@@ -30,6 +30,7 @@ module Katalyst
 
             def to_h
               column, direction = split(/[ +]/, 2)
+
               direction = "asc" unless DIRECTIONS.include?(direction)
               { column:, direction: }
             end

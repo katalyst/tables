@@ -1,13 +1,15 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class OrderableFormController extends Controller {
+  static values = { scope: String };
+
   add(item) {
-    const { id_name, id_value, index_name } = item.paramsValue;
-    this.element.insertAdjacentHTML(
-      "beforeend",
-      `<input type="hidden" name="${id_name}" value="${id_value}" data-generated>
-              <input type="hidden" name="${index_name}" value="${item.index}" data-generated>`,
-    );
+    item.params(this.scopeValue).forEach(({ name, value }) => {
+      this.element.insertAdjacentHTML(
+        "beforeend",
+        `<input type="hidden" name="${name}" value="${value}" data-generated>`,
+      );
+    });
   }
 
   submit() {
