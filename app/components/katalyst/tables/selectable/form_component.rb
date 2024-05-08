@@ -4,24 +4,21 @@ module Katalyst
   module Tables
     module Selectable
       class FormComponent < ViewComponent::Base # :nodoc:
+        include Katalyst::Tables::Identifiable::Defaults
+
         attr_reader :id, :primary_key
 
-        def initialize(table:,
+        # @param collection [Katalyst::Tables::Collection::Core] the collection to render
+        # @param id [String] the id of the form element (defaults to <resources>_selection_form)
+        # @param primary_key [String] the primary key of the record in the collection (defaults to :id)
+        def initialize(collection:,
                        id: nil,
                        primary_key: :id)
           super
 
-          @table       = table
-          @id          = id
+          @collection  = collection
+          @id          = id || Selectable.default_form_id(collection)
           @primary_key = primary_key
-
-          if @id.nil?
-            table_id = table.try(:id)
-
-            raise ArgumentError, "Table selection requires an id" if table_id.nil?
-
-            @id = "#{table_id}_selection"
-          end
         end
 
         def inspect

@@ -5,8 +5,9 @@ Rails.application.routes.draw do
     patch :order, on: :collection
   end
   resources :people, only: %i[index]
-  resources :resources, only: %i[index show]
-  put "resources/active", to: "resources#activate"
+  resources :resources, only: %i[index show] do
+    put :activate, path: "active", on: :collection
+  end
 
   namespace :admin do
     resources :resources, only: %i[index]

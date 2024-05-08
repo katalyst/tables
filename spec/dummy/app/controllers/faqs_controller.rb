@@ -2,7 +2,7 @@
 
 class FaqsController < ApplicationController
   def index
-    @faqs = Katalyst::Tables::Collection::Base.with_params(params).apply(Faq.all)
+    render locals: { collection: Faq.all }
   end
 
   def order
@@ -10,7 +10,7 @@ class FaqsController < ApplicationController
       Faq.find(id).update(attrs)
     end
 
-    redirect_back(fallback_location: root_path, status: :see_other)
+    redirect_back(fallback_location: faqs_path, status: :see_other)
   end
 
   private

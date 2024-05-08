@@ -11,7 +11,7 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
   let(:row) { rendered.at_css("tbody tr") }
 
   context "with an empty table" do
-    let(:rendered) { render_inline(table) { |row| } }
+    let(:rendered) { render_inline(table) { nil } }
 
     it "renders an empty row" do
       expect(row).to match_html(<<~HTML)
@@ -32,21 +32,5 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
 
   it "sets header? to false" do
     expect(component).to have_attributes(header?: false)
-  end
-
-  context "with dom id generation" do
-    let(:table) do
-      Katalyst::TableComponent.new(collection:).extend(Katalyst::Tables::Identifiable)
-    end
-    let(:collection) do
-      create_list(:person, 1)
-      build(:collection, items: Person.all)
-    end
-
-    it "generates a dom id" do
-      expect(row).to match_html(<<~HTML)
-        <tr id="person_1"><td>Person 1</td></tr>
-      HTML
-    end
   end
 end

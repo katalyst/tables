@@ -26,7 +26,7 @@ RSpec.describe Katalyst::Tables::Cells::DateTimeComponent do
 
     it "renders header with html_options" do
       expect(label).to match_html(<<~HTML)
-        <th id="ID" class="type-datetime CLASS" style="style" data-foo="bar" aria-label="LABEL">Created at</th>       
+        <th id="ID" class="type-datetime CLASS" style="style" data-foo="bar" aria-label="LABEL">Created at</th>
       HTML
     end
 

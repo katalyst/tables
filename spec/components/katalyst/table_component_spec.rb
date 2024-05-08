@@ -190,12 +190,21 @@ RSpec.describe Katalyst::TableComponent do
         <table>
           <thead>
             <tr>
+              <th class="selection"></th>
               <th>Resource partial</th>
               <th class="type-boolean active">Active</th>
             </tr>
           </thead>
           <tbody>
             <tr>
+              <td class="selection"
+                  data-controller="tables--selection--item"
+                  data-tables--selection--item-params-value='{"id":1}'
+                  data-tables--selection--item-tables--selection--form-outlet="#resources_selection_form"
+                  data-action="change-&gt;tables--selection--item#change"
+                  data-turbo-permanent="">
+                <input type="checkbox">
+              </td>
               <td>Resource 1</td>
               <td class="type-boolean active">No</td>
             </tr>
@@ -215,6 +224,7 @@ RSpec.describe Katalyst::TableComponent do
             </caption>
             <thead>
               <tr>
+                <th class="selection"></th>
                 <th>Resource partial</th>
                 <th class="type-boolean active">Active</th>
               </tr>
@@ -231,21 +241,12 @@ RSpec.describe Katalyst::TableComponent do
       let(:items) { build_list(:resource, 1) }
 
       it "finds the partial from the first row" do
-        expect(table).to match_html(<<~HTML)
-          <table>
-            <thead>
-              <tr>
-                <th>Resource partial</th>
-                <th class="type-boolean active">Active</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Resource 1</td>
-                <td class="type-boolean active">No</td>
-              </tr>
-            </tbody>
-          </table>
+        expect(table.at_css("thead tr")).to match_html(<<~HTML)
+          <tr>
+            <th class="selection"></th>
+            <th>Resource partial</th>
+            <th class="type-boolean active">Active</th>
+          </tr>
         HTML
       end
     end

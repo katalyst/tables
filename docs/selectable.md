@@ -1,71 +1,42 @@
-# Selectable extension
+# Katalyst::Tables::Selectable
 
-The Selectable extension adds the ability to select multiple rows in the table
-and apply bulk actions to the selected entries.
-
-The extension can be enabled on a specific table instance or mixed in to a
-table component class. In either case, the extension will add new functionality
-to the table component and any nested row components, plus a component to show
-the selection status and keep track of selected items between re-renders that
-needs to be rendered in the page separately.
+`Selectable` adds the ability to select multiple rows in a table and apply bulk
+actions to the selected data rows.
 
 ## Usage
 
-You can add the selectable extension to an existing table instance by calling
-extend on the table instance:
+The extension is included by default and can enabled for a specific table
+by adding a `select` column:
 
-```ruby
-table = Katalyst::TableComponent.new(collection:)
-table.extend(Katalyst::Table::Selectable)
-```
-
-You can also include the extension in a table component class:
-
-```ruby
-
-class SelectableTableComponent < Katalyst::TableComponent
-  include Katalyst::Table::Selectable
-```
-
-In both cases, you will need to configure the selection form that is generated
-for submitting changes to the items. This can be done by calling
-
-```ruby
-table.with_selection
-```
-`with_selection` accepts the following attributes:
-* `primary_key` - the primary key field to store for the selection, defaults to
-  `:id`
-  
-In your row view template, you will need to call `row.selection` to generate the
-selection column. This renders a checkbox to select/deselect the individual row 
-in the table. Selection is persisted on sort if sorting is enabled.
-
-## Form component
-
-The metadata for the selection is stored separately in the selectable form 
-component which must be rendered separately in the view. This generates a form
-which contains the hidden inputs for the selected rows. As the actions will
-likely be attached to different endpoints, the form itself does not have an
-`action`; instead, this must be specified manually for each action you want to
-perform via the `formaction` and `formmethod` attributes. We can use this to
-generate actions such as CSV download and archiving/activation:
 ```erb
-<%= render table.selection do |form| %>
-  <%= tag.button "Download", formaction: resources_path(format: :csv), formmethod: "GET" %>
-  <%= tag.button "Activate", formatction: "/resources/activate", formmethod: "PUT" %>
+<%= table_with(collection:, generate_ids: true) do |row| %>
+  <% row.select %>
+  <% row.cell :name, label: "Resource partial" %>
+  <% row.boolean :active, class: "active" %>
 <% end %>
 ```
 
-## Example
+You will also need to create a form for holding and submitting the selected rows
+data and providing actions to perform on the selected data rows:
 
-A full example of the set up for csv downloads and activation might look like the following.
+The form itself does not have an `action`; instead, you must be specify actions and methods
+manually for each action you want to perform by setting `formaction` and `formmethod` on
+the action buttons you add the the form. For example:
+
+```erb
+<%= table_selection_with(collection:) do %>
+  <%= tag.button "Download", formaction: resources_path(format: :csv), formmethod: :get %>
+  <%= tag.button "Activate", formaction: activate_resources_path, formmethod: :put %>
+<% end %>
+```
+
+To complete the example outlined above, you could implement the following:
 
 ### Routes
 ```ruby
 # routes.rb
 resources :resources do
-  put :activate, on: :collection
+  put :activate, path: "active", on: :collection
 end
 ```
 
@@ -74,24 +45,29 @@ end
 # resources_controller.rb
 class ResourcesController < ApplicationController
   def index
-    @collection = Collection.with_params(params).apply(Resource.all)
+    collection = Collection.with_params(params).apply(Resource.all)
     
     respond_to do |format|
-      format.html { render locals: { collection: @collection } }
-      format.csv { render body: generate_csv_from_collection(@collection) }
+      format.html { render locals: { collection: } }
+      format.csv { render body: generate_csv_from_collection(collection:) }
     end
   end
-  
+
   def activate
     collection = Collection.with_params(params).apply(Resource.all)
-    collection.items.update_all(active: true)
+
+    collection.items.update_all(active: true) if collection.id.any?
+
     redirect_back fallback_location: resources_path, status: :see_other
   end
   
   private
-  
-  def generate_csv_from_collection(collection)
-    # ...
+
+  def generate_csv_from_collection(collection:)
+    CSV.generate do |csv|
+      csv << %w[id name]
+      collection.items.pluck(:id, :name).each { |item| csv << item }
+    end
   end
 
   class Collection < Katalyst::Tables::Collection::Base
@@ -100,31 +76,8 @@ class ResourcesController < ApplicationController
     attribute :id, default: -> { [] }
 
     def filter
-      self.items = items.where(id: id) if id.any?
+      self.items = items.where(id:) if id.any?
     end
   end
 end
 ```
-
-### Views
-In the index, render the table selection form and the table separately:
-```erb
-<% table = Katalyst::TableComponent.new(collection: collection)
-   table.extend(Katalyst::Tables::Selectable)
-   table.with_selection %>
-   
-<%= table.selection do |form| %>
-  <%= tag.button "Download", formaction: resources_path(format: :csv), formmethod: "GET" %>
-  <%= tag.button "Activate", formaction: activate_resources_path, formmethod: "PUT" %>
-<% end %>
-    
-<%= render table do |row| %>
-  <% row.selection %>
-  
-  <% row.cell :name, label: "Resource partial" %>
-  <% row.cell :active do |cell| %>
-    <%= cell.value ? "Yes" : "No" %>
-  <% end %>
-<% end %>
-```
-

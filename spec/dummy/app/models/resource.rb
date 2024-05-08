@@ -6,4 +6,6 @@ class Resource < ApplicationRecord
   has_one_attached :image do |image|
     image.variant :thumb, resize_to_fill: [100, 100]
   end
+
+  scope :active, -> { where(active: true) }
 end

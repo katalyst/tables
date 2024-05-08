@@ -1,25 +1,25 @@
-# Identifiable extension
+# Katalyst::Tables::Identifiable
 
-The Identifiable extension adds default dom ids to the table and rows.
+`Identifiable` adds default dom ids to the table and data rows:
 
-The extension can be enabled on a specific table instance or mixed in to a
-table component class. In either case, the extension will add new functionality
-to the table component and any nested row components.
+```html
+<table id="people">
+  <thead>
+    <tr><th>Name</th></tr>
+  </thead>
+  <tbody>
+    <tr id="person_1"><td>John Doe</td></tr>
+  </tbody>
+</table>
+```
 
 ## Usage
 
-You can add the selectable extension to an existing table instance by calling
-extend on the table instance:
+The extension is included by default and can be enabled by passing `generate_ids: true`
+the `table_with` helper or any table component.
 
-```ruby
-table = Katalyst::TableComponent.new(collection:)
-table.extend(Katalyst::Table::Identifiable)
-```
-
-You can also include the extension in a table component class:
-
-```ruby
-
-class IdentifiableTableComponent < Katalyst::TableComponent
-  include Katalyst::Table::Identifiable
+```erb
+<%= table_with(collection:, generate_ids: true) do |table| %>
+  <%= table.text :name %>
+<% end %>
 ```

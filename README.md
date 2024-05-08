@@ -24,23 +24,38 @@ import tables from "@katalyst/tables";
 application.load(tables);
 ```
 
+```scss
+// app/assets/stylesheets/application.scss
+@use "@katalyst/tables";
+```
+
 ## Usage
 
 This gem provides entry points for backend and frontend concerns:
-* `Katalyst::TableComponent` can be used render encapsulated tables, it calls a
-  partial for each row.
+* `Katalyst::TableComponent` can be used render encapsulated tables.
 * `Katalyst::Tables::Frontend` provides `table_with` for inline table generation
 * `Katalyst::Tables::Collection::Base` provides a default entry point for
   building collections in your controller actions.
 
-## Frontend
+### Frontend
 
-Use `Katalyst::TableComponent` to build a table component from an ActiveRecord
-collection, or from a `Katalyst::Tables::Collection::Base` instance.
+Add `include Katalyst::Tables::Frontend` to your `ApplicationHelper` or similar.
 
-For example, if you render `Katalyst::TableComponent.new(collection: @people)`,
-the table component will look for a partial called `_person.html+row.erb` and
-render it for each row (and once for the header row).
+You can use the `table_with` helper to generate a table inline in your view without explicitly interacting with the
+table component. This is the preferred approach when creating tables. However, if the table is complex or you need to 
+reuse it, you should consider moving the definition of the row into a partial.
+
+```erb
+<%= table_with collection: @people do |row, person| %>
+  <% row.text :name do |cell| %>
+    <%= link_to cell.value, [:edit, person] %>
+  <% end %>
+  <% row.text :email %>
+<% end %>
+```
+
+By not providing a block to the `table_with` call, the gem will look for a partial called `_person.html+row.erb` to
+render each row:
 
 ```erb
 <%# locals: { row:, person: nil } %>
@@ -50,7 +65,7 @@ render it for each row (and once for the header row).
 <% row.cell :email %>
 ```
 
-The table component will call your partial once per row and accumulate the cells
+The table will call your block / partial once per row and accumulate the cells
 you generate into rows, including a header row:
 
 ```html
@@ -79,33 +94,17 @@ You can customize the partial and/or the name of the resource in a similar style
 to view partials:
 
 ```erb
-<%= render Katalyst::TableComponent.new(collection: @employees, as: :person, partial: "person") %>
-``` 
-
-### Inline tables
-
-You can use the `table_with` helper to generate a table inline in your view without explicitly interacting with the
-table component. This is primarily intended for backwards compatibility, but it can be useful for simple tables.
-
-Add `include Katalyst::Tables::Frontend` to your `ApplicationHelper` or similar.
-
-```erb
-<%= table_with collection: @people do |row, person| %>
-  <% row.cell :name do |cell| %>
-    <%= link_to cell.value, [:edit, person] %>
-  <% end %>
-  <% row.cell :email %>
-<% end %>
+<%= table_with(collection: @employees, as: :person, partial: "person") %>
 ```
 
 ### HTML Attributes
 
 You can add custom attributes on table, row, and cell tags.
 
-The table tag takes attributes passed to `TableComponent` or via the call to `table_with`, similar to `form_with`:
+The table tag takes attributes passed to `table_with` helper, similar to `form_with`:
 
 ```erb
-<%= TableComponent.new(collection: @people, id: "people-table")
+<%= table_with(collection: @people, id: "people-table")
 ```
 
 Cells support the same approach:
@@ -124,7 +123,7 @@ generation.
 Note: because the row builder gets called to generate the header row, you may need to guard calls that access the
 `person` directly as shown in the previous example. You could also check whether `person` is present.
 
-#### Headers
+### Headers
 
 Tables will automatically generate a header row for you by calling your row partial or provided block with no object.
 During this call, `row.header?` is true, `row.body?` is false, and the object (`person`) is nil.
@@ -168,7 +167,7 @@ the value you can pass a block instead:
 <% end %>
 ```
 
-In the context of the block you have access the cell builder if you simply
+In the context of the block you have access the cell component if you simply
 want to extend the default behaviour:
 
 ```erb
@@ -206,80 +205,24 @@ class PeopleController < ApplicationController
 end
 ```
 
-Collections can be passed directly to `TableComponent` and it will automatically
+Collections can be passed directly to `table_with` method and it will automatically
 detect features such as sorting and generate the appropriate table header links.
 
 ```erb
-<%= render TableComponent.new(collection: @people) %>
-```
-
-## Sort
-
-When sort is enabled, table columns will be automatically sortable in the
-frontend for any column that corresponds to an attribute on the model. You can
-also add sorting to non-attribute columns by defining a scope in your
-model:
-
-```
-scope :order_by_status, ->(direction) { ... }
-```
-
-You can also use sort without using collections, this was the primary backend
-interface for V1 and takes design cues from Pagy. Start by including the backend
-in your controller(s):
-
-```ruby
-include Katalyst::Tables::Backend
-```
-
-Now, in your controller index actions, you can sort your active record
-collections based on the `sort` param which is appended to the current URL as a
-get parameter when a user clicks on a column header.
-
-Building on our example from earlier:
-
-```ruby
-class PeopleController < ApplicationController
-  include Katalyst::Tables::Backend
-  
-  def index
-    @people = People.all
-
-    @sort, @people = table_sort(@people) # sort
-  end
-end
-```
-
-You then add the sort form object to your view so that it can add column header
-links and show the current sort state:
-
-```erb
-<%= table_with collection: @people, sort: @sort do |row, person| %>
-  <%= row.cell :name %>
-  <%= row.cell :email %>
-<% end %>
-```
-
-## Pagination
-
-This gem designed to work with [pagy](https://github.com/ddnexus/pagy/).
-
-If you use collections and enable pagination then pagy will be called internally
-and the pagy metadata will be available as `pagination` on the collection.
-
-`Katalyst::Tables::PagyNavComponent` can be used to render the pagination links
-for a collection.
-
-```erb
-<%= render Katalyst::Tables::PagyNavComponent.new(collection: @people) %>
+<%= table_with(collection: @people) %>
 ```
 
 ## Extensions
 
-The following extensions are available:
+The following extensions are available and activated by default:
 
+* [Identifiable](docs/identifiable.md) - adds default dom ids to the table and data rows.
 * [Orderable](docs/orderable.md) - adds bulk-update for 'ordinal' columns via dragging rows in the table.
+* [Pagination](docs/pagination.md) - handles paginating of data in the collection.
 * [Selectable](docs/selectable.md) - adds bulk-action support for rows in the table.
+* [Sortable](docs/sortable.md) - table column headers that can be sorted will be wrapped in links.
+
+You can disable extensions by altering the `Katalyst::Tables.config.component_extensions` before initialization.
 
 ## Customization
 
@@ -323,30 +266,21 @@ And the customized component:
 
 ```ruby
 class ActionTableComponent < Katalyst::TableComponent
+  def actions(column = :_actions, label: "", heading: false, **, &)
+    with_cell(ActionsComponent.new(collection:, row:, column:, record:, label:, heading:, **), &)
+  end
 
-  config.header_row = "ActionHeaderRow"
-  config.body_row   = "ActionBodyRow"
-  config.body_cell  = "ActionBodyCell"
-  
   def default_html_attributes
     { class: "action-table" }
   end
 
-  class ActionHeaderRow < Katalyst::Tables::HeaderRowComponent
-    def actions(&block)
-      cell(:actions, class: "actions", label: "", &block)
+  class ActionsComponent < Katalyst::Tables::CellComponent
+    def action(label, href, **opts)
+      content_tag :a, label, { href: }.merge(opts)
     end
-  end
 
-  class ActionBodyRow < Katalyst::Tables::BodyRowComponent
-    def actions(&block)
-      cell(:actions, class: "actions", &block)
-    end
-  end
-
-  class ActionBodyCell < Katalyst::Tables::BodyCellComponent
-    def action(label, href, **attrs)
-      content_tag(:a, label, href: href, **attrs)
+    def default_html_attributes
+      { class: "actions" }
     end
   end
 end
