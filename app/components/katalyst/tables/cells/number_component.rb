@@ -2,19 +2,19 @@
 
 module Katalyst
   module Tables
-    module Body
+    module Cells
       # Formats the value as a number
       #
       # Adds a class to the cell to allow for custom styling
-      class NumberComponent < BodyCellComponent
+      class NumberComponent < CellComponent
         def rendered_value
           value.present? ? number_to_human(value) : ""
         end
 
-        using Katalyst::HtmlAttributes::HasHtmlAttributes
+        private
 
         def default_html_attributes
-          { class: "type-number" }.merge_html(super)
+          { class: "type-number" }
         end
       end
     end

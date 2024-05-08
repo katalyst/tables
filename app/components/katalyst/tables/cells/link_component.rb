@@ -2,26 +2,22 @@
 
 module Katalyst
   module Tables
-    module Body
+    module Cells
       # Displays a link to the record
       # The link text is the value of the attribute
-      # @see Koi::Tables::BodyRowComponent#link
-      class LinkComponent < BodyCellComponent
+      class LinkComponent < CellComponent
         define_html_attribute_methods :link_attributes
 
-        def initialize(table, record, attribute, url:, link: {}, **options)
-          super(table, record, attribute, **options)
+        def initialize(url:, link:, **)
+          super(**)
 
           @url = url
 
           self.link_attributes = link
         end
 
-        def call
-          content # ensure content is set before rendering options
-
-          link = content.present? && url.present? ? link_to(content, url, **link_attributes) : content.to_s
-          content_tag(@type, link, **html_attributes)
+        def rendered_value
+          link_to(value, url, **link_attributes)
         end
 
         def url
@@ -34,6 +30,12 @@ module Katalyst
           else
             @url
           end
+        end
+
+        private
+
+        def default_html_attributes
+          { class: "type-link" }
         end
       end
     end

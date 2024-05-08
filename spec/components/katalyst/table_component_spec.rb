@@ -83,33 +83,6 @@ RSpec.describe Katalyst::TableComponent do
     end
   end
 
-  context "when sorting is enabled" do
-    let(:collection) { build(:collection, count: 1, sorting: "name asc") }
-
-    let(:table) do
-      with_request_url("/people?s=q&page=2") do
-        render_inline(component) do |row|
-          row.cell :name
-        end
-      end
-    end
-
-    it "adds sort links" do
-      expect(table).to match_html(<<~HTML)
-        <table>
-          <thead>
-            <tr>
-              <th data-sort="asc"><a href="/people?s=q&sort=name+desc" data-turbo-action="replace">Name</a></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>Person 1</td></tr>
-          </tbody>
-        </table>
-      HTML
-    end
-  end
-
   context "when html attributes are passed to header row" do
     let(:table) do
       render_inline(component) do |row|

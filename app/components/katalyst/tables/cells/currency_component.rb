@@ -2,14 +2,14 @@
 
 module Katalyst
   module Tables
-    module Body
+    module Cells
       # Formats the value as a money value
       #
       # The value is expected to be in cents.
       # Adds a class to the cell to allow for custom styling
-      class CurrencyComponent < BodyCellComponent
-        def initialize(table, record, attribute, options: {}, **html_attributes)
-          super(table, record, attribute, **html_attributes)
+      class CurrencyComponent < CellComponent
+        def initialize(options:, **)
+          super(**)
 
           @options = options
         end
@@ -18,10 +18,10 @@ module Katalyst
           value.present? ? number_to_currency(value / 100.0, @options) : ""
         end
 
-        using Katalyst::HtmlAttributes::HasHtmlAttributes
+        private
 
         def default_html_attributes
-          { class: "type-currency" }.merge_html(super)
+          { class: "type-currency" }
         end
       end
     end

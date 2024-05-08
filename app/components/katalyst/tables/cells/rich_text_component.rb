@@ -2,15 +2,18 @@
 
 module Katalyst
   module Tables
-    module Body
+    module Cells
       # Displays the plain text for rich text content
       #
       # Adds a title attribute to allow for hover over display of the full content
-      class RichTextComponent < BodyCellComponent
-        using Katalyst::HtmlAttributes::HasHtmlAttributes
+      class RichTextComponent < CellComponent
+        private
 
         def default_html_attributes
-          { title: value.to_plain_text }.merge_html(super)
+          {
+            class: "type-rich-text",
+            title: (value.to_plain_text unless row.header?),
+          }
         end
       end
     end

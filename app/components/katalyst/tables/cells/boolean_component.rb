@@ -9,6 +9,8 @@ module Katalyst
           value ? "Yes" : "No"
         end
 
+        private
+
         def default_html_attributes
           { class: "type-boolean" }
         end

@@ -2,17 +2,17 @@
 
 module Katalyst
   module Tables
-    module Body
+    module Cells
       # Shows an attachment
       #
       # The value is expected to be an ActiveStorage attachment
       #
-      # If it is representable, shows as a image tag using a default variant named :thumb.
+      # If it is representable, shows as a image tag using the specified variant.
       #
       # Otherwise shows as a link to download.
-      class AttachmentComponent < BodyCellComponent
-        def initialize(table, record, attribute, variant: :thumb, **options)
-          super(table, record, attribute, **options)
+      class AttachmentComponent < CellComponent
+        def initialize(variant:, **)
+          super(**)
 
           @variant = variant
         end
@@ -46,9 +46,13 @@ module Katalyst
 
         private
 
+        def default_html_attributes
+          { class: "type-attachment" }
+        end
+
         # Find the reflective variant by name (i.e. :thumb by default)
         def named_variant
-          object.attachment_reflections[@attribute.to_s].named_variants[@variant.to_sym]
+          record.attachment_reflections[@column.to_s].named_variants[@variant.to_sym]
         end
       end
     end
