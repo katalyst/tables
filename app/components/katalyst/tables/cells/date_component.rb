@@ -2,13 +2,13 @@
 
 module Katalyst
   module Tables
-    module Body
+    module Cells
       # Formats the value as a date
-      # @param format [String] date format, defaults to :table
+      # @param format [String] date format
       # @param relative [Boolean] if true, the date may be(if within 5 days) shown as a relative date
-      class DateComponent < BodyCellComponent
-        def initialize(table, record, attribute, format: :table, relative: true, **options)
-          super(table, record, attribute, **options)
+      class DateComponent < CellComponent
+        def initialize(format:, relative:, **)
+          super(**)
 
           @format   = format
           @relative = relative
@@ -24,6 +24,13 @@ module Katalyst
 
         private
 
+        def default_html_attributes
+          {
+            class: "type-date",
+            title: (absolute_time if row.body? && @relative && value.present? && days_ago_in_words(value).present?),
+          }
+        end
+
         def absolute_time
           value.present? ? I18n.l(value, format: @format) : ""
         end
@@ -34,10 +41,6 @@ module Katalyst
           else
             days_ago_in_words(value)&.capitalize || absolute_time
           end
-        end
-
-        def default_html_attributes
-          @relative && value.present? && days_ago_in_words(value).present? ? { title: absolute_time } : {}
         end
 
         def days_ago_in_words(value)

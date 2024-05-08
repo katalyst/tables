@@ -2,17 +2,17 @@
 
 module Katalyst
   module Tables
-    module Body
+    module Cells
       # Formats the value as a datetime
-      # @param format [String] datetime format, defaults to :admin
+      # @param format [String] datetime format
       # @param relative [Boolean] if true, the datetime may be(if today) shown as a relative date/time
-      class DateTimeComponent < BodyCellComponent
+      class DateTimeComponent < CellComponent
         include ActionView::Helpers::DateHelper
 
-        def initialize(table, record, attribute, format: :table, relative: true, **options)
-          super(table, record, attribute, **options)
+        def initialize(format:, relative:, **)
+          super(**)
 
-          @format   = format
+          @format = format
           @relative = relative
         end
 
@@ -25,6 +25,13 @@ module Katalyst
         end
 
         private
+
+        def default_html_attributes
+          {
+            class: "type-datetime",
+            title: (absolute_time if row.body? && @relative && today?),
+          }
+        end
 
         def absolute_time
           value.present? ? I18n.l(value, format: @format) : ""
@@ -46,10 +53,6 @@ module Katalyst
           else
             absolute_time
           end
-        end
-
-        def default_html_attributes
-          @relative && today? ? { title: absolute_time } : {}
         end
       end
     end

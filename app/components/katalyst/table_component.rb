@@ -119,7 +119,167 @@ module Katalyst
     # @example Render a generic text column for any value that supports `to_s`
     #   <% row.cell :name %> # label => <th>Name</th>, data => <td>John Doe</td>
     def cell(column, label: nil, heading: false, **, &)
-      with_cell(Tables::CellComponent.new(collection:, row:, column:, record:, label:, heading:, **), &)
+      with_cell(Tables::CellComponent.new(
+                  collection:, row:, column:, record:, label:, heading:, **,
+                ), &)
+    end
+
+    alias_method :text, :cell
+
+    # Generates a column from boolean values rendered as "Yes" or "No".
+    #
+    # @param column [Symbol] the column's name, called as a method on the record
+    # @param label [String|nil] the label to use for the column header
+    # @param heading [boolean] if true, data cells will use `th` tags
+    # @param ** [Hash] HTML attributes to be added to column cells
+    # @param & [Proc] optional block to alter the cell content
+    # @return [void]
+    #
+    # @example Render a boolean column indicating whether the record is active
+    #   <% row.boolean :active %> # => <td>Yes</td>
+    def boolean(column, label: nil, heading: false, **, &)
+      with_cell(Tables::Cells::BooleanComponent.new(
+                  collection:, row:, column:, record:, label:, heading:, **,
+                ), &)
+    end
+
+    # Generates a column from date values rendered using I18n.l.
+    # The default format is :default, but it can be overridden.
+    #
+    # @param column [Symbol] the column's name, called as a method on the record
+    # @param label [String|nil] the label to use for the column header
+    # @param heading [boolean] if true, data cells will use `th` tags
+    # @param format [Symbol] the I18n date format to use when rendering
+    # @param relative [Boolean] if true, the date may be shown as a relative date (if within 5 days)
+    # @param ** [Hash] HTML attributes to be added to column cells
+    # @param & [Proc] optional block to alter the cell content
+    # @return [void]
+    #
+    # @example Render a date column describing when the record was created
+    #   <% row.date :created_at %> # => <td>29 Feb 2024</td>
+    def date(column, label: nil, heading: false, format: :default, relative: true, **, &)
+      with_cell(Tables::Cells::DateComponent.new(
+                  collection:, row:, column:, record:, label:, heading:, format:, relative:, **,
+                ), &)
+    end
+
+    # Generates a column from datetime values rendered using I18n.l.
+    # The default format is :default, but it can be overridden.
+    #
+    # @param column [Symbol] the column's name, called as a method on the record
+    # @param label [String|nil] the label to use for the column header
+    # @param heading [boolean] if true, data cells will use `th` tags
+    # @param format [Symbol] the I18n datetime format to use when rendering
+    # @param relative [Boolean] if true, the datetime may be(if today) shown as a relative date/time
+    # @param ** [Hash] HTML attributes to be added to column cells
+    # @param & [Proc] optional block to alter the cell content
+    # @return [void]
+    #
+    # @example Render a datetime column describing when the record was created
+    #   <% row.datetime :created_at %> # => <td>29 Feb 2024, 5:00pm</td>
+    def datetime(column, label: nil, heading: false, format: :default, relative: true, **, &)
+      with_cell(Tables::Cells::DateTimeComponent.new(
+                  collection:, row:, column:, record:, label:, heading:, format:, relative:, **,
+                ), &)
+    end
+
+    # Generates a column from numeric values formatted appropriately.
+    #
+    # @param column [Symbol] the column's name, called as a method on the record
+    # @param label [String|nil] the label to use for the column header
+    # @param heading [boolean] if true, data cells will use `th` tags
+    # @param ** [Hash] HTML attributes to be added to column cells
+    # @param & [Proc] optional block to alter the cell content
+    # @return [void]
+    #
+    # @example Render the number of comments on a post
+    #   <% row.number :comment_count %> # => <td>0</td>
+    def number(column, label: nil, heading: false, **, &)
+      with_cell(Tables::Cells::NumberComponent.new(
+                  collection:, row:, column:, record:, label:, heading:, **,
+                ), &)
+    end
+
+    # Generates a column from numeric values rendered using `number_to_currency`.
+    #
+    # @param column [Symbol] the column's name, called as a method on the record
+    # @param label [String|nil] the label to use for the column header
+    # @param heading [boolean] if true, data cells will use `th` tags
+    # @param options [Hash] options to be passed to `number_to_currency`
+    # @param ** [Hash] HTML attributes to be added to column cells
+    # @param & [Proc] optional block to alter the cell content
+    # @return [void]
+    #
+    # @example Render a currency column for the price of a product
+    #   <% row.currency :price %> # => <td>$3.50</td>
+    def currency(column, label: nil, heading: false, options: {}, **, &)
+      with_cell(Tables::Cells::CurrencyComponent.new(
+                  collection:, row:, column:, record:, label:, heading:, options:, **,
+                ), &)
+    end
+
+    # Generates a column containing HTML markup.
+    #
+    # @param column [Symbol] the column's name, called as a method on the record
+    # @param label [String|nil] the label to use for the column header
+    # @param heading [boolean] if true, data cells will use `th` tags
+    # @param ** [Hash] HTML attributes to be added to column cells
+    # @param & [Proc] optional block to alter the cell content
+    # @return [void]
+    #
+    # @note This method assumes that the method returns HTML-safe content.
+    #   If the content is not HTML-safe, it will be escaped.
+    #
+    # @example Render a description column containing HTML markup
+    #   <% row.rich_text :description %> # => <td><em>Emphasis</em></td>
+    def rich_text(column, label: nil, heading: false, options: {}, **, &)
+      with_cell(Tables::Cells::RichTextComponent.new(
+                  collection:, row:, column:, record:, label:, heading:, options:, **,
+                ), &)
+    end
+
+    # Generates a column that links to the record's show page (by default).
+    #
+    # @param column [Symbol] the column's name, called as a method on the record
+    # @param label [String|nil] the label to use for the column header
+    # @param heading [boolean] if true, data cells will use `th` tags
+    # @param url [Symbol|String|Proc] arguments for url_For, defaults to the record
+    # @param link [Hash] options to be passed to the link_to helper
+    # @param ** [Hash] HTML attributes to be added to column cells
+    # @param & [Proc] optional block to alter the cell content
+    # @return [void]
+    #
+    # @example Render a column containing the record's title, linked to its show page
+    #   <% row.link :title %> # => <td><a href="/admin/post/15">About us</a></td>
+    # @example Render a column containing the record's title, linked to its edit page
+    #   <% row.link :title, url: :edit_admin_post_path do |cell| %>
+    #      Edit <%= cell %>
+    #   <% end %>
+    #   # => <td><a href="/admin/post/15/edit">Edit About us</a></td>
+    # TODO: move to Koi, this doesn't seem generally applicable (example is specific to Koi)
+    def link(column, label: nil, heading: false, url: record, link: {}, **, &)
+      with_cell(Tables::Cells::LinkComponent.new(
+                  collection:, row:, column:, record:, label:, heading:, url:, link:, **,
+                ), &)
+    end
+
+    # Generates a column that renders an ActiveStorage attachment as a downloadable link.
+    #
+    # @param column [Symbol] the column's name, called as a method on the record
+    # @param label [String|nil] the label to use for the column header
+    # @param heading [boolean] if true, data cells will use `th` tags
+    # @param variant [Symbol] the variant to use when rendering the image (default :thumb)
+    # @param ** [Hash] HTML attributes to be added to column cells
+    # @param & [Proc] optional block to alter the cell content
+    # @return [void]
+    #
+    # @example Render a column containing a download link to the record's background image
+    #   <% row.attachment :background %> # => <td><a href="...">background.png</a></td>
+    # TODO: move to Koi, not generally applicable
+    def attachment(column, label: nil, heading: false, variant: :thumb, **, &)
+      with_cell(Tables::Cells::AttachmentComponent.new(
+                  collection:, row:, column:, record:, label:, heading:, variant:, **,
+                ), &)
     end
 
     # Is selection enabled for this table?
