@@ -117,7 +117,7 @@ Rows do not get called directly, so instead you can assign to `html_attributes` 
 generation.
 
 ```erb
-<% row.html_attributes = { id: person.id } if row.body? %>
+<% row.update_html_attributes(id: person.id) if row.body? %>
 ```
 
 Note: because the row builder gets called to generate the header row, you may need to guard calls that access the
@@ -171,37 +171,30 @@ In the context of the block you have access the cell component if you simply
 want to extend the default behaviour:
 
 ```erb
+<%# @type [Katalyst::Tables::CellComponent] cell %>
 <% row.text :name do |cell| %>
-  <%= link_to cell.value, person %>
+  <%= link_to cell, person %>
 <% end %>
 ```
 
-You can also assign to `html_attributes` on the cell builder, similar to the row
-builder, but please note that this will replace any options passed to the cell
-as arguments.
+You can also update `html_attributes` on the cell builder, similar to the row
+builder, see `katalyst-html-attributes` for details.
 
 ## Collections
 
 The `Katalyst::Tables::Collection::Base` class provides a convenient way to
 manage collections in your controller actions. It is designed to be used with
 Pagy for pagination and provides built-in sorting when used with ActiveRecord
-collections. Sorting and Pagination are off by default, but you can create
-a custom `ApplicationCollection` class that sets them on by default.
+collections. Sorting and Pagination are off by default, you can either set them
+on creation or create a custom `Collection` class that sets them on by default:
 
 ```ruby
-class ApplicationCollection < Katalyst::Tables::Collection::Base
+# in #index
+Katalyst::Tables::Collection::Base.new(sorting: "name asc", pagination: true)
+# or as a nested class in your controller
+class Collection < Katalyst::Tables::Collection::Base
   config.sorting = "name asc" # requires models have a name attribute
   config.pagination = true
-end
-```
-
-You can then use this class in your controller actions:
-
-```ruby
-class PeopleController < ApplicationController
-  def index
-    @people = ApplicationCollection.new.with_params(params).apply(People.all)
-  end
 end
 ```
 
@@ -209,7 +202,7 @@ Collections can be passed directly to `table_with` method and it will automatica
 detect features such as sorting and generate the appropriate table header links.
 
 ```erb
-<%= table_with(collection: @people) %>
+<%= table_with(collection:) %>
 ```
 
 ## Extensions
@@ -221,70 +214,9 @@ The following extensions are available and activated by default:
 * [Pagination](docs/pagination.md) - handles paginating of data in the collection.
 * [Selectable](docs/selectable.md) - adds bulk-action support for rows in the table.
 * [Sortable](docs/sortable.md) - table column headers that can be sorted will be wrapped in links.
+* [Customization](docs/customization.md) - customize the table and cell rendering.
 
 You can disable extensions by altering the `Katalyst::Tables.config.component_extensions` before initialization.
-
-## Customization
-
-A common pattern we use is to have a cell at the end of the table for actions. For example:
-
-```html
-<table class="action-table">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th class="actions"></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Alice</td>
-      <td class="actions">
-        <a href="/people/1/edit">Edit</a>
-        <a href="/people/1" method="delete">Delete</a>
-      </td>
-    </tr>
-  </tbody>
-</table>
-```
-
-You can write a custom component that helps generate this type of table by
-adding the required classes and adding helpers for generating the actions.
-This allows for a declarative table syntax, something like this:
-
-```erb
-<%= render ActionTableComponent.new(collection:) do |row| %>
-  <% row.text :name %>
-  <% row.actions do |cell| %>
-    <%= cell.action "Edit", :edit %>
-    <%= cell.action "Delete", :delete, method: :delete %>
-  <% end %>
-<% end %>
-```
-
-And the customized component:
-
-```ruby
-class ActionTableComponent < Katalyst::TableComponent
-  def actions(column = :_actions, label: "", heading: false, **, &)
-    with_cell(ActionsComponent.new(collection:, row:, column:, record:, label:, heading:, **), &)
-  end
-
-  def default_html_attributes
-    { class: "action-table" }
-  end
-
-  class ActionsComponent < Katalyst::Tables::CellComponent
-    def action(label, href, **opts)
-      content_tag :a, label, { href: }.merge(opts)
-    end
-
-    def default_html_attributes
-      { class: "actions" }
-    end
-  end
-end
-```
 
 ## Development
 
