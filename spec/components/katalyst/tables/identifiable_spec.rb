@@ -10,7 +10,7 @@ RSpec.describe Katalyst::Tables::Identifiable do
 
   it "renders tables with the expected id and data attributes" do
     component = Katalyst::TableComponent.new(collection:, generate_ids: true)
-    html = render_inline(component) { |row| row.cell(:name) }
+    html = render_inline(component) { |row| row.text(:name) }
     expect(html).to match_html(<<~HTML)
       <table id="people">
         <thead><tr><th>Name</th></tr></thead>
@@ -23,7 +23,7 @@ RSpec.describe Katalyst::Tables::Identifiable do
 
   it "supports minimal tables without header or caption" do
     component = Katalyst::TableComponent.new(collection:, caption: false, header: false, generate_ids: true)
-    html = render_inline(component) { |row| row.cell(:name) }
+    html = render_inline(component) { |row| row.text(:name) }
     expect(html).to match_html(<<~HTML)
       <table id="people">
         <tbody>
@@ -37,7 +37,7 @@ RSpec.describe Katalyst::Tables::Identifiable do
     component = Katalyst::TableComponent.new(collection:, **Test::HTML_ATTRIBUTES, generate_ids: true)
     html = render_inline(component) do |row, person|
       row.html_attributes = { id: "test_#{person.id}" } if person
-      row.cell(:name)
+      row.text(:name)
     end
     expect(html).to match_html(<<~HTML)
       <table id="ID" class="CLASS" style="style" aria-label="LABEL" data-foo="bar">

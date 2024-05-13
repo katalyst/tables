@@ -19,7 +19,7 @@
 <% end %>
 
 <%= table_with(collection: @people) do |row, person| %>
-  <% row.cell :name %>
+  <% row.text :name %>
   <% row.boolean :active %>
   <% row.date :created_at, relative: person&.active %>
   <% row.datetime :created_at %>

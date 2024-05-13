@@ -10,7 +10,7 @@
 
 <%= table_with(collection:) do |row| %>
   <% row.ordinal %>
-  <% row.cell :question %>
-  <% row.cell :answer %>
+  <% row.text :question, heading: true %>
+  <% row.text :answer %>
 <% end %>
 <%= table_orderable_with(collection:, url: order_faqs_path) %>

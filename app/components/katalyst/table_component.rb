@@ -4,10 +4,10 @@ module Katalyst
   # A component for rendering a table from a collection, with a header row.
   # ```erb
   # <%= Katalyst::TableComponent.new(collection: @people) do |row, person| %>
-  #   <%= row.cell :name do |cell| %>
+  #   <%= row.text :name do |cell| %>
   #     <%= link_to cell.value, person %>
   #   <% end %>
-  #   <%= row.cell :email %>
+  #   <%= row.text :email %>
   # <% end %>
   # ```
   class TableComponent < ViewComponent::Base
@@ -133,7 +133,7 @@ module Katalyst
     # @return [void]
     #
     # @example Render a generic text column for any value that supports `to_s`
-    #   <% row.cell :name %> # label => <th>Name</th>, data => <td>John Doe</td>
+    #   <% row.text :name %> # label => <th>Name</th>, data => <td>John Doe</td>
     def text(column, label: nil, heading: false, **, &)
       with_cell(Tables::CellComponent.new(
                   collection:, row:, column:, record:, label:, heading:, **,

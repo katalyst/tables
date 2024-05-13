@@ -7,7 +7,7 @@ RSpec.describe Katalyst::Tables::BodyRowComponent do
 
   let(:table) { Katalyst::TableComponent.new(collection:) }
   let(:collection) { create_list(:person, 1) }
-  let(:rendered) { render_inline(table) { |row| row.cell(:name) } }
+  let(:rendered) { render_inline(table) { |row| row.text(:name) } }
   let(:row) { rendered.at_css("tbody tr") }
 
   context "with an empty table" do

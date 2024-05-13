@@ -36,8 +36,8 @@ module Katalyst
       # @param & [Proc] optional block to wrap the cell content
       # @return [void]
       #
-      # @example Render a generic text column for any value that supports `to_s`
-      #   <% row.cell :name %> # label => <th>Name</th>, data => <td>John Doe</td>
+      # @example Render a column with a drag-and-drop handle for users to reorder rows
+      #   <% row.ordinal %> # label => <th></th>, data => <td ...>⠿</td>
       def ordinal(column = :ordinal, primary_key: :id, **, &)
         initialize_orderable if row.header?
 

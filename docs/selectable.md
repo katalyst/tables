@@ -11,7 +11,7 @@ by adding a `select` column:
 ```erb
 <%= table_with(collection:, generate_ids: true) do |row| %>
   <% row.select %>
-  <% row.cell :name, label: "Resource partial" %>
+  <% row.text :name, label: "Resource partial" %>
   <% row.boolean :active, class: "active" %>
 <% end %>
 ```

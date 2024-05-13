@@ -59,10 +59,10 @@ render each row:
 
 ```erb
 <%# locals: { row:, person: nil } %>
-<% row.cell :name do |cell| %>
+<% row.text :name do |cell| %>
   <%= link_to cell.value, [:edit, person] %>
 <% end %>
-<% row.cell :email %>
+<% row.text :email %>
 ```
 
 The table will call your block / partial once per row and accumulate the cells
@@ -110,7 +110,7 @@ The table tag takes attributes passed to `table_with` helper, similar to `form_w
 Cells support the same approach:
 
 ```erb
-<%= row.cell :name, class: "name" %>
+<%= row.text :name, class: "name" %>
 ```
 
 Rows do not get called directly, so instead you can assign to `html_attributes` on the row builder to customize row tag
@@ -132,14 +132,14 @@ All cells generated in the table header iteration will automatically be header c
 in your body rows by passing `heading: true` when you generate the cell.
 
 ```erb
-<% row.cell :id, heading: true %>
+<% row.number :id, heading: true %>
 ```
 
 The table header cells default to showing the capitalized column name, but you can customize this in one of two ways:
 
 * Set the value inline
     ```erb
-    <% row.cell :id, label: "ID" %>
+    <% row.number :id, label: "ID" %>
     ```
 * Define a translation for the attribute
     ```yml
@@ -162,7 +162,7 @@ the table cell. This is often all you need to do, but if you do want to customis
 the value you can pass a block instead:
 
 ```erb
-<% row.cell :status do %>
+<% row.text :status do %>
   <%= person.password.present? ? "Active" : "Invited" %>
 <% end %>
 ```
@@ -171,7 +171,7 @@ In the context of the block you have access the cell component if you simply
 want to extend the default behaviour:
 
 ```erb
-<% row.cell :status do |cell| %>
+<% row.text :name do |cell| %>
   <%= link_to cell.value, person %>
 <% end %>
 ```
@@ -190,7 +190,7 @@ a custom `ApplicationCollection` class that sets them on by default.
 
 ```ruby
 class ApplicationCollection < Katalyst::Tables::Collection::Base
-  config.sorting = "name" # requires models have a name attribute
+  config.sorting = "name asc" # requires models have a name attribute
   config.pagination = true
 end
 ```
@@ -254,7 +254,7 @@ This allows for a declarative table syntax, something like this:
 
 ```erb
 <%= render ActionTableComponent.new(collection:) do |row| %>
-  <% row.cell :name %>
+  <% row.text :name %>
   <% row.actions do |cell| %>
     <%= cell.action "Edit", :edit %>
     <%= cell.action "Delete", :delete, method: :delete %>
