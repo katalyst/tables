@@ -78,7 +78,7 @@ end
 ```erb
 <%= table_with(collection:) do |row| %>
   <% row.ordinal %>
-  <% row.cell :name %>
+  <% row.text :name %>
 <% end %>
 <%= table_orderable_with(collection:, url: order_models_path) %>
 ```
@@ -140,7 +140,7 @@ end
 ```erb
 <%= table_with(collection: gallery.images) do |row| %>
   <% row.ordinal %>
-  <% row.cell :name %>
+  <% row.text :name %>
 <% end %>
 <%= table_orderable_with(collection:, url: @gallery, scope: "gallery[image_attributes]") %>
 ```

@@ -65,7 +65,7 @@ module Katalyst
       end
 
       # Serialize data for use in blocks, i.e.
-      #   row.cell(:name) { |cell| tag.span(cell) }
+      #   row.text(:name) { |cell| tag.span(cell) }
       def to_s
         # Note, this can't be `content` because the block is evaluated in order to produce content.
         rendered_value

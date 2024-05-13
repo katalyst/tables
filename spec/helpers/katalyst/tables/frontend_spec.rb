@@ -8,7 +8,7 @@ RSpec.describe Katalyst::Tables::Frontend do
   let(:collection) { build(:collection, count: 1) }
 
   it "renders tables" do
-    table_with(collection:) { |row| row.cell :name }
+    table_with(collection:) { |row| row.text :name }
     expect(rendered).to match_html(<<~HTML)
       <table>
         <thead><tr><th>Name</th></tr></thead>
@@ -18,7 +18,7 @@ RSpec.describe Katalyst::Tables::Frontend do
   end
 
   it "passes html_options to table tag" do
-    table_with(collection:, **Test::HTML_ATTRIBUTES) { |row| row.cell :name }
+    table_with(collection:, **Test::HTML_ATTRIBUTES) { |row| row.text :name }
 
     expect(rendered).to match_html(<<~HTML)
       <table id="ID" class="CLASS" style="style" data-foo="bar" aria-label="LABEL">
@@ -30,7 +30,7 @@ RSpec.describe Katalyst::Tables::Frontend do
 
   it "supports custom table components" do
     table_with(collection:, component: CustomTableComponent) do |row|
-      row.cell :name
+      row.text :name
     end
 
     expect(rendered).to match_html(<<~HTML)
@@ -52,7 +52,7 @@ RSpec.describe Katalyst::Tables::Frontend do
   it "supports custom table components via controller defaults" do
     allow(controller).to receive(:default_table_component).and_return(CustomTableComponent)
 
-    table_with(collection:) { |row| row.cell :name }
+    table_with(collection:) { |row| row.text :name }
 
     expect(rendered).to match_html(<<~HTML)
       <table class="custom-table">

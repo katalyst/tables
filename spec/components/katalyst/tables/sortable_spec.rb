@@ -17,7 +17,7 @@ RSpec.describe Katalyst::Tables::Sortable do
 
   it "omits sort when not configured on the collection" do
     expect(render_header(collection: Person.all) do |row|
-      row.cell(:name)
+      row.text(:name)
     end).to match_html(<<~HTML)
       <th>Name</th>
     HTML
@@ -25,7 +25,7 @@ RSpec.describe Katalyst::Tables::Sortable do
 
   it "renders sort link when enabled" do
     expect(render_header do |row|
-      row.cell(:name)
+      row.text(:name)
     end).to match_html(<<~HTML)
       <th data-sort="asc"><a data-turbo-action="replace" href="/people?sort=name+desc">Name</a></th>
     HTML
@@ -33,7 +33,7 @@ RSpec.describe Katalyst::Tables::Sortable do
 
   it "does not add sort link to unsupported columns" do
     expect(render_header do |row|
-      row.cell(:itself)
+      row.text(:itself)
     end).to match_html(<<~HTML)
       <th>Itself</th>
     HTML
@@ -41,15 +41,15 @@ RSpec.describe Katalyst::Tables::Sortable do
 
   it "does not render status on unsorted columns" do
     expect(render_header do |row|
-      row.cell(:created_at)
+      row.date(:created_at)
     end).to match_html(<<~HTML)
-      <th><a data-turbo-action="replace" href="/people?sort=created_at+asc">Created at</a></th>
+      <th class="type-date"><a data-turbo-action="replace" href="/people?sort=created_at+asc">Created at</a></th>
     HTML
   end
 
   it "does not cobber other html_attributes" do
     expect(render_header do |row|
-      row.cell(:name, data: { other: "" })
+      row.text(:name, data: { other: "" })
     end).to match_html(<<~HTML)
       <th data-sort="asc" data-other><a data-turbo-action="replace" href="/people?sort=name+desc">Name</a></th>
     HTML
@@ -57,7 +57,7 @@ RSpec.describe Katalyst::Tables::Sortable do
 
   it "omits unnecessary sort param linking to default sort" do
     expect(render_header(url: "/people?sort=name+desc") do |row|
-      row.cell(:name)
+      row.text(:name)
     end).to match_html(<<~HTML)
       <th data-sort="desc"><a data-turbo-action="replace" href="/people">Name</a></th>
     HTML

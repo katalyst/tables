@@ -5,7 +5,7 @@ require "rails_helper"
 RSpec.describe Katalyst::TableComponent do
   subject(:component) { described_class.new(collection:) }
 
-  let(:table) { render_inline(component) { |row| row.cell(:name) } }
+  let(:table) { render_inline(component) { |row| row.text(:name) } }
   let(:collection) { build(:collection, count: 1) }
 
   it "renders tables" do
@@ -48,7 +48,7 @@ RSpec.describe Katalyst::TableComponent do
   end
 
   it "renders caption for empty collections" do
-    table = render_inline(described_class.new(collection: build(:collection, count: 0))) { |row| row.cell(:name) }
+    table = render_inline(described_class.new(collection: build(:collection, count: 0))) { |row| row.text(:name) }
     expect(table).to match_html(<<~HTML)
       <table>
         <caption align="bottom">
@@ -87,7 +87,7 @@ RSpec.describe Katalyst::TableComponent do
     let(:table) do
       render_inline(component) do |row|
         row.html_attributes = Test::HTML_ATTRIBUTES if row.header?
-        row.cell :name
+        row.text(:name)
       end
     end
 
@@ -110,7 +110,7 @@ RSpec.describe Katalyst::TableComponent do
   context "when html attributes are passed to header cell" do
     let(:table) do
       render_inline(component) do |row|
-        row.cell :name, **(row.header? ? Test::HTML_ATTRIBUTES : {})
+        row.text :name, **(row.header? ? Test::HTML_ATTRIBUTES : {})
       end
     end
 
@@ -134,7 +134,7 @@ RSpec.describe Katalyst::TableComponent do
     let(:table) do
       render_inline(component) do |row|
         row.html_attributes = Test::HTML_ATTRIBUTES if row.body?
-        row.cell :name
+        row.text :name
       end
     end
 
@@ -159,7 +159,7 @@ RSpec.describe Katalyst::TableComponent do
   context "when html attributes are passed to body cell" do
     let(:table) do
       render_inline(component) do |row|
-        row.cell :name, **(row.body? ? Test::HTML_ATTRIBUTES : {})
+        row.text :name, **(row.body? ? Test::HTML_ATTRIBUTES : {})
       end
     end
 
@@ -298,7 +298,7 @@ RSpec.describe Katalyst::TableComponent do
 
     let(:table) do
       render_inline(component) do |row|
-        row.cell :name
+        row.text :name
       end
     end
 
@@ -325,7 +325,7 @@ RSpec.describe Katalyst::TableComponent do
 
     let(:table) do
       render_inline(component) do |row|
-        row.cell(:name)
+        row.text(:name)
         row.actions do |cell|
           cell.action("Edit", :edit) +
             cell.action("Delete", :delete, method: :delete)
