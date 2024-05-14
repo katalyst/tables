@@ -1,31 +1,21 @@
-name: Ruby
+name: Test
 
 on:
-  push:
-    branches:
-      - main
-
   pull_request:
-
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Ruby and install gems
-        uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-      - name: Setup node
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           cache: yarn
-      - run: yarn install
-      - name: Run setup
+      - name: Setup
         run: |
           bin/setup
-      - name: Run default rake task
-        env:
-          RAILS_ENV: test
+      - name: Test
         run: |
           bundle exec rake
