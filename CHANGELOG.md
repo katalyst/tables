@@ -1,7 +1,17 @@
-## [3.0.0.beta1]
-- Breaking change: remove Turbo Streams from table and pagination components, focus preservation is handled via Turbo Morph
+## [3.0.0]
+
+- Breaking change: remove Turbo Streams from table and pagination components,
+  focus preservation is handled via Turbo Morph
 - Improve spec coverage
+- Re-write internals to make it easier to extend and customize
 - Update examples in [README](README.md) and [docs](/docs) to reflect changes
+
+If you're upgrading from 2.x, you'll need to change your controllers to use
+the recommendations from the README. The changes should be straightforward,
+but you will need to enable morphing to allow focus preservation.
+
+In general, we don't recommend using row partials anymore, as it's easier to
+read the code when the row is defined in the index view.
 
 ## [2.6.0]
 
