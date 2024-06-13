@@ -24,8 +24,8 @@ module Katalyst
           config_accessor :paginate
         end
 
-        def initialize(paginate: config.paginate, **options)
-          super(**options)
+        def initialize(paginate: config.paginate, **)
+          super(**)
 
           @paginate = paginate.freeze
         end

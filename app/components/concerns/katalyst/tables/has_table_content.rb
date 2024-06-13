@@ -5,8 +5,8 @@ module Katalyst
     module HasTableContent # :nodoc:
       extend ActiveSupport::Concern
 
-      def initialize(object_name: nil, partial: nil, as: nil, **options)
-        super(**options)
+      def initialize(object_name: nil, partial: nil, as: nil, **)
+        super(**)
 
         @object_name = object_name || model_name&.i18n_key
         @partial     = partial

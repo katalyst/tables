@@ -25,7 +25,7 @@ RSpec.describe Katalyst::Tables::CellComponent do
         expect(render_inline(component)).to match_html('<th class="center">Name</th>')
       end
 
-      it "supports content wrapping" do
+      it "supports content wrapping" do # rubocop:disable RSpec/ExampleLength
         wrapper = Class.new(ViewComponent::Base) do
           def self.name
             "TestWrapper"
@@ -85,7 +85,7 @@ RSpec.describe Katalyst::Tables::CellComponent do
         expect(render_inline(component)).to match_html('<td class="center">Bobby&gt;</td>')
       end
 
-      it "supports content wrapping" do
+      it "supports content wrapping" do # rubocop:disable RSpec/ExampleLength
         wrapper = Class.new(ViewComponent::Base) do
           def self.name
             "TestWrapper"

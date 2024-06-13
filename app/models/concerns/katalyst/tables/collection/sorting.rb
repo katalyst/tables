@@ -45,10 +45,10 @@ module Katalyst
           attr_reader :default_sort
         end
 
-        def initialize(sorting: config.sorting, **options)
+        def initialize(sorting: config.sorting, **)
           @default_sort = sorting.to_param if sorting.present?
 
-          super(sort: @default_sort, **options) # set default sort based on config
+          super(sort: @default_sort, **) # set default sort based on config
         end
 
         def default_sort?

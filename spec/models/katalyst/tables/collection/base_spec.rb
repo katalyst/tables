@@ -145,9 +145,10 @@ RSpec.describe Katalyst::Tables::Collection::Base do
 
     let(:params) { ActionController::Parameters.new(search: "query") }
 
-    it "applies filtering then sort then pagination" do # rubocop:disable RSpec/MultipleExpectations
-      items = spy(ActiveRecord::Relation) # rubocop:disable RSpec/VerifiedDoubles
-      model = spy(Resource) # rubocop:disable RSpec/VerifiedDoubles
+    # rubocop:disable RSpec/MultipleExpectations, RSpec/ExampleLength, RSpec/VerifiedDoubles
+    it "applies filtering then sort then pagination" do
+      items = spy(ActiveRecord::Relation)
+      model = spy(Resource)
       allow(items).to receive_messages(model:, count: 50)
       allow(model).to receive(:has_attribute?).and_return(true)
 
@@ -158,5 +159,6 @@ RSpec.describe Katalyst::Tables::Collection::Base do
       expect(items).to have_received(:offset).ordered # pagination
       expect(items).to have_received(:limit).ordered # pagination
     end
+    # rubocop:enable RSpec/MultipleExpectations, RSpec/ExampleLength, RSpec/VerifiedDoubles
   end
 end

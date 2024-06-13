@@ -33,7 +33,7 @@ RSpec.describe Katalyst::Tables::Identifiable do
     HTML
   end
 
-  it "accepts html_attributes with higher precedence than the provided ids" do
+  it "accepts html_attributes with higher precedence than the provided ids" do # rubocop:disable RSpec/ExampleLength
     component = Katalyst::TableComponent.new(collection:, **Test::HTML_ATTRIBUTES, generate_ids: true)
     html = render_inline(component) do |row, person|
       row.html_attributes = { id: "test_#{person.id}" } if person

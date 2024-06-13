@@ -1,19 +1,9 @@
 require:
-  - rubocop-capybara
   - rubocop-katalyst
-  - rubocop-factory_bot
-  - rubocop-rspec_rails
 
 AllCops:
-  NewCops: enable
   TargetRubyVersion: 3.2
   Exclude:
-    - bin/*
-    - config/**/*
-    - db/**/*
-    - deploy/*
-    - node_modules/**/*
-    - vendor/bundle/**/*
     # Dummy app
     - spec/dummy/*
     - spec/dummy/bin/*
@@ -24,7 +14,7 @@ AllCops:
     - spec/dummy/vendor/bundle/**/*
 
 RSpec/ExampleLength:
-  Enabled: false
+  CountAsOne: ["array", "heredoc", "method_call"]
 
 RSpec/AnyInstance:
   Enabled: false

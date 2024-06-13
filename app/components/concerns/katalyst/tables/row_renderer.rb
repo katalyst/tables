@@ -50,7 +50,7 @@ module Katalyst
       def render_partial_template(view, locals, template, layout, block)
         locals[@local_name || template.variable] = @object
         locals[:row]                             = @row
-        super(view, locals, template, layout, block)
+        super
       end
     end
   end

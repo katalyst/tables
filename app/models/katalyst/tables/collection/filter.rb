@@ -40,8 +40,8 @@ module Katalyst
 
         attr_reader :param_key
 
-        def initialize(param_key: :filters, **options)
-          super(**options)
+        def initialize(param_key: :filters, **)
+          super(**)
 
           @param_key = param_key.to_sym
         end

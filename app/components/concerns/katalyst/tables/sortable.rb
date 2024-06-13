@@ -8,7 +8,7 @@ module Katalyst
       extend ActiveSupport::Concern
 
       def initialize(**)
-        super(**)
+        super
 
         @header_row_cell_callbacks << method(:add_sorting_to_cell) if collection.sortable?
       end
