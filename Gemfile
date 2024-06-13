@@ -18,7 +18,7 @@ gem "rails"
 gem "rake"
 gem "rspec-rails"
 gem "rubocop-katalyst", require: false
-gem "sqlite3", "~> 1.7"
+gem "sqlite3", "~> 2.0"
 gem "stimulus-rails"
 gem "turbo-rails"
 
