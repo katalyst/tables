@@ -1,0 +1,5 @@
+<%= summary_table_with(model: @faq) do |row| %>
+  <% row.text :question %>
+  <% row.rich_text :answer %>
+  <% row.datetime :created_at %>
+<% end %>

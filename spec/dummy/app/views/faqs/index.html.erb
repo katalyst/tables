@@ -3,9 +3,11 @@
 <h1>Faqs</h1>
 <%= link_to "Home", root_path %>
 
-<%= table_with(collection:) do |row| %>
+<%= table_with(collection:) do |row, faq| %>
   <% row.ordinal %>
-  <% row.text :question, heading: true %>
+  <% row.text :question, heading: true do |cell| %>
+    <%= link_to cell, faq %>
+  <% end %>
   <% row.text :answer %>
 <% end %>
 <%= table_orderable_with(collection:, url: order_faqs_path) %>
