@@ -19,6 +19,8 @@ module Dummy
 
     config.autoload_lib(ignore: %w(assets tasks))
 
+    config.time_zone = "Adelaide"
+
     # Tests should not eager load
     config.eager_load = false
 

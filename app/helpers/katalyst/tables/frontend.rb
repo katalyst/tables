@@ -55,10 +55,29 @@ module Katalyst
         render(Selectable::FormComponent.new(collection:, id:, primary_key:), &)
       end
 
+      # Construct a new summary table component.
+      #
+      # @param model [ActiveRecord::Base] subject for the table
+      #
+      # Blocks will receive the table in row-rendering mode (with row and record defined):
+      # @yieldparam [Katalyst::TableComponent] the table component to render rows
+      # @yieldparam [nil, Object] nil for the header column, or the given model for the value column
+      def summary_table_with(model:, **, &)
+        component ||= default_summary_table_component_class
+        component = component.new(model:, **)
+
+        render(component, &)
+      end
+
       private
 
       def default_table_component_class
         component = controller.try(:default_table_component) || TableComponent
+        component.respond_to?(:constantize) ? component.constantize : component
+      end
+
+      def default_summary_table_component_class
+        component = controller.try(:default_summary_table_component) || SummaryTableComponent
         component.respond_to?(:constantize) ? component.constantize : component
       end
     end

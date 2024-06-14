@@ -14,7 +14,9 @@
 <% end %>
 
 <%= table_with(collection: @people) do |row, person| %>
-  <% row.text :name %>
+  <% row.text :name do |cell| %>
+    <%= link_to cell, person %>
+  <% end %>
   <% row.boolean :active %>
   <% row.date :created_at, relative: person&.active %>
   <% row.datetime :created_at %>

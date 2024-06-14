@@ -32,10 +32,11 @@ application.load(tables);
 ## Usage
 
 This gem provides entry points for backend and frontend concerns:
-* `Katalyst::TableComponent` can be used render encapsulated tables.
-* `Katalyst::Tables::Frontend` provides `table_with` for inline table generation
+* `Katalyst::TableComponent` can be used render encapsulated tables,
+* `Katalyst::SummaryTableComponent` can be used render a record using the table syntax,
+* `Katalyst::Tables::Frontend` provides `table_with` for inline table generation,
 * `Katalyst::Tables::Collection::Base` provides a default entry point for
-  building collections in your controller actions.
+  building collections in your controller actions
 
 ### Frontend
 
@@ -203,6 +204,17 @@ detect features such as sorting and generate the appropriate table header links.
 
 ```erb
 <%= table_with(collection:) %>
+```
+
+## Summary tables
+You can use the `Katalyst::SummaryTableComponent` to render a single record utilizing all the functionality from the 
+`Katalyst::TableComponent`. 
+
+```erb
+<%= summary_table_with model: @person do |row| %>
+  <% row.text :name %>
+  <% row.text :email %>
+<% end %>
 ```
 
 ## Extensions

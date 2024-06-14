@@ -1,4 +1,4 @@
 // where psuedo selector has a specificity of 0 so it can be easily overwritten with simple selectors
-:where(th.type-boolean) {
+:where(th.type-boolean, td.type-boolean) {
   width: var(--width-small);
 }

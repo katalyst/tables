@@ -8,6 +8,7 @@ module Katalyst
 
       included do
         class_attribute :_default_table_component, instance_accessor: false
+        class_attribute :_default_summary_table_component, instance_accessor: false
       end
 
       class_methods do
@@ -18,11 +19,25 @@ module Katalyst
         def default_table_component(component)
           self._default_table_component = component
         end
+
+        # Set the summary table component to be used as the default for all
+        # summary tables in the views rendered by this controller and its
+        # subclasses.
+        #
+        # @param component [Class] the summary table component class to use
+        def default_summary_table_component(component)
+          self._default_summary_table_component = component
+        end
       end
 
       # Default table component for this controller
       def default_table_component
         self.class._default_table_component
+      end
+
+      # Default summary table component for this controller
+      def default_summary_table_component
+        self.class._default_summary_table_component
       end
     end
   end

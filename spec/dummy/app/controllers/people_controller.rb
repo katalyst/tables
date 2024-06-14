@@ -5,6 +5,10 @@ class PeopleController < ApplicationController
     @people = Collection.with_params(params).apply(Person.all)
   end
 
+  def show
+    @person = Person.find(params[:id])
+  end
+
   class Collection < Katalyst::Tables::Collection::Base
     config.paginate = { items: 5 }
     config.sorting = "name asc"

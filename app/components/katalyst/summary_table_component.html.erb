@@ -1,0 +1,15 @@
+<%# Simulating a normal table render for the side effects %>
+<% capture do %>
+  <%= header_row %>
+  <% body_rows.each do |body| %>
+    <%= body %>
+  <% end %>
+<% end %>
+
+<%= tag.table(**html_attributes) do %>
+  <%= tag.tbody(**tbody_attributes) do %>
+    <% summary_rows.each do |summary_row| %>
+      <%= summary_row %>
+    <% end %>
+  <% end %>
+<% end %>

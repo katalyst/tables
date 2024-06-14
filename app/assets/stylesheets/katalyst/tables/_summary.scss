@@ -1,0 +1,14 @@
+table.summary-table {
+  width: unset;
+  border-top: 1px solid var(--row-border-color);
+
+  th {
+    min-width: 12rem;
+  }
+
+  th,
+  td {
+    vertical-align: baseline;
+    text-align: left;
+  }
+}
