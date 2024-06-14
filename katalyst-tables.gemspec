@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name = "katalyst-tables"
-  spec.version = "3.0.0"
+  spec.version = "3.1.0"
   spec.authors = ["Katalyst Interactive"]
   spec.email = ["devs@katalyst.com.au"]
 
@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.description = "HTML table generator for building tabular index views with filtering, sorting, and pagination."
   spec.homepage = "https://github.com/katalyst/tables"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 3.2.0"
+  spec.required_ruby_version = ">= 3.3.0"
 
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
   spec.metadata["rubygems_mfa_required"] = "true"

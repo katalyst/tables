@@ -1,3 +1,7 @@
+## [3.1.0]
+- Introduce summary tables
+- Update ruby requirement >= 3.3
+
 ## [3.0.0]
 
 - Breaking change: remove Turbo Streams from table and pagination components,
