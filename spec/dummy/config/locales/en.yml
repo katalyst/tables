@@ -1,0 +1,7 @@
+en:
+  active_record:
+    attributes:
+      resource/category:
+        article: "Article"
+        documentation: "Documentation"
+        report: "Report"

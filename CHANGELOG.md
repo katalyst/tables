@@ -1,3 +1,6 @@
+## [3.2.0]
+- Enum columns
+
 ## [3.1.0]
 - Introduce summary tables
 - Update ruby requirement >= 3.3
