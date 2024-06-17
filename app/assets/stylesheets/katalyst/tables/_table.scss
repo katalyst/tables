@@ -1,4 +1,5 @@
 @use "ordinal" as *;
+@use "select" as *;
 @use "typed-columns";
 
 $grey: #f0ecf3 !default;
@@ -7,6 +8,7 @@ $table-header-color: transparent !default;
 $row-border-color: $grey !default;
 $row-height: 48px !default;
 $cell-spacing: 0.5rem !default;
+$tag-color: $grey !default;
 
 $width-small: 6rem !default;
 $width-medium: 12rem !default;
@@ -17,6 +19,7 @@ table {
   --cell-spacing: #{$cell-spacing};
   --table-header-color: #{$table-header-color};
   --row-border-color: #{$row-border-color};
+  --tag-color: #{$tag-color};
 
   --width-small: #{$width-small};
   --width-medium: #{$width-medium};

@@ -1,6 +1,10 @@
 require:
   - rubocop-katalyst
 
+inherit_mode:
+  merge:
+    - Exclude
+
 AllCops:
   TargetRubyVersion: 3.3
   Exclude:
@@ -12,9 +16,3 @@ AllCops:
     - spec/dummy/deploy/*
     - spec/dummy/node_modules/**/*
     - spec/dummy/vendor/bundle/**/*
-
-RSpec/ExampleLength:
-  CountAsOne: ["array", "heredoc", "method_call"]
-
-RSpec/AnyInstance:
-  Enabled: false

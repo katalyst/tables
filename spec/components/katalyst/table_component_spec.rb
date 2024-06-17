@@ -183,7 +183,7 @@ RSpec.describe Katalyst::TableComponent do
 
   context "when partial is inferred" do
     let(:table) { render_inline(component) }
-    let(:collection) { build(:collection, type: :resource, count: 1) }
+    let(:collection) { build(:collection, type: :report, count: 1) }
 
     it "calls the partial to render rows" do
       expect(table).to match_html(<<~HTML)
@@ -192,6 +192,7 @@ RSpec.describe Katalyst::TableComponent do
             <tr>
               <th class="selection"></th>
               <th>Resource partial</th>
+              <th class="type-enum">Category</th>
               <th class="type-boolean active">Active</th>
             </tr>
           </thead>
@@ -206,6 +207,7 @@ RSpec.describe Katalyst::TableComponent do
                 <input type="checkbox">
               </td>
               <td>Resource 1</td>
+              <td class="type-enum"><small data-enum="category" data-value="report">Report</small></td>
               <td class="type-boolean active">No</td>
             </tr>
           </tbody>
@@ -226,6 +228,7 @@ RSpec.describe Katalyst::TableComponent do
               <tr>
                 <th class="selection"></th>
                 <th>Resource partial</th>
+                <th class="type-enum">Category</th>
                 <th class="type-boolean active">Active</th>
               </tr>
             </thead>
@@ -245,6 +248,7 @@ RSpec.describe Katalyst::TableComponent do
           <tr>
             <th class="selection"></th>
             <th>Resource partial</th>
+            <th class="type-enum">Category</th>
             <th class="type-boolean active">Active</th>
           </tr>
         HTML
