@@ -15,7 +15,7 @@ module Katalyst
         end
 
         def filters
-          changed_attributes.except("sort", "page")
+          changes.except("sort", "page").transform_values(&:second)
         end
       end
     end
