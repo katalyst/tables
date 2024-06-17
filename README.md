@@ -221,6 +221,8 @@ You can use the `Katalyst::SummaryTableComponent` to render a single record util
 
 The following extensions are available and activated by default:
 
+* [Filtering](docs/filtering.md) - adds automatic collection filtering based on attributes 
+* [Query](docs/query.md) - adds human-friendly text filtering that populates collection attributes 
 * [Identifiable](docs/identifiable.md) - adds default dom ids to the table and data rows.
 * [Orderable](docs/orderable.md) - adds bulk-update for 'ordinal' columns via dragging rows in the table.
 * [Pagination](docs/pagination.md) - handles paginating of data in the collection.

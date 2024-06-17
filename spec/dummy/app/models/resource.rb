@@ -9,5 +9,7 @@ class Resource < ApplicationRecord
     image.variant :thumb, resize_to_fill: [100, 100]
   end
 
-  scope :active, -> { where(active: true) }
+  scope :active, ->(active = true) { where(active:) }
+  scope :updated, ->(value) { value ? where("created_at != updated_at") : where("created_at == updated_at") }
+  scope :table_search, ->(query) { where(arel_table[:name].matches("%#{sanitize_sql_like(query)}%")) }
 end

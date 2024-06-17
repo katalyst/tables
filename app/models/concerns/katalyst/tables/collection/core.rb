@@ -49,6 +49,11 @@ module Katalyst
           false
         end
 
+        # Collections that do not include Query are never searchable.
+        def searchable?
+          false
+        end
+
         def apply(items)
           @items = items
           reducers.build do |_|
@@ -63,7 +68,7 @@ module Katalyst
         end
 
         def filters
-          changes.except("sort", "page").transform_values(&:second)
+          changes.except("sort", "page", "query").transform_values(&:second)
         end
 
         def model

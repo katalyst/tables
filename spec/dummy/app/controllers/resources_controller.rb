@@ -30,12 +30,14 @@ class ResourcesController < ApplicationController
   end
 
   class Collection < Katalyst::Tables::Collection::Base
+    include Katalyst::Tables::Collection::Query
+
+    config.search_scope = :table_search
     config.sorting = :name
 
     attribute :id, default: -> { [] }
-
-    def filter
-      self.items = items.where(id:) if id.any?
-    end
+    attribute :name, :string
+    attribute :category, default: -> { [] }
+    attribute :active, :boolean
   end
 end
