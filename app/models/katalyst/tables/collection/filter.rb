@@ -23,7 +23,6 @@ module Katalyst
       # ````
       class Filter
         include Core
-        include Filtering
         include Pagination
         include Sorting
 

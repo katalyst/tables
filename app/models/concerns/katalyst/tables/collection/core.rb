@@ -39,6 +39,11 @@ module Katalyst
           clear_changes_information
         end
 
+        # Collections are filtered when any parameters have changed from their defaults.
+        def filtered?
+          filters.any?
+        end
+
         # Collections that do not include Sorting are never sortable.
         def sortable?
           false
@@ -51,6 +56,22 @@ module Katalyst
             self
           end.call(self)
           self
+        end
+
+        def filter
+          # no-op by default
+        end
+
+        def filters
+          changes.except("sort", "page").transform_values(&:second)
+        end
+
+        def model
+          if items.is_a?(ActiveRecord::Base)
+            items
+          else
+            items.model
+          end
         end
       end
     end

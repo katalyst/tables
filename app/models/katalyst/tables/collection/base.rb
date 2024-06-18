@@ -23,7 +23,6 @@ module Katalyst
       # ````
       class Base
         include Core
-        include Filtering
         include Pagination
         include Sorting
 
@@ -32,10 +31,6 @@ module Katalyst
 
         def self.with_params(params)
           new.with_params(params)
-        end
-
-        def model
-          items.model
         end
 
         def model_name

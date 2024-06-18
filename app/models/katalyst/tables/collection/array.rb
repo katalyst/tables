@@ -6,7 +6,6 @@ module Katalyst
       # Entry point for creating a collection from an array for use with table components.
       class Array
         include Core
-        include Filtering
 
         def self.with_params(params)
           new.with_params(params)
