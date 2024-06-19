@@ -29,6 +29,14 @@ module Katalyst
           def enum_attribute?(key)
             _default_attributes[key].value.is_a?(::Array)
           end
+
+          private
+
+          # @override ActiveModel::AttributeRegistration::ClassMethods#resolve_type_name()
+          def resolve_type_name(name, **)
+            # note, this is Katalyst::Tables::Collection::Type, not ActiveModel::Type
+            Type.lookup(name, **)
+          end
         end
 
         included do

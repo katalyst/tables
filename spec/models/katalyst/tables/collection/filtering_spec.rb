@@ -14,6 +14,7 @@ RSpec.describe Katalyst::Tables::Collection::Filtering do
       attribute :name, :string
       attribute :active, :boolean # exists
       attribute :updated, :boolean # derived
+      attribute :created_at, :date_range
       attribute :category, default: -> { [] }
       attribute :"parent.name", :string
       attribute :"parent.active", :boolean
@@ -77,6 +78,29 @@ RSpec.describe Katalyst::Tables::Collection::Filtering do
                      .merge(Parent.where.not(updated_at: nil))
                      .to_sql,
       )
+    end
+  end
+
+  describe "dates" do
+    it "supports tagged dates" do
+      scope = collection.with_params(query: "created_at:1970-01-01").apply(Resource.all)
+      expect(scope.items.to_sql).to eq(Resource.where(created_at: Date.parse("1970-01-01")).to_sql)
+    end
+
+    it "supports date range" do
+      scope = collection.with_params(query: "created_at:1970-01-01..2200-01-01").apply(Resource.all)
+      expect(scope.items.to_sql)
+        .to eq(Resource.where(created_at: Date.parse("1970-01-01")..Date.parse("2200-01-01")).to_sql)
+    end
+
+    it "supports date ranges with lower bound" do
+      scope = collection.with_params(query: "created_at:>1970-01-01").apply(Resource.all)
+      expect(scope.items.to_sql).to eq(Resource.where(created_at: Date.parse("1970-01-01")..).to_sql)
+    end
+
+    it "supports date ranges with upper bound" do
+      scope = collection.with_params(query: "created_at:<2200-01-01").apply(Resource.all)
+      expect(scope.items.to_sql).to eq(Resource.where(created_at: ..Date.parse("2200-01-01")).to_sql)
     end
   end
 
