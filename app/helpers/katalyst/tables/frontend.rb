@@ -69,6 +69,14 @@ module Katalyst
         render(component, &)
       end
 
+      # Construct a new filter.
+      #
+      # @param collection [Katalyst::Tables::Collection::Core] the collection to render
+      # @param url [String] the url to submit the form to (e.g. <resources>_path)
+      def filter_with(collection:, url: url_for(action: :index), &)
+        render(FilterComponent.new(collection:, url:), &)
+      end
+
       private
 
       def default_table_component_class

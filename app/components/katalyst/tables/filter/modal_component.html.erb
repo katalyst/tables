@@ -1,0 +1,25 @@
+<%= tag.div(**html_attributes) do %>
+  <table>
+    <thead>
+    <tr>
+      <th></th>
+      <th>Key</th>
+      <th>Values</th>
+    </tr>
+    </thead>
+    <tbody>
+    <% attributes.each do |key, attribute| %>
+      <tr>
+        <th><%= collection.model.human_attribute_name(key) %></th>
+        <td><%= key %></td>
+        <td><%= values_for(key, attribute) %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+  <% if footer? %>
+    <div class="footer">
+      <%= footer %>
+    </div>
+  <% end %>
+<% end %>

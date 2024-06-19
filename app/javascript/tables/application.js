@@ -3,6 +3,7 @@ import OrderableListController from "./orderable/list_controller";
 import OrderableFormController from "./orderable/form_controller";
 import SelectionFormController from "./selection/form_controller";
 import SelectionItemController from "./selection/item_controller";
+import FilterModalController from "./filter/modal_controller";
 
 const Definitions = [
   {
@@ -24,6 +25,10 @@ const Definitions = [
   {
     identifier: "tables--selection--item",
     controllerConstructor: SelectionItemController,
+  },
+  {
+    identifier: "tables--filter--modal",
+    controllerConstructor: FilterModalController,
   },
 ];
 

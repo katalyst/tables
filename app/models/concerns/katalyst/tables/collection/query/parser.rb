@@ -11,7 +11,6 @@ module Katalyst
 
           def initialize(collection)
             @collection = collection
-            @attributes = collection.class._default_attributes.deep_dup
             @untagged   = []
           end
 
@@ -51,9 +50,9 @@ module Katalyst
           end
 
           def parser_for(key)
-            attribute = @attributes[key]
+            attribute = collection.class._default_attributes[key]
 
-            if attribute&.value.is_a?(::Array)
+            if collection.class.enum_attribute?(key)
               ArrayValueParser.new(collection:, attribute:)
             else
               SingleValueParser.new(collection:, attribute:)

@@ -1,0 +1,20 @@
+<%= tag.div(**html_attributes) do %>
+  <% if content? %>
+    <%= content %>
+  <% else %>
+    <%= form do |form| %>
+      <%= form.text_field(
+            :query,
+            type:         :search,
+            size:         :full,
+            label:        nil,
+            autocomplete: "off",
+            **input_attributes,
+          ) %>
+
+      <%= form.submit("Apply") %>
+    <% end %>
+  <% end %>
+
+  <%= modal %>
+<% end %>

@@ -25,6 +25,10 @@ module Katalyst
                    end
             end
           end
+
+          def enum_attribute?(key)
+            _default_attributes[key].value.is_a?(::Array)
+          end
         end
 
         included do
@@ -72,7 +76,7 @@ module Katalyst
         end
 
         def model
-          if items.is_a?(ActiveRecord::Base)
+          if items < ActiveRecord::Base
             items
           else
             items.model

@@ -1,0 +1,34 @@
+[data-controller="tables--filter--modal"] {
+  position: relative;
+}
+
+.filter-keys-modal {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.16),
+    0 3px 6px rgba(0, 0, 0, 0.23);
+  padding-inline: 1rem;
+  padding-block: 0.5rem 0;
+  margin-top: 0.5rem;
+  background: white;
+  border-radius: 4px;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.125s;
+  pointer-events: none;
+
+  &[data-open] {
+    opacity: 1;
+    pointer-events: unset;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: flex-end;
+    padding-block: 1rem;
+  }
+}
