@@ -1,5 +1,6 @@
 ## [3.2.0]
 - Enum columns
+- Filter component (still in development, optional extension)
 
 ## [3.1.0]
 - Introduce summary tables
