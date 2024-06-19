@@ -54,6 +54,24 @@ RSpec.describe Katalyst::Tables::FilterComponent do
     HTML
   end
 
+  it "describes date ranges" do
+    create_collection do
+      attribute :created_at, :date_range
+    end
+    expect(render_inline(component).at_css("tbody > tr:first-of-type")).to match_html(<<~HTML)
+      <tr>
+        <th>Created at</th>
+        <td>created_at</td>
+        <td>
+          <code>YYYY-MM-DD</code>,
+          <code>&gt;YYYY-MM-DD</code>,
+          <code>&lt;YYYY-MM-DD</code>,
+          <code>YYYY-MM-DD..YYYY-MM-DD</code>
+        </td>
+      </tr>
+    HTML
+  end
+
   it "describes enums" do
     create_collection do
       attribute :category, default: -> { [] }

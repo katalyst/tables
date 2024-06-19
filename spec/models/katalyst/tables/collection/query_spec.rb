@@ -13,6 +13,7 @@ RSpec.describe Katalyst::Tables::Collection::Query do
       attribute :search
       attribute :name, :string
       attribute :active, :boolean
+      attribute :created_at, :date_range
       attribute :category, default: -> { [] }
       attribute :"parent.name", :string
       attribute :"parent.id", default: -> { [] }
@@ -58,8 +59,25 @@ RSpec.describe Katalyst::Tables::Collection::Query do
     end
 
     it "supports false for booleans" do
-      collection.with_params(query: 'active:false')
+      collection.with_params(query: "active:false")
       expect(collection.filters).to eq("active" => false)
+    end
+  end
+
+  describe "dates" do
+    it "supports tagged dates" do
+      collection.with_params(query: "created_at:1970-01-01")
+      expect(collection.filters).to eq("created_at" => Date.parse("1970-01-01"))
+    end
+
+    it "supports quoted dates" do
+      collection.with_params(query: 'created_at:"1970-01-01"')
+      expect(collection.filters).to eq("created_at" => Date.parse("1970-01-01"))
+    end
+
+    it "supports date ranges" do
+      collection.with_params(query: "created_at:>1970-01-01")
+      expect(collection.filters).to eq("created_at" => Date.parse("1970-01-01")..)
     end
   end
 

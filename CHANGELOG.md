@@ -2,6 +2,13 @@
 - Enum columns
 - Filter component (still in development, optional extension)
 
+Note: this release adds a dedicated registry for collection filtering types 
+instead of using the default provided by ActiveModel.
+
+If you have custom types that you use with tables collections,
+you will need to register them with Katalyst::Tables::Collection::Type
+in an initializer or similar.
+
 ## [3.1.0]
 - Introduce summary tables
 - Update ruby requirement >= 3.3

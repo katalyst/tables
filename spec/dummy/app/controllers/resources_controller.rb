@@ -39,5 +39,6 @@ class ResourcesController < ApplicationController
     attribute :name, :string
     attribute :category, default: -> { [] }
     attribute :active, :boolean
+    attribute :created_at, :date_range
   end
 end
