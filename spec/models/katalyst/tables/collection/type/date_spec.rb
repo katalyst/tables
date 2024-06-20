@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-RSpec.describe Katalyst::Tables::Collection::Type::DateRange do
+RSpec.describe Katalyst::Tables::Collection::Type::Date do
   let(:type) { described_class.new }
 
   describe "#cast" do
