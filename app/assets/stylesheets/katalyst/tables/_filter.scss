@@ -26,6 +26,15 @@
     pointer-events: unset;
   }
 
+  table {
+    table-layout: fixed;
+  }
+
+  th.label,
+  th.key {
+    width: 15%;
+  }
+
   .footer {
     display: flex;
     justify-content: flex-end;

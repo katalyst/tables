@@ -8,6 +8,7 @@ module Katalyst
           include ActiveRecord::Sanitization::ClassMethods
 
           attr_reader :exact
+          alias_method :exact?, :exact
 
           delegate :type, :serialize, :deserialize, :cast, to: :@delegate
 
@@ -21,7 +22,7 @@ module Katalyst
           private
 
           def filter_condition(model, column, value)
-            if exact || scope
+            if exact? || scope
               super
             else
               model.where(model.arel_table[column].matches("%#{sanitize_sql_like(value)}%"))

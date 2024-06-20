@@ -39,22 +39,59 @@ module Katalyst
 
         def values_for(key, attribute)
           values_method = "#{key.parameterize.underscore}_values"
-          if attribute.type == :boolean
+          if collection.respond_to?(values_method)
+            return scope_values(attribute, values_method)
+          end
+
+          case attribute.type
+          when :boolean
             render_options(true, false)
-          elsif attribute.type == :date
-            render_options("YYYY-MM-DD", ">YYYY-MM-DD", "<YYYY-MM-DD", "YYYY-MM-DD..YYYY-MM-DD")
-          elsif attribute.type == :enum && collection.model.defined_enums.has_key?(key)
-            render_array(*collection.model.defined_enums[key].keys)
-          elsif collection.respond_to?(values_method)
-            values_for_scope(attribute, values_method)
+          when :date
+            date_values
+          when :integer
+            integer_values(attribute)
+          when :float
+            float_values(attribute)
+          when :enum
+            enum_values(key)
+          when :string
+            string_values(attribute)
           end
         end
 
-        def values_for_scope(attribute, values_method)
+        def scope_values(attribute, values_method)
+          values = collection.public_send(values_method)
+          attribute.multiple? ? render_array(*values) : render_options(*values)
+        end
+
+        def date_values
+          render_options("YYYY-MM-DD", ">YYYY-MM-DD", "<YYYY-MM-DD", "YYYY-MM-DD..YYYY-MM-DD")
+        end
+
+        def string_values(attribute)
+          options = render_options("example", '"an example"')
+          safe_join([options, attribute.exact? ? "(exact match)" : "(fuzzy match)"], " ")
+        end
+
+        def enum_values(key)
+          enums = collection.model.defined_enums
+
+          render_array(*enums[key].keys) if enums.has_key?(key)
+        end
+
+        def float_values(attribute)
           if attribute.multiple?
-            render_array(*collection.public_send(values_method))
+            render_array("0.5", "1", "...")
           else
-            render_options(*collection.public_send(values_method))
+            render_options("0.5", ">0.5", "<0.5", "-0.5..0.5")
+          end
+        end
+
+        def integer_values(attribute)
+          if attribute.multiple?
+            render_array("0", "1", "...")
+          else
+            render_options("10", ">10", "<10", "0..10")
           end
         end
 
