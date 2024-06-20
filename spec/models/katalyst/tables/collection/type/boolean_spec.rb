@@ -83,4 +83,62 @@ RSpec.describe Katalyst::Tables::Collection::Type::Boolean do
         .to eq(Nested::Child.joins(:parent).merge(Parent.where.not(updated_at: nil)).to_sql)
     end
   end
+
+  describe "#cast" do
+    subject(:type) { described_class.new }
+
+    it { expect(type.cast(nil)).to be_nil }
+    it { expect(type.cast(1)).to be_truthy }
+    it { expect(type.cast("1")).to be_truthy }
+    it { expect(type.cast([])).to be_truthy }
+    it { expect(type.cast(["1"])).to be_truthy }
+
+    context "when multiple: true" do
+      subject(:type) { described_class.new(multiple: true) }
+
+      it { expect(type.cast(nil)).to be_nil }
+      it { expect(type.cast(1)).to be_truthy }
+      it { expect(type.cast("1")).to be_truthy }
+      it { expect(type.cast([])).to eq [] }
+      it { expect(type.cast(["1"])).to eq [true] }
+    end
+  end
+
+  describe "#serialize" do
+    subject(:type) { described_class.new }
+
+    it { expect(type.serialize(nil)).to be_nil }
+    it { expect(type.cast(1)).to be_truthy }
+    it { expect(type.cast("1")).to be_truthy }
+    it { expect(type.cast([])).to be_truthy }
+    it { expect(type.cast(["1"])).to be_truthy }
+
+    context "when multiple: true" do
+      subject(:type) { described_class.new(multiple: true) }
+
+      it { expect(type.serialize(nil)).to be_nil }
+      it { expect(type.serialize(1)).to be_truthy }
+      it { expect(type.serialize("1")).to be_truthy }
+      it { expect(type.serialize([])).to eq [] }
+      it { expect(type.serialize(["1"])).to eq [true] }
+    end
+  end
+
+  describe "#deserialize" do
+    subject(:type) { described_class.new }
+
+    it { expect(type.deserialize(nil)).to be_nil }
+    it { expect(type.deserialize(1)).to be_truthy }
+    it { expect(type.deserialize("1")).to be_truthy }
+
+    context "when multiple: true" do
+      subject(:type) { described_class.new(multiple: true) }
+
+      it { expect(type.deserialize(nil)).to be_nil }
+      it { expect(type.deserialize(1)).to be_truthy }
+      it { expect(type.deserialize("1")).to be_truthy }
+      it { expect(type.deserialize([])).to eq [] }
+      it { expect(type.deserialize(["1"])).to eq [true] }
+    end
+  end
 end

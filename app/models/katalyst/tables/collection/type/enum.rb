@@ -5,16 +5,14 @@ module Katalyst
     module Collection
       module Type
         class Enum < Value
+          include Helpers::Multiple
+
+          def initialize(multiple: true, **)
+            super
+          end
+
           def type
             :enum
-          end
-
-          def default_value
-            []
-          end
-
-          def multiple?
-            true
           end
         end
       end

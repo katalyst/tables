@@ -35,7 +35,7 @@ class ResourcesController < ApplicationController
     config.sorting = :name
 
     attribute :search, :search, scope: :table_search
-    attribute :id, default: -> { [] }
+    attribute :id, :integer, multiple: true
     attribute :name, :string
     attribute :category, :enum
     attribute :active, :boolean

@@ -20,7 +20,7 @@ class Collection < Katalyst::Tables::Collection::Base
   include Katalyst::Tables::Collection::Query
   include Katalyst::Tables::Collection::Filtering
   
-  attribute :id, default: -> { [] }
+  attribute :id, :integer, multiple: true
   attribute :search, :search, scope: :table_search
   attribute :name, :string
   attribute :active, :boolean
@@ -29,7 +29,7 @@ class Collection < Katalyst::Tables::Collection::Base
   attribute :"parent.name", :string
   attribute :"parent.active", :boolean
   attribute :"parent.updated", :boolean
-  attribute :"parent.id", default: -> { [] }
+  attribute :"parent.id", :integer, multiple: true
   attribute :"parent.role", :enum
 end
 ```
@@ -137,7 +137,7 @@ class MyCollection < Katalyst::Tables::Collection::Base
   include Katalyst::Tables::Collection::Query
   include Katalyst::Tables::Collection::Filtering
 
-  attribute :id, default: -> { [] }
+  attribute :id, :integer, multiple: true
   attribute :search, :search, scope: :table_search
   attribute :name, :string
   attribute :active, :boolean

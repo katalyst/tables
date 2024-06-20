@@ -13,9 +13,9 @@ To use the `Query` module, include it in your collection class and define the at
 ```ruby
 class Collection < Katalyst::Tables::Collection::Base
   include Katalyst::Tables::Collection::Query
-  
 
-  attribute :id, default: -> { [] }
+
+  attribute :id, :integer, multiple: true
   attribute :search, :search, scope: :table_search
   attribute :name, :string
   attribute :active, :boolean
@@ -101,7 +101,7 @@ Here is an example of using the `Query` module with a collection:
 class Collection < Katalyst::Tables::Collection::Base
   include Katalyst::Tables::Collection::Query
 
-  attribute :id, default: -> { [] }
+  attribute :id, :integer, multiple: true
   attribute :search, :search, scope: :table_search
   attribute :name, :string
   attribute :active, :boolean

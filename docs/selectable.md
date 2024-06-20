@@ -73,7 +73,7 @@ class ResourcesController < ApplicationController
   class Collection < Katalyst::Tables::Collection::Base
     config.sorting = :name
 
-    attribute :id, default: -> { [] }
+    attribute :id, :integer, multiple: true
 
     def filter
       self.items = items.where(id:) if id.any?

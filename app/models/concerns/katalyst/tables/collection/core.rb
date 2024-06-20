@@ -26,7 +26,7 @@ module Katalyst
             end
           end
 
-          using Type::Value::Extensions
+          using Type::Helpers::Extensions
 
           def attribute(name, type = nil, default: (no_default = true), **)
             type = type.is_a?(Symbol) ? resolve_type_name(type, **) : type || Type::Value.new

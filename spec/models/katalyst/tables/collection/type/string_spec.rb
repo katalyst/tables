@@ -79,4 +79,29 @@ RSpec.describe Katalyst::Tables::Collection::Type::String do
       )
     end
   end
+
+  describe "#cast" do
+    subject(:type) { described_class.new }
+
+    it { expect(type.cast(nil)).to be_nil }
+    it { expect(type.cast("test")).to eq "test" }
+    it { expect(type.cast([])).to eq "[]" }
+  end
+
+  describe "#serialize" do
+    subject(:type) { described_class.new }
+
+    it { expect(type.serialize(nil)).to be_nil }
+    it { expect(type.serialize("test")).to eq "test" }
+    it { expect(type.serialize([])).to eq [] }
+    it { expect(type.serialize(["test"])).to eq ["test"] }
+  end
+
+  describe "#deserialize" do
+    subject(:type) { described_class.new }
+
+    it { expect(type.deserialize(nil)).to be_nil }
+    it { expect(type.deserialize("test")).to eq "test" }
+    it { expect(type.deserialize([])).to eq "[]" }
+  end
 end

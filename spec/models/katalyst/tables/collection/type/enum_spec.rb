@@ -60,4 +60,31 @@ RSpec.describe Katalyst::Tables::Collection::Type::Enum do
         .to eq(Nested::Child.joins(:parent).merge(Parent.where(role: :teacher)).to_sql)
     end
   end
+
+  describe "#cast" do
+    subject(:type) { described_class.new }
+
+    it { expect(type.cast(nil)).to be_nil }
+    it { expect(type.cast("article")).to eq "article" }
+    it { expect(type.cast([])).to eq [] }
+    it { expect(type.cast(["article"])).to eq ["article"] }
+  end
+
+  describe "#serialize" do
+    subject(:type) { described_class.new }
+
+    it { expect(type.serialize(nil)).to be_nil }
+    it { expect(type.serialize("article")).to eq "article" }
+    it { expect(type.serialize([])).to eq [] }
+    it { expect(type.serialize(["article"])).to eq ["article"] }
+  end
+
+  describe "#deserialize" do
+    subject(:type) { described_class.new }
+
+    it { expect(type.deserialize(nil)).to be_nil }
+    it { expect(type.deserialize("article")).to eq "article" }
+    it { expect(type.deserialize([])).to eq [] }
+    it { expect(type.deserialize(["article"])).to eq ["article"] }
+  end
 end

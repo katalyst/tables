@@ -7,14 +7,14 @@ RSpec.describe Katalyst::Tables::Collection::Query do
     Class.new(Katalyst::Tables::Collection::Base) do
       include Katalyst::Tables::Collection::Query
 
-      attribute :id, default: -> { [] }
+      attribute :id, :integer, multiple: true
       attribute :search, :search, scope: :table_search
       attribute :name, :string
       attribute :active, :boolean
       attribute :created_at, :date
       attribute :category, :enum
       attribute :"parent.name", :string
-      attribute :"parent.id", default: -> { [] }
+      attribute :"parent.id", :integer, multiple: true
     end.new
   end
 
@@ -109,7 +109,7 @@ RSpec.describe Katalyst::Tables::Collection::Query do
 
     it "supports complex keys with ids" do
       collection.with_params(query: "parent.id:15")
-      expect(collection.filters).to eq("parent.id" => ["15"])
+      expect(collection.filters).to eq("parent.id" => [15])
     end
   end
 end

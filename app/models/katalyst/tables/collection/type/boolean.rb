@@ -5,12 +5,11 @@ module Katalyst
     module Collection
       module Type
         class Boolean < Value
-          delegate :type, :serialize, :deserialize, :cast, to: :@delegate
+          include Helpers::Delegate
+          include Helpers::Multiple
 
-          def initialize(...)
-            super
-
-            @delegate = ActiveModel::Type::Boolean.new
+          def initialize(**)
+            super(**, delegate: ActiveModel::Type::Boolean)
           end
 
           def filter?(attribute, value)
