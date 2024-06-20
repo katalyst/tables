@@ -30,8 +30,11 @@ module Katalyst
           }
         end
 
+        using Collection::Type::Value::Extensions
+
         def attributes
-          collection.class.attribute_types.except(*DEFAULT_ATTRIBUTES)
+          collection.class.attribute_types
+            .select { |_, a| a.filterable? && a.type != :search }
         end
 
         def values_for(key, attribute)
@@ -40,14 +43,18 @@ module Katalyst
             render_options(true, false)
           elsif attribute.type == :date
             render_options("YYYY-MM-DD", ">YYYY-MM-DD", "<YYYY-MM-DD", "YYYY-MM-DD..YYYY-MM-DD")
-          elsif collection.model.defined_enums.has_key?(key)
+          elsif attribute.type == :enum && collection.model.defined_enums.has_key?(key)
             render_array(*collection.model.defined_enums[key].keys)
           elsif collection.respond_to?(values_method)
-            if collection.class.enum_attribute?(key)
-              render_array(*collection.public_send(values_method))
-            else
-              render_options(*collection.public_send(values_method))
-            end
+            values_for_scope(attribute, values_method)
+          end
+        end
+
+        def values_for_scope(attribute, values_method)
+          if attribute.multiple?
+            render_array(*collection.public_send(values_method))
+          else
+            render_options(*collection.public_send(values_method))
           end
         end
 

@@ -7,14 +7,12 @@ RSpec.describe Katalyst::Tables::Collection::Query do
     Class.new(Katalyst::Tables::Collection::Base) do
       include Katalyst::Tables::Collection::Query
 
-      config.search_scope = :table_search
-
       attribute :id, default: -> { [] }
-      attribute :search
+      attribute :search, :search, scope: :table_search
       attribute :name, :string
       attribute :active, :boolean
       attribute :created_at, :date
-      attribute :category, default: -> { [] }
+      attribute :category, :enum
       attribute :"parent.name", :string
       attribute :"parent.id", default: -> { [] }
     end.new
@@ -66,7 +64,7 @@ RSpec.describe Katalyst::Tables::Collection::Query do
 
   describe "dates" do
     it "supports tagged dates" do
-      collection.with_params(query: "created_at:1970-01-01")
+      collection.with_params(query: "created_at: 1970-01-01")
       expect(collection.filters).to eq("created_at" => Date.parse("1970-01-01"))
     end
 

@@ -33,7 +33,7 @@ module Katalyst
           BOUNDED = /\A(\d{4})-(\d\d)-(\d\d)\.\.(\d{4})-(\d\d)-(\d\d)\z/
 
           def cast_value(value)
-            return value unless value.is_a?(String)
+            return value unless value.is_a?(::String)
 
             if value =~ ISO_DATE
               new_date($1.to_i, $2.to_i, $3.to_i)

@@ -32,12 +32,12 @@ class ResourcesController < ApplicationController
   class Collection < Katalyst::Tables::Collection::Base
     include Katalyst::Tables::Collection::Query
 
-    config.search_scope = :table_search
     config.sorting = :name
 
+    attribute :search, :search, scope: :table_search
     attribute :id, default: -> { [] }
     attribute :name, :string
-    attribute :category, default: -> { [] }
+    attribute :category, :enum
     attribute :active, :boolean
     attribute :created_at, :date
   end

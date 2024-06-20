@@ -12,7 +12,7 @@ module Examples
 
   # Example of a collection that uses an array value for an attribute.
   class TagsCollection < Katalyst::Tables::Collection::Base
-    attribute :tags, default: -> { [] }
+    attribute :tags, :enum
 
     def filter
       self.items = items.with_tags(tags) if tags.any?

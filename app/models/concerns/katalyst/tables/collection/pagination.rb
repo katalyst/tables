@@ -19,7 +19,7 @@ module Katalyst
         included do
           attr_accessor :pagination
 
-          attribute :page, :integer, default: 1
+          attribute :page, :integer, default: 1, filter: false
 
           config_accessor :paginate
         end

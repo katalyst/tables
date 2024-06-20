@@ -8,34 +8,25 @@ module Katalyst
 
         include Filtering
 
-        included do
-          config_accessor :search_scope
+        class_methods do
+          def search_attribute
+            _default_attributes.each_value do |attribute|
+              return attribute.name if attribute.type.type == :search
+            end
+          end
+        end
 
-          attribute :query, :string, default: ""
-          attribute :search, :string, default: ""
+        included do
+          attribute :query, :query, default: ""
 
           # Note: this is defined inline so that we can overwrite query=
           def query=(value)
             query = super
 
-            parser = Parser.new(self).parse(query)
-
-            if searchable? && parser.untagged.any?
-              self.search = parser.untagged.join(" ")
-            end
+            Parser.new(self).parse(query)
 
             query
           end
-        end
-
-        # Returns true if the collection supports untagged searching. This
-        # requires config.search_scope to be set to the name of the scope to use
-        # in the target record for untagged text searches. If not set, untagged
-        # search terms will be silently ignored.
-        #
-        # @return [true, false]
-        def searchable?
-          config.search_scope.present?
         end
       end
     end

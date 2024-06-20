@@ -19,20 +19,18 @@ The module applies filters based on the value of each given attribute to the col
 class Collection < Katalyst::Tables::Collection::Base
   include Katalyst::Tables::Collection::Query
   include Katalyst::Tables::Collection::Filtering
-
-  config.search_scope = :table_search
-
+  
   attribute :id, default: -> { [] }
-  attribute :search
+  attribute :search, :search, scope: :table_search
   attribute :name, :string
-  attribute :active, :boolean # exists
-  attribute :updated, :boolean # derived
-  attribute :category, default: -> { [] }
+  attribute :active, :boolean
+  attribute :updated, :boolean, scope: :updated
+  attribute :category, :enum
   attribute :"parent.name", :string
   attribute :"parent.active", :boolean
   attribute :"parent.updated", :boolean
   attribute :"parent.id", default: -> { [] }
-  attribute :"parent.role", default: -> { [] }
+  attribute :"parent.role", :enum
 end
 ```
 
@@ -52,18 +50,23 @@ scope = collection.with_params(query: "").apply(Resource.all)
 
 ### Basic search
 
-The `Filtering` module supports basic string search, which it applies to a `search` attribute when you define
-`config.search_scope` in your collection.
+The `Filtering` module supports basic string search, which it applies to a `:search` attribute if defined.
 
 ```ruby
+class Collection < Katalyst::Tables::Collection::Base
+  include Katalyst::Tables::Collection::Query
+  
+  attribute :custom_search, :search, scope: :custom_search
+end
+
 scope = collection.with_params(query: "test").apply(Resource.all)
-# => Resource.table_search("test")
+# => Resource.custom_search("test")
 
 collection.with_params(query: "active status")
-# => Resource.table_search('active status')
+# => Resource.custom_search('active status')
 
 scope = collection.with_params(query: '"active status"').apply(Resource.all)
-# => Resource.table_search('"active status"')
+# => Resource.custom_search('"active status"')
 ```
 
 ### Boolean search
@@ -134,13 +137,11 @@ class MyCollection < Katalyst::Tables::Collection::Base
   include Katalyst::Tables::Collection::Query
   include Katalyst::Tables::Collection::Filtering
 
-  config.search_scope = :table_search
-
   attribute :id, default: -> { [] }
-  attribute :search
+  attribute :search, :search, scope: :table_search
   attribute :name, :string
   attribute :active, :boolean
-  attribute :category, default: -> { [] }
+  attribute :category, :enum
   attribute :"parent.name", :string
   attribute :"parent.id", :integer
 end

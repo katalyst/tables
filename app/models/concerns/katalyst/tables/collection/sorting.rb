@@ -40,7 +40,7 @@ module Katalyst
         using SortParams
 
         included do
-          attribute :sort, :string
+          attribute :sort, :string, filter: false
 
           attr_reader :default_sort
         end

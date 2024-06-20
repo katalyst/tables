@@ -13,14 +13,13 @@ To use the `Query` module, include it in your collection class and define the at
 ```ruby
 class Collection < Katalyst::Tables::Collection::Base
   include Katalyst::Tables::Collection::Query
-
-  config.search_scope = :table_search
+  
 
   attribute :id, default: -> { [] }
-  attribute :search
+  attribute :search, :search, scope: :table_search
   attribute :name, :string
   attribute :active, :boolean
-  attribute :category, default: -> { [] }
+  attribute :category, :enum
   attribute :"parent.name", :string
   attribute :"parent.id", :integer
 end
@@ -28,8 +27,7 @@ end
 
 ## User inputs
 
-The `Query` module supports basic string inputs, which it applies to a `search` attribute when you define
-`config.search_scope` in your collection.
+The `Query` module supports basic string inputs, which it applies to a `search` attribute if defined.
 
 ```ruby
 collection.with_params(query: "test")
@@ -103,13 +101,11 @@ Here is an example of using the `Query` module with a collection:
 class Collection < Katalyst::Tables::Collection::Base
   include Katalyst::Tables::Collection::Query
 
-  config.search_scope = :table_search
-
   attribute :id, default: -> { [] }
-  attribute :search
+  attribute :search, :search, scope: :table_search
   attribute :name, :string
   attribute :active, :boolean
-  attribute :category, default: -> { [] }
+  attribute :category, :enum
   attribute :"parent.name", :string
   attribute :"parent.id", :integer
 end

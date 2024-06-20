@@ -5,27 +5,50 @@ module Katalyst
     module Collection
       module Type
         class Value < ActiveModel::Type::Value
+          module Extensions
+            refine(ActiveModel::Type::Value) do
+              def default_value
+                nil
+              end
+
+              def multiple?
+                false
+              end
+
+              def filterable?
+                false
+              end
+            end
+          end
+
+          using Extensions
+
           attr_reader :scope
 
-          def initialize(scope: nil)
+          def initialize(scope: nil, filter: true)
             super()
 
             @scope = scope
+            @filterable = filter
+          end
+
+          def filterable?
+            @filterable
           end
 
           def filter?(attribute, value)
-            value.present? || attribute.came_from_user?
+            filterable? && (value.present? || attribute.came_from_user?)
           end
 
-          def filter(collection, attribute)
+          def filter(scope, attribute)
             value = filter_value(attribute)
 
-            return unless filter?(attribute, value)
+            return scope unless filter?(attribute, value)
 
-            model, column = model_and_column_for(collection, attribute)
-            condition = filter_condition(model, column, value)
+            scope, model, column = model_and_column_for(scope, attribute)
+            condition            = filter_condition(model, column, value)
 
-            collection.items = collection.items.merge(condition)
+            scope.merge(condition)
           end
 
           private
@@ -44,13 +67,12 @@ module Katalyst
             end
           end
 
-          def model_and_column_for(collection, attribute)
+          def model_and_column_for(scope, attribute)
             if attribute.name.include?(".")
               table, column = attribute.name.split(".")
-              collection.items = collection.items.joins(table.to_sym)
-              [collection.items.reflections[table].klass, column]
+              [scope.joins(table.to_sym), scope.model.reflections[table].klass, column]
             else
-              [collection.model, attribute.name]
+              [scope, scope.model, attribute.name]
             end
           end
         end
