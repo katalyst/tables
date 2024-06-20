@@ -12,13 +12,13 @@ RSpec.describe Katalyst::Tables::Collection::Filtering do
       attribute :id, default: -> { [] }
       attribute :search
       attribute :name, :string
-      attribute :active, :boolean # exists
-      attribute :updated, :boolean # derived
+      attribute :active, :boolean
+      attribute :updated, :boolean, scope: :updated
       attribute :created_at, :date
       attribute :category, default: -> { [] }
       attribute :"parent.name", :string
       attribute :"parent.active", :boolean
-      attribute :"parent.updated", :boolean
+      attribute :"parent.updated", :boolean, scope: :updated
       attribute :"parent.id", default: -> { [] }
       attribute :"parent.role", default: -> { [] }
     end
@@ -57,7 +57,7 @@ RSpec.describe Katalyst::Tables::Collection::Filtering do
       expect(scope.items.to_sql).to eq(Resource.where(active: false).to_sql)
     end
 
-    it "supports derived value booleans" do
+    it "supports booleans with scope" do
       scope = collection.with_params(query: "updated:true").apply(Resource.all)
       expect(scope.items.to_sql).to eq(Resource.where("created_at != updated_at").to_sql)
     end

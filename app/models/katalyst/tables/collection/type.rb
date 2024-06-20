@@ -25,7 +25,7 @@ module Katalyst
           end
         end
 
-        register(:boolean, ActiveModel::Type::Boolean)
+        register(:boolean, Type::Boolean)
         register(:date, Type::Date)
         register(:decimal, ActiveModel::Type::Decimal)
         register(:float, ActiveModel::Type::Float)
