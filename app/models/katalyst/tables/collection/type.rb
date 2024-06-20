@@ -27,10 +27,12 @@ module Katalyst
 
         register(:boolean, Type::Boolean)
         register(:date, Type::Date)
-        register(:decimal, ActiveModel::Type::Decimal)
-        register(:float, ActiveModel::Type::Float)
-        register(:integer, ActiveModel::Type::Integer)
-        register(:string, ActiveModel::Type::String)
+        register(:enum, Type::Enum)
+        register(:float, Type::Float)
+        register(:integer, Type::Integer)
+        register(:string, Type::String)
+        register(:query, Type::Query)
+        register(:search, Type::Search)
       end
     end
   end

@@ -6,13 +6,11 @@
       <%= form.text_field(
             :query,
             type:         :search,
-            size:         :full,
-            label:        nil,
             autocomplete: "off",
             **input_attributes,
           ) %>
 
-      <%= form.submit("Apply") %>
+      <%= form.button("Apply", type: :submit, name: nil) %>
     <% end %>
   <% end %>
 

@@ -26,8 +26,14 @@ module Katalyst
             end
           end
 
-          def enum_attribute?(key)
-            _default_attributes[key].value.is_a?(::Array)
+          using Type::Value::Extensions
+
+          def attribute(name, type = nil, default: (no_default = true), **)
+            type = type.is_a?(Symbol) ? resolve_type_name(type, **) : type || Type::Value.new
+
+            default = type.default_value if no_default
+
+            default.nil? && no_default ? super(name, type, **) : super
           end
 
           private

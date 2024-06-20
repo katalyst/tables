@@ -25,6 +25,10 @@ module Katalyst
               break unless take_tagged || take_untagged
             end
 
+            if untagged.any? && (search = collection.class.search_attribute)
+              collection.assign_attributes(search => untagged.join(" "))
+            end
+
             self
           end
 
@@ -38,6 +42,8 @@ module Katalyst
             return unless query.scan(/(\w+(\.\w+)?):/)
 
             key, = query.values_at(1)
+            skip_whitespace
+
             parser_for(key).parse(query)
           end
 
@@ -49,10 +55,12 @@ module Katalyst
             untagged
           end
 
+          using Type::Value::Extensions
+
           def parser_for(key)
             attribute = collection.class._default_attributes[key]
 
-            if collection.class.enum_attribute?(key)
+            if attribute.type.multiple? || attribute.value.is_a?(::Array)
               ArrayValueParser.new(collection:, attribute:)
             else
               SingleValueParser.new(collection:, attribute:)

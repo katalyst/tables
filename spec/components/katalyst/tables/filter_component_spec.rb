@@ -19,8 +19,8 @@ RSpec.describe Katalyst::Tables::FilterComponent do
       <div data-controller="tables--filter--modal" data-action="click@window->tables--filter--modal#close click->tables--filter--modal#open:stop keydown.esc->tables--filter--modal#close ">
         <form action="/resources" accept-charset="UTF-8" method="get">
           <input autocomplete="off" type="hidden" name="sort" id="sort">
-          <input type="search" size="full" autocomplete="off" data-action="focus->tables--filter--modal#open" value="" name="query" id="query">
-          <input type="submit" name="commit" value="Apply" data-disable-with="Apply">
+          <input type="search" autocomplete="off" data-action="focus->tables--filter--modal#open" value="" name="query" id="query">
+          <button type="submit">Apply</button>
         </form>
         <div class="filter-keys-modal" data-tables--filter--modal-target="modal">
           <table>
@@ -74,7 +74,7 @@ RSpec.describe Katalyst::Tables::FilterComponent do
 
   it "describes enums" do
     create_collection do
-      attribute :category, default: -> { [] }
+      attribute :category, :enum
     end
     expect(render_inline(component).at_css("tbody > tr:first-of-type")).to match_html(<<~HTML)
       <tr>
