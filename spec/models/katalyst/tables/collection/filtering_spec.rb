@@ -7,7 +7,7 @@ RSpec.describe Katalyst::Tables::Collection::Filtering do
     Class.new(Katalyst::Tables::Collection::Base) do
       include Katalyst::Tables::Collection::Query
 
-      attribute :id, default: -> { [] }
+      attribute :id, :integer, multiple: true
       attribute :search, :search, scope: :table_search
       attribute :name, :string
       attribute :active, :boolean
@@ -17,7 +17,7 @@ RSpec.describe Katalyst::Tables::Collection::Filtering do
       attribute :"parent.name", :string
       attribute :"parent.active", :boolean
       attribute :"parent.updated", :boolean, scope: :updated
-      attribute :"parent.id", default: -> { [] }
+      attribute :"parent.id", :integer, multiple: true
       attribute :"parent.role", :enum
     end
   end

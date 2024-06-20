@@ -33,6 +33,22 @@ RSpec.describe Katalyst::Tables::Collection::Type::Integer do
       expect(filter(collection).to_sql).to eq(Resource.where(value: 1).to_sql)
     end
 
+    it "supports multi-values" do
+      collection = new_collection(value: [1, 2]) do
+        attribute :value, :integer, multiple: true
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.where(value: [1, 2]).to_sql)
+    end
+
+    it "supports ranges" do
+      collection = new_collection(value: ">0") do
+        attribute :value, :integer
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.where(value: 0..).to_sql)
+    end
+
     it "supports invalid" do
       collection = new_collection(value: nil) do
         attribute :value, :integer
@@ -65,6 +81,69 @@ RSpec.describe Katalyst::Tables::Collection::Type::Integer do
 
       expect(filter(collection, Nested::Child.all, key: "parent.id").to_sql)
         .to eq(Nested::Child.joins(:parent).merge(Parent.where(id: 1)).to_sql)
+    end
+  end
+
+  describe "#cast" do
+    subject(:type) { described_class.new }
+
+    it { expect(type.cast(nil)).to be_nil }
+    it { expect(type.cast(0)).to eq 0 }
+    it { expect(type.cast("0")).to eq 0 }
+    it { expect(type.cast([])).to be_nil }
+    it { expect(type.cast(["0"])).to be_nil }
+    it { expect(type.cast("<0")).to eq(..0) }
+    it { expect(type.cast(">0")).to eq(0..) }
+    it { expect(type.cast("0..1")).to eq(0..1) }
+    it { expect(type.cast(0..1)).to eq(0..1) }
+
+    context "when multiple: true" do
+      subject(:type) { described_class.new(multiple: true) }
+
+      it { expect(type.cast(nil)).to be_nil }
+      it { expect(type.cast(0)).to eq 0 }
+      it { expect(type.cast("0")).to eq 0 }
+      it { expect(type.cast([])).to eq [] }
+      it { expect(type.cast(["0"])).to eq [0] }
+      it { expect(type.cast(["<0"])).to eq([0]) }
+    end
+  end
+
+  describe "#serialize" do
+    subject(:type) { described_class.new }
+
+    it { expect(type.serialize(nil)).to be_nil }
+    it { expect(type.serialize(0)).to eq 0 }
+    it { expect(type.serialize("0")).to eq 0 }
+    it { expect(type.serialize([])).to be_nil }
+    it { expect(type.serialize(["0"])).to be_nil }
+
+    context "when multiple: true" do
+      subject(:type) { described_class.new(multiple: true) }
+
+      it { expect(type.serialize(nil)).to be_nil }
+      it { expect(type.serialize(0)).to eq 0 }
+      it { expect(type.serialize("0")).to eq 0 }
+      it { expect(type.serialize([])).to eq [] }
+      it { expect(type.serialize(["0"])).to eq [0] }
+    end
+  end
+
+  describe "#deserialize" do
+    subject(:type) { described_class.new }
+
+    it { expect(type.deserialize(nil)).to be_nil }
+    it { expect(type.deserialize(0)).to eq 0 }
+    it { expect(type.deserialize("0")).to eq 0 }
+
+    context "when multiple: true" do
+      subject(:type) { described_class.new(multiple: true) }
+
+      it { expect(type.deserialize(nil)).to be_nil }
+      it { expect(type.deserialize(0)).to eq 0 }
+      it { expect(type.deserialize("0")).to eq 0 }
+      it { expect(type.deserialize([])).to eq [] }
+      it { expect(type.deserialize(["0"])).to eq [0] }
     end
   end
 end

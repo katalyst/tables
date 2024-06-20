@@ -30,7 +30,7 @@ module Katalyst
           }
         end
 
-        using Collection::Type::Value::Extensions
+        using Collection::Type::Helpers::Extensions
 
         def attributes
           collection.class.attribute_types

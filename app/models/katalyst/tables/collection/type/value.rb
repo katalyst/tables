@@ -5,23 +5,7 @@ module Katalyst
     module Collection
       module Type
         class Value < ActiveModel::Type::Value
-          module Extensions
-            refine(ActiveModel::Type::Value) do
-              def default_value
-                nil
-              end
-
-              def multiple?
-                false
-              end
-
-              def filterable?
-                false
-              end
-            end
-          end
-
-          using Extensions
+          using Helpers::Extensions
 
           attr_reader :scope
 

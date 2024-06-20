@@ -55,7 +55,7 @@ module Katalyst
             untagged
           end
 
-          using Type::Value::Extensions
+          using Type::Helpers::Extensions
 
           def parser_for(key)
             attribute = collection.class._default_attributes[key]
