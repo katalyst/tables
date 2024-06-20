@@ -21,12 +21,12 @@ module Katalyst
           end
 
           def default_value
-            @default_value ||= ActiveModel::Type::Value.new
+            @default_value ||= Value.new
           end
         end
 
         register(:boolean, ActiveModel::Type::Boolean)
-        register(:date_range, Type::DateRange)
+        register(:date, Type::Date)
         register(:decimal, ActiveModel::Type::Decimal)
         register(:float, ActiveModel::Type::Float)
         register(:integer, ActiveModel::Type::Integer)

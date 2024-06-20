@@ -14,7 +14,7 @@ RSpec.describe Katalyst::Tables::Collection::Filtering do
       attribute :name, :string
       attribute :active, :boolean # exists
       attribute :updated, :boolean # derived
-      attribute :created_at, :date_range
+      attribute :created_at, :date
       attribute :category, default: -> { [] }
       attribute :"parent.name", :string
       attribute :"parent.active", :boolean
@@ -101,6 +101,16 @@ RSpec.describe Katalyst::Tables::Collection::Filtering do
     it "supports date ranges with upper bound" do
       scope = collection.with_params(query: "created_at:<2200-01-01").apply(Resource.all)
       expect(scope.items.to_sql).to eq(Resource.where(created_at: ..Date.parse("2200-01-01")).to_sql)
+    end
+
+    it "supports unparseable dates" do
+      scope = collection.with_params(query: "created_at:2020").apply(Resource.all)
+      expect(scope.items.to_sql).to eq(Resource.none.to_sql)
+    end
+
+    it "supports invalid dates" do
+      scope = collection.with_params(query: "created_at:0000-00-00").apply(Resource.all)
+      expect(scope.items.to_sql).to eq(Resource.none.to_sql)
     end
   end
 

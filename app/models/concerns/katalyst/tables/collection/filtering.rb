@@ -12,6 +12,12 @@ module Katalyst
           use(Filter)
         end
 
+        # Internal access to attributes for applying filters to a
+        # collection. Not intended for public use.
+        def _filter_attributes
+          @attributes.except(*DEFAULT_ATTRIBUTES).values
+        end
+
         class Filter
           include ActiveRecord::Sanitization::ClassMethods
 
@@ -20,49 +26,63 @@ module Katalyst
           end
 
           def call(collection)
-            collection.class._default_attributes.each_value do |attribute|
-              key = attribute.name
-
-              next if DEFAULT_ATTRIBUTES.include?(key)
-
-              value = collection.attributes[key]
-
-              filter_attribute(collection, key, value, attribute.type.type)
+            collection._filter_attributes.each do |attribute|
+              filter_attribute(collection, attribute)
             end
 
             @app.call(collection)
           end
 
-          def filter_attribute(collection, key, value, type)
-            if key == "search"
-              search(collection, value)
-            elsif type == :string
-              filter_matches(collection, key, value)
-            elsif type == :boolean
-              filter_eq(collection, key, value) unless value.nil?
-            elsif value.present?
-              filter_eq(collection, key, value)
+          def filter_attribute(collection, attribute)
+            if attribute.name == "search"
+              search(collection, attribute)
+            elsif attribute.type.type == :string
+              filter_matches(collection, attribute)
+            elsif attribute.type.type == :boolean
+              filter_eq(collection, attribute) unless attribute.value.nil?
+            elsif attribute.type.type == :date
+              attribute.type.filter(collection, attribute)
+            elsif attribute.value.present?
+              filter_eq(collection, attribute)
             end
           end
 
-          def search(collection, search)
-            return if search.blank? || !collection.searchable?
+          def search(collection, attribute)
+            return if attribute.value.blank? || !collection.searchable?
 
-            collection.items = collection.items.public_send(collection.config.search_scope, search)
+            collection.items = collection.items.public_send(collection.config.search_scope, attribute.value)
           end
 
-          def filter_matches(collection, key, value)
-            return if value.nil?
+          def filter_matches(collection, attribute)
+            return if attribute.value.nil?
 
-            model, column = join_key(collection, key)
+            model, column = model_and_column_for(collection, attribute)
             arel_column = model.arel_table[column]
 
-            collection.items = collection.items.where(arel_column.matches("%#{sanitize_sql_like(value)}%"))
+            condition = arel_column.matches("%#{sanitize_sql_like(attribute.value)}%")
+            collection.items = collection.items.where(condition)
           end
 
-          def filter_eq(collection, key, value)
-            model, column = join_key(collection, key)
+          def filter_date(collection, attribute)
+            return if attribute.value.nil?
 
+            model, column = model_and_column_for(collection, attribute)
+
+            condition = if !attribute.valid?
+                          model.none
+                        elsif model.attribute_types.has_key?(column)
+                          model.where(column => attribute.value)
+                        else
+                          model.public_send(column, attribute.value)
+                        end
+
+            collection.items = collection.items.merge(condition)
+          end
+
+          def filter_eq(collection, attribute)
+            model, column = model_and_column_for(collection, attribute)
+
+            value = attribute.value
             condition = if model.attribute_types.has_key?(column)
                           model.where(column => value)
                         else
@@ -74,18 +94,14 @@ module Katalyst
 
           private
 
-          def join_key(collection, key)
-            if key.include?(".")
-              table, column = key.split(".")
+          def model_and_column_for(collection, attribute)
+            if attribute.name.include?(".")
+              table, column = attribute.name.split(".")
               collection.items = collection.items.joins(table.to_sym)
               [collection.items.reflections[table].klass, column]
             else
-              [collection.items.model, key]
+              [collection.items.model, attribute.name]
             end
-          end
-
-          def column_for(key)
-            key.include?(".") ? key.split(".").last : key
           end
         end
       end

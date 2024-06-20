@@ -38,7 +38,7 @@ module Katalyst
           values_method = "#{key.parameterize.underscore}_values"
           if attribute.type == :boolean
             render_options(true, false)
-          elsif attribute.type == :date_range
+          elsif attribute.type == :date
             render_options("YYYY-MM-DD", ">YYYY-MM-DD", "<YYYY-MM-DD", "YYYY-MM-DD..YYYY-MM-DD")
           elsif collection.model.defined_enums.has_key?(key)
             render_array(*collection.model.defined_enums[key].keys)

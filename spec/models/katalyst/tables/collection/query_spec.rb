@@ -13,7 +13,7 @@ RSpec.describe Katalyst::Tables::Collection::Query do
       attribute :search
       attribute :name, :string
       attribute :active, :boolean
-      attribute :created_at, :date_range
+      attribute :created_at, :date
       attribute :category, default: -> { [] }
       attribute :"parent.name", :string
       attribute :"parent.id", default: -> { [] }

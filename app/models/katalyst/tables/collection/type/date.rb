@@ -4,9 +4,9 @@ module Katalyst
   module Tables
     module Collection
       module Type
-        class DateRange < ActiveModel::Type::Value
+        class Date < Value
           def type
-            :date_range
+            :date
           end
 
           def serialize(value)
@@ -43,8 +43,6 @@ module Katalyst
               (..new_date($1.to_i, $2.to_i, $3.to_i))
             elsif value =~ BOUNDED
               (new_date($1.to_i, $2.to_i, $3.to_i)..new_date($4.to_i, $5.to_i, $6.to_i))
-            else
-              value
             end
           end
 

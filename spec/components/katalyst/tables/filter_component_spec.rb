@@ -56,7 +56,7 @@ RSpec.describe Katalyst::Tables::FilterComponent do
 
   it "describes date ranges" do
     create_collection do
-      attribute :created_at, :date_range
+      attribute :created_at, :date
     end
     expect(render_inline(component).at_css("tbody > tr:first-of-type")).to match_html(<<~HTML)
       <tr>
