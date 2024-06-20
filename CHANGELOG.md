@@ -1,3 +1,13 @@
+## [3.3.0]
+- Custom types for collections which support extensions for filtering with ranges and arrays.
+
+Note that if you have custom types defined for use in your collections, this could be a breaking
+change. We recommend you change your types to inherit from `Katalyst::Tables::Collections::Type::Value`
+and register them with `Katalyst::Tables::Collections::Type`.
+
+`Query` and `Filtering` are still optional extensions. We recommend that you add them to a
+based collection class in your application, e.g. `Admin::Collection`.
+
 ## [3.2.0]
 - Enum columns
 - Filter component (still in development, optional extension)
