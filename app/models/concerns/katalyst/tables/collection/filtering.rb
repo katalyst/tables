@@ -27,21 +27,19 @@ module Katalyst
 
           def call(collection)
             collection._filter_attributes.each do |attribute|
-              filter_attribute(collection, attribute)
+              filter_attribute(collection, attribute, attribute.type)
             end
 
             @app.call(collection)
           end
 
-          def filter_attribute(collection, attribute)
+          def filter_attribute(collection, attribute, type)
             if attribute.name == "search"
               search(collection, attribute)
-            elsif attribute.type.type == :string
+            elsif type.type == :string
               filter_matches(collection, attribute)
-            elsif attribute.type.type == :boolean
-              filter_eq(collection, attribute) unless attribute.value.nil?
-            elsif attribute.type.type == :date
-              attribute.type.filter(collection, attribute)
+            elsif type.type.in?(%i[boolean date])
+              type.filter(collection, attribute)
             elsif attribute.value.present?
               filter_eq(collection, attribute)
             end
