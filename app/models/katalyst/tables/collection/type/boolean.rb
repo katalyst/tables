@@ -13,7 +13,7 @@ module Katalyst
           end
 
           def filter?(attribute, value)
-            !value.nil? || attribute.came_from_user?
+            (!value.nil? && !value.eql?([])) || attribute.came_from_user?
           end
         end
       end

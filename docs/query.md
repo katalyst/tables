@@ -27,7 +27,7 @@ end
 
 ## User inputs
 
-The `Query` module supports basic string inputs, which it applies to a `search` attribute if defined.
+The `Query` module supports basic string inputs, which it applies to a `search` attribute (type: `:search`) if defined.
 
 ```ruby
 collection.with_params(query: "test")
@@ -42,7 +42,7 @@ The named scope should be defined on your model and take a string as input. A go
 
 ### Tagged inputs
 
-Attributes with types can be completed using tagged inputs. For example:
+Attributes with types can be completed using tagged and typed inputs. For example:
 
 ```ruby
 # In the collection
@@ -60,7 +60,8 @@ collection.with_params(query: 'active:"true"').filters
 
 ### Multi-value inputs
 
-Attributes that have a default array value can accept multiple input values:
+Some attributes support multiple values. Enums support this by default, while integers, floats, and booleans
+can be configured to accept multiple inputs. Example: `attribute :id, :integer, multiple: true`.
 
 ```ruby
 collection.with_params(query: "category:report")
@@ -70,6 +71,32 @@ collection.with_params(query: "category: [article, report]")
 collection.with_params(query: 'category:["article", "report"]')
 # => { "category" => ["article", "report"] }
 ```
+
+### Range inputs
+
+Continuous values like dates, integers, and floats support range inputs. These are enabled by default and
+users can filter on a range by specifying open or closed ranges. For example:
+
+```ruby
+collection.with_params(query: "created_at:<2024-01-01")
+# => { "created_at" => ..2024-01-01 }
+collection.with_params(query: "created_at:>2024-01-01")
+# => { "created_at" => 2024-01-01.. }
+collection.with_params(query: "created_at:2024-01-01..2025-01-01")
+# => { "created_at" => 2024-01-01..2025-01-01 }
+```
+
+### String inputs
+
+String inputs are automatically matched using `Arel::Predicates#matches` (substring matching).
+
+```ruby
+collection.with_params(query: "first_name:Aaron")
+# => where(arel_table[:first_name].matches("%Aaron%"))
+```
+
+You can configure exact (equality) matching instead with attribute configuration:
+`attribute :first_name, :string, exact: true`.
 
 ### Associations
 

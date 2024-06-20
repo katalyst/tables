@@ -57,6 +57,22 @@ RSpec.describe Katalyst::Tables::Collection::Type::Boolean do
       expect(filter(collection).to_sql).to eq(Resource.where(active: false).to_sql)
     end
 
+    it "supports multiple with no value" do
+      collection = new_collection do
+        attribute :active, :boolean, multiple: true
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.all.to_sql)
+    end
+
+    it "supports multiple with values" do
+      collection = new_collection(active: [true, false]) do
+        attribute :active, :boolean, multiple: true
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.where(active: [true, false]).to_sql)
+    end
+
     it "supports scopes" do
       collection = new_collection(updated: true) do
         attribute :updated, :boolean, scope: :updated
