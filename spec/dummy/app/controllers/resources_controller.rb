@@ -40,5 +40,6 @@ class ResourcesController < ApplicationController
     attribute :category, :enum
     attribute :active, :boolean
     attribute :created_at, :date
+    attribute :index, :integer
   end
 end

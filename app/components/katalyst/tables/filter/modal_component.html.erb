@@ -2,17 +2,17 @@
   <table>
     <thead>
     <tr>
-      <th></th>
-      <th>Key</th>
-      <th>Values</th>
+      <th class="label"></th>
+      <th class="key">Key</th>
+      <th class="values">Values</th>
     </tr>
     </thead>
     <tbody>
     <% attributes.each do |key, attribute| %>
       <tr>
-        <th><%= collection.model.human_attribute_name(key) %></th>
-        <td><%= key %></td>
-        <td><%= values_for(key, attribute) %></td>
+        <th class="label"><%= collection.model.human_attribute_name(key) %></th>
+        <td class="key"><%= key %></td>
+        <td class="values"><%= values_for(key, attribute) %></td>
       </tr>
     <% end %>
     </tbody>
