@@ -3,39 +3,65 @@
 require "rails_helper"
 
 # rubocop:disable RSpec/InstanceVariable
-RSpec.describe Katalyst::Tables::FilterComponent do
+RSpec.describe Katalyst::Tables::QueryComponent do
   subject(:component) { described_class.new(collection: @collection, url: "/resources") }
 
-  def create_collection(&block)
+  def create_collection(params = {}, &block)
     @collection = Class.new(Katalyst::Tables::Collection::Base) do
       include Katalyst::Tables::Collection::Query
+      config.sorting = :name
       instance_exec(&block) if block
-    end.new.apply(Resource)
+    end.with_params(params).apply(Resource)
   end
 
   it "renders filter form + modal" do
     create_collection
     expect(render_inline(component)).to match_html(<<~HTML)
-      <div data-controller="tables--filter--modal" data-action="click@window->tables--filter--modal#close click->tables--filter--modal#open:stop keydown.esc->tables--filter--modal#close ">
-        <form action="/resources" accept-charset="UTF-8" method="get">
-          <input autocomplete="off" type="hidden" name="sort" id="sort">
-          <input type="search" autocomplete="off" data-action="focus->tables--filter--modal#open" value="" name="query" id="query">
-          <button type="submit">Apply</button>
-        </form>
-        <div class="filter-keys-modal" data-tables--filter--modal-target="modal">
+      <form data-controller="tables--query"
+            data-action="click@window->tables--query#closeModal click->tables--query#openModal:stop focusin@window->tables--query#closeModal focusin->tables--query#openModal:stop keydown.esc->tables--query#clear:stop submit->tables--query#submit"
+            action="/resources" accept-charset="UTF-8" method="get">
+        <div class="query-input">
+          <label hidden="hidden" for="q">Search</label>
+          <input type="search" autocomplete="off" value="" name="q" id="q">
+          <button type="submit" tabindex="-1">Apply</button>
+        </div>
+        <div class="query-modal" data-tables--query-target="modal">
           <table>
             <thead>
               <tr>
                 <th class="label"></th>
                 <th class="key">Key</th>
                 <th class="values">Values</th>
-              </tr>#{' '}
+              </tr>
             </thead>
             <tbody>
             </tbody>
           </table>
         </div>
-      </div>
+      </form>
+    HTML
+  end
+
+  it "renders with custom content" do
+    create_collection
+    expect(render_inline(component) do
+      component.form(class: "custom") do |form|
+        component.concat(form.hidden_field(:example))
+      end
+    end).to match_html(<<~HTML)
+      <form class="custom"
+            data-controller="tables--query"
+            data-action="click@window->tables--query#closeModal click->tables--query#openModal:stop focusin@window->tables--query#closeModal focusin->tables--query#openModal:stop keydown.esc->tables--query#clear:stop submit->tables--query#submit"
+            action="/resources" accept-charset="UTF-8" method="get">
+        <input autocomplete="off" type="hidden" name="example" id="example">
+      </form>
+    HTML
+  end
+
+  it "renders sort when non-default" do
+    create_collection(sort: "name desc")
+    expect(render_inline(component).at_css("input[name=sort]")).to match_html(<<~HTML)
+      <input autocomplete="off" type="hidden" value="name desc" name="sort" id="sort">
     HTML
   end
 

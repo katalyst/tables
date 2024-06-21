@@ -55,6 +55,15 @@ module Katalyst
         render(Selectable::FormComponent.new(collection:, id:, primary_key:), &)
       end
 
+      # Construct a new query interface for filtering the current page.
+      #
+      # @param collection [Katalyst::Tables::Collection::Core] the collection to render
+      # @param url [String] the url to submit the form to (e.g. <resources>_path)
+      def table_query_with(collection:, url: url_for(action: :index), component: nil, &)
+        component ||= default_table_query_component_class
+        render(component.new(collection:, url:), &)
+      end
+
       # Construct a new summary table component.
       #
       # @param model [ActiveRecord::Base] subject for the table
@@ -69,18 +78,15 @@ module Katalyst
         render(component, &)
       end
 
-      # Construct a new filter.
-      #
-      # @param collection [Katalyst::Tables::Collection::Core] the collection to render
-      # @param url [String] the url to submit the form to (e.g. <resources>_path)
-      def filter_with(collection:, url: url_for(action: :index), &)
-        render(FilterComponent.new(collection:, url:), &)
-      end
-
       private
 
       def default_table_component_class
         component = controller.try(:default_table_component) || TableComponent
+        component.respond_to?(:constantize) ? component.constantize : component
+      end
+
+      def default_table_query_component_class
+        component = controller.try(:default_table_query_component) || QueryComponent
         component.respond_to?(:constantize) ? component.constantize : component
       end
 

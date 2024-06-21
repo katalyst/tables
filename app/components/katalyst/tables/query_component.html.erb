@@ -1,0 +1,8 @@
+<% if content? %>
+    <%= content %>
+<% else %>
+  <%= form do |form| %>
+    <%= render query_input(form:) %>
+    <%= modal %>
+  <% end %>
+<% end %>

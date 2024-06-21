@@ -1,8 +1,20 @@
-[data-controller="tables--filter--modal"] {
+[data-controller="tables--query"] {
   position: relative;
+
+  .query-input {
+    display: flex;
+
+    input[type="search"] {
+      flex: 1;
+    }
+
+    button {
+      flex: 0;
+    }
+  }
 }
 
-.filter-keys-modal {
+.query-modal {
   position: absolute;
   top: 100%;
   left: 0;

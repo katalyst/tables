@@ -1,6 +1,6 @@
 <%# locals: { collection: } %>
 
-<%= filter_with(collection:) %>
+<%= table_query_with(collection:) %>
 
 <%= table_selection_with(collection:) do %>
   <%= tag.button "Download", formaction: resources_path(format: :csv), formmethod: :get %>
