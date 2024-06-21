@@ -1,0 +1,10 @@
+<div class="query-input">
+  <%= form.label name, "Search", hidden: "" %>
+  <%= form.text_field(
+        name,
+        type:         :search,
+        autocomplete: "off",
+        **html_attributes,
+      ) %>
+  <%= form.button("Apply", type: :submit, name: nil, tabindex: -1) %>
+</div>

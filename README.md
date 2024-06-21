@@ -227,7 +227,7 @@ query expressions such as `first_name:Aaron` or `created_at:>2024-01-01` and the
 will be automatically parsed and applied to the collection attribute, and the collection
 will automatically generate and apply ActiveRecord conditions to filter the given scope.
 
-There's also a frontend utility, `filter_with(collection:)` that will generate the form
+There's also a frontend utility, `table_query_with(collection:)` that will generate the form
 and show a modal that helps users to interact with the query interface. More details available
 in the [query](docs/query.md) documentation.
 

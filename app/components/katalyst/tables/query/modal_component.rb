@@ -2,12 +2,10 @@
 
 module Katalyst
   module Tables
-    module Filter
+    module Query
       class ModalComponent < ViewComponent::Base
         include Katalyst::HtmlAttributes
         include Katalyst::Tables::Frontend
-
-        DEFAULT_ATTRIBUTES = %w[page sort search query].freeze
 
         renders_one :footer
 
@@ -23,9 +21,9 @@ module Katalyst
 
         def default_html_attributes
           {
-            class: "filter-keys-modal",
+            class: "query-modal",
             data:  {
-              tables__filter__modal_target: "modal",
+              tables__query_target: "modal",
             },
           }
         end

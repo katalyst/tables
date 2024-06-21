@@ -35,6 +35,16 @@ module Katalyst
               { column:, direction: }
             end
           end
+
+          refine Symbol do
+            def to_param
+              to_s.to_param
+            end
+
+            def to_h
+              to_s.to_h
+            end
+          end
         end
 
         using SortParams
@@ -116,7 +126,7 @@ module Katalyst
 
             if collection.items.respond_to?(:"order_by_#{column}")
               collection.items = collection.items.reorder(nil).public_send(:"order_by_#{column}", direction.to_sym)
-            elsif collection.items.model.has_attribute?(column)
+            elsif collection.model.has_attribute?(column)
               collection.items = collection.items.reorder(column => direction)
             end
 
