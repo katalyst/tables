@@ -86,7 +86,9 @@ module Katalyst
         end
 
         def filters
-          changes.except("sort", "page", "query").transform_values(&:second)
+          changes
+            .select { |k, _| self.class._default_attributes[k].type.filterable? }
+            .transform_values(&:second)
         end
 
         def model

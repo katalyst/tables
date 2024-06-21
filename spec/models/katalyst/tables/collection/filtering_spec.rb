@@ -23,23 +23,23 @@ RSpec.describe Katalyst::Tables::Collection::Filtering do
   end
 
   it "supports search" do
-    scope = collection.with_params(query: "test").apply(Resource.all)
+    scope = collection.with_params(q: "test").apply(Resource.all)
     expect(scope.items.to_sql).to eq(Resource.table_search("test").to_sql)
   end
 
   it "supports booleans" do
-    scope = collection.with_params(query: "active:true").apply(Resource.all)
+    scope = collection.with_params(q: "active:true").apply(Resource.all)
     expect(scope.items.to_sql).to eq(Resource.where(active: true).to_sql)
   end
 
   it "supports dates" do
-    scope = collection.with_params(query: "created_at:1970-01-01..2200-01-01").apply(Resource.all)
+    scope = collection.with_params(q: "created_at:1970-01-01..2200-01-01").apply(Resource.all)
     expect(scope.items.to_sql)
       .to eq(Resource.where(created_at: Date.parse("1970-01-01")..Date.parse("2200-01-01")).to_sql)
   end
 
   it "supports strings" do
-    scope = collection.with_params(query: "name:Aaron").apply(Nested::Child.all)
+    scope = collection.with_params(q: "name:Aaron").apply(Nested::Child.all)
     expect(scope.items.to_sql).to eq(
       Nested::Child.where(Arel.sql("\"nested_children\".\"name\" LIKE ?",
                                    "%Aaron%")).to_sql,
@@ -48,22 +48,22 @@ RSpec.describe Katalyst::Tables::Collection::Filtering do
 
   describe "multi value" do
     it "supports single values for enums" do
-      scope = collection.with_params(query: "category:report").apply(Resource.all)
+      scope = collection.with_params(q: "category:report").apply(Resource.all)
       expect(scope.items.to_sql).to eq(Resource.where(category: :report).to_sql)
     end
 
     it "supports multiple values for enums" do
-      scope = collection.with_params(query: "category: [article, report]").apply(Resource.all)
+      scope = collection.with_params(q: "category: [article, report]").apply(Resource.all)
       expect(scope.items.to_sql).to eq(Resource.where(category: %i[article report]).to_sql)
     end
 
     it "supports invalid enum values" do
-      scope = collection.with_params(query: "category: [bad]").apply(Resource.all)
+      scope = collection.with_params(q: "category: [bad]").apply(Resource.all)
       expect(scope.items.to_sql).to eq(Resource.where(category: nil).to_sql)
     end
 
     it "supports complex key matching on enums" do
-      scope = collection.with_params(query: "parent.role:teacher").apply(Nested::Child.all)
+      scope = collection.with_params(q: "parent.role:teacher").apply(Nested::Child.all)
       expect(scope.items.to_sql).to eq(
         Nested::Child.joins(:parent)
                      .merge(Parent.where(role: :teacher))
@@ -72,7 +72,7 @@ RSpec.describe Katalyst::Tables::Collection::Filtering do
     end
 
     it "supports complex key matching on id arrays" do
-      scope = collection.with_params(query: "parent.id:[15, 10]").apply(Nested::Child.all)
+      scope = collection.with_params(q: "parent.id:[15, 10]").apply(Nested::Child.all)
       expect(scope.items.to_sql).to eq(
         Nested::Child.joins(:parent)
                      .merge(Parent.where(id: [15, 10]))
@@ -82,7 +82,7 @@ RSpec.describe Katalyst::Tables::Collection::Filtering do
   end
 
   it "supports complex key matching on ids" do
-    scope = collection.with_params(query: "parent.id:15").apply(Nested::Child.all)
+    scope = collection.with_params(q: "parent.id:15").apply(Nested::Child.all)
     expect(scope.items.to_sql).to eq(
       Nested::Child.joins(:parent)
                    .where(Arel.sql("\"parents\".\"id\" = ?", 15))

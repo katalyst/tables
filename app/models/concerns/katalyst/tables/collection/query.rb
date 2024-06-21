@@ -17,10 +17,11 @@ module Katalyst
         end
 
         included do
-          attribute :query, :query, default: ""
+          attribute :q, :query, default: ""
+          alias_attribute :query, :q
 
           # Note: this is defined inline so that we can overwrite query=
-          def query=(value)
+          def q=(value)
             query = super
 
             Parser.new(self).parse(query)

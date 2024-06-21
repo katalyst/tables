@@ -44,7 +44,7 @@ initial scope (e.g., `Resource.all`).
 When passing an empty query string to the collection, no filters will be applied
 
 ```ruby
-scope = collection.with_params(query: "").apply(Resource.all)
+scope = collection.with_params(q: "").apply(Resource.all)
 # => Resource.all
 ```
 
@@ -59,20 +59,20 @@ class Collection < Katalyst::Tables::Collection::Base
   attribute :custom_search, :search, scope: :custom_search
 end
 
-scope = collection.with_params(query: "test").apply(Resource.all)
+scope = collection.with_params(q: "test").apply(Resource.all)
 # => Resource.custom_search("test")
 
-collection.with_params(query: "active status")
+collection.with_params(q: "active status")
 # => Resource.custom_search('active status')
 
-scope = collection.with_params(query: '"active status"').apply(Resource.all)
+scope = collection.with_params(q: '"active status"').apply(Resource.all)
 # => Resource.custom_search('"active status"')
 ```
 
 ### Boolean search
 
 ```ruby
-scope = collection.with_params(query: "active:true").apply(Resource.all)
+scope = collection.with_params(q: "active:true").apply(Resource.all)
 # => Resource.where(active: true)
 ```
 
@@ -80,7 +80,7 @@ Supports derived booleans. When filtering on a derived attribute, `Filtering` wi
 the name of the attribute, passing in the value. 
 
 ```ruby
-scope = collection.with_params(query: "updated:true").apply(Resource.all)
+scope = collection.with_params(q: "updated:true").apply(Resource.all)
 # => Resource.where("created_at != updated_at")
 ```
 
@@ -89,41 +89,41 @@ scope = collection.with_params(query: "updated:true").apply(Resource.all)
 Attributes that have a default array value can accept multiple input values:
 
  ```ruby
- scope = collection.with_params(query: "category:report").apply(Resource.all)
+ scope = collection.with_params(q: "category:report").apply(Resource.all)
  # => Resource.where(category: :report)
  
-scope = collection.with_params(query: "category: [article, report]").apply(Resource.all)
+scope = collection.with_params(q: "category: [article, report]").apply(Resource.all)
  # => Resource.where(category: %i[article report])
  ```
 
 ### String search
 ```ruby
-scope = collection.with_params(query: "name:Aaron").apply(Nested::Child.all)
+scope = collection.with_params(q: "name:Aaron").apply(Nested::Child.all)
 # => Nested::Child.where("name LIKE ?", "%Aaron%")
 ```
 
 - **Complex Key Matching**: String filtering with associations.
  ```ruby
- scope = collection.with_params(query: "parent.name:test").apply(Nested::Child.all)
+ scope = collection.with_params(q: "parent.name:test").apply(Nested::Child.all)
  # => Nested::Child.joins(:parent).where("parents.name LIKE ?", "%test%")
  ```
 
 ### Associations
 
  ```ruby
-scope = collection.with_params(query: "parent.role:teacher").apply(Nested::Child.all)
+scope = collection.with_params(q: "parent.role:teacher").apply(Nested::Child.all)
 # => Nested::Child.joins(:parent).merge(Parent.where(role: :teacher))
 
-scope = collection.with_params(query: "parent.active:true").apply(Nested::Child.all)
+scope = collection.with_params(q: "parent.active:true").apply(Nested::Child.all)
 # => Nested::Child.joins(:parent).merge(Parent.where(active: true))
 
-scope = collection.with_params(query: "parent.id:15").apply(Nested::Child.all)
+scope = collection.with_params(q: "parent.id:15").apply(Nested::Child.all)
 # => Nested::Child.joins(:parent).where("parents.id = ?", 15)
 
-scope = collection.with_params(query: "parent.id:[1, 2, 3]").apply(Resource.all)
+scope = collection.with_params(q: "parent.id:[1, 2, 3]").apply(Resource.all)
 # => Resource.where(id: [1, 2, 3])
 
-scope = collection.with_params(query: "parent.name:test").apply(Nested::Child.all)
+scope = collection.with_params(q: "parent.name:test").apply(Nested::Child.all)
 # => Nested::Child.joins(:parent).where("parents.name LIKE ?", "%test%")
 ```
 
@@ -147,6 +147,6 @@ class MyCollection < Katalyst::Tables::Collection::Base
 end
 
 collection = MyCollection.new
-scope      = collection.with_params(query: "active:true category:[article,report] parent.id:15").apply(Resource.all)
+scope      = collection.with_params(q: "active:true category:[article,report] parent.id:15").apply(Resource.all)
 # => Resource.joins(:parent).where(active: true, category: %i[article report], "parents.id" => 15)
 ```

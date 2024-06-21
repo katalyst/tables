@@ -30,11 +30,11 @@ end
 The `Query` module supports basic string inputs, which it applies to a `search` attribute (type: `:search`) if defined.
 
 ```ruby
-collection.with_params(query: "test")
+collection.with_params(q: "test")
 # => { "search" => "test" }
-collection.with_params(query: "active status")
+collection.with_params(q: "active status")
 # => { "search" => "active status" }
-collection.with_params(query: '"active status"')
+collection.with_params(q: '"active status"')
 # => { "search" => '"active status"' }
 ```
 
@@ -48,13 +48,13 @@ Attributes with types can be completed using tagged and typed inputs. For exampl
 # In the collection
 attribute :active, :boolean
 # In the controller
-collection.with_params(query: "active:true").filters
+collection.with_params(q: "active:true").filters
 # => { "active" => true }
 ```
 
 Values can be quoted, e.g. if they contain spaces:
 ```ruby
-collection.with_params(query: 'active:"true"').filters
+collection.with_params(q: 'active:"true"').filters
 # => { "active" => true }
 ```
 
@@ -64,11 +64,11 @@ Some attributes support multiple values. Enums support this by default, while in
 can be configured to accept multiple inputs. Example: `attribute :id, :integer, multiple: true`.
 
 ```ruby
-collection.with_params(query: "category:report")
+collection.with_params(q: "category:report")
 # => { "category" => ["report"] }
-collection.with_params(query: "category: [article, report]")
+collection.with_params(q: "category: [article, report]")
 # => { "category" => ["article", "report"] }
-collection.with_params(query: 'category:["article", "report"]')
+collection.with_params(q: 'category:["article", "report"]')
 # => { "category" => ["article", "report"] }
 ```
 
@@ -78,11 +78,11 @@ Continuous values like dates, integers, and floats support range inputs. These a
 users can filter on a range by specifying open or closed ranges. For example:
 
 ```ruby
-collection.with_params(query: "created_at:<2024-01-01")
+collection.with_params(q: "created_at:<2024-01-01")
 # => { "created_at" => ..2024-01-01 }
-collection.with_params(query: "created_at:>2024-01-01")
+collection.with_params(q: "created_at:>2024-01-01")
 # => { "created_at" => 2024-01-01.. }
-collection.with_params(query: "created_at:2024-01-01..2025-01-01")
+collection.with_params(q: "created_at:2024-01-01..2025-01-01")
 # => { "created_at" => 2024-01-01..2025-01-01 }
 ```
 
@@ -91,7 +91,7 @@ collection.with_params(query: "created_at:2024-01-01..2025-01-01")
 String inputs are automatically matched using `Arel::Predicates#matches` (substring matching).
 
 ```ruby
-collection.with_params(query: "first_name:Aaron")
+collection.with_params(q: "first_name:Aaron")
 # => where(arel_table[:first_name].matches("%Aaron%"))
 ```
 
@@ -103,9 +103,9 @@ You can configure exact (equality) matching instead with attribute configuration
 Filtering supports joining on `belongs_to` associations. These can be filtered using `model.key` tagged inputs:
 
 ```ruby
-collection.with_params(query: "parent.name:test")
+collection.with_params(q: "parent.name:test")
 # => { "parent.name" => "test" }
-collection.with_params(query: "parent.id:[15]")
+collection.with_params(q: "parent.id:[15]")
 # => { "parent.id" => [15] }
 ```
 
@@ -114,9 +114,9 @@ collection.with_params(query: "parent.id:[15]")
 Queries with unsupported tags or unknown keys are ignored.
 
 ```ruby
-collection.with_params(query: "unknown:true")
+collection.with_params(q: "unknown:true")
 # => {}
-collection.with_params(query: "boom.name:test")
+collection.with_params(q: "boom.name:test")
 # => {}
 ```
 
@@ -138,6 +138,6 @@ class Collection < Katalyst::Tables::Collection::Base
 end
 
 collection = MyCollection.new
-collection.with_params(query: "active:true category:[article,report] parent.id:15")
+collection.with_params(q: "active:true category:[article,report] parent.id:15")
 # => { "active" => true, "category" => ["article", "report"], "parent.id" => 15 }
 ```
