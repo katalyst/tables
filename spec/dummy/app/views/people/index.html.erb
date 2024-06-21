@@ -1,16 +1,14 @@
 <h1>People</h1>
 <%= link_to "Home", root_path %>
 
+<%# Note: deliberately testing without Query to ensure backwards compatibility %>
 <%= form_with model: @people, method: :get, data: {
-      controller:    "search",
-      action:        "input->search#update",
-      search_target: "form",
-      turbo_action:  "replace",
+      turbo_action: "replace",
     } do |form| %>
   <%= form.label :search %>
-  <%= form.text_field :search, type: :search, data: { search_target: "input" } %>
+  <%= form.text_field :search, type: :search %>
   <%= form.hidden_field :sort unless @people.default_sort? %>
-  <%= form.submit "Filter", hidden: "" %>
+  <%= form.submit "Filter", name: nil %>
 <% end %>
 
 <%= table_with(collection: @people) do |row, person| %>

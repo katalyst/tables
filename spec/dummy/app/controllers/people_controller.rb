@@ -9,6 +9,7 @@ class PeopleController < ApplicationController
     @person = Person.find(params[:id])
   end
 
+  # Note: legacy style collection, testing backwards compatibility (vs Query)
   class Collection < Katalyst::Tables::Collection::Base
     config.paginate = { items: 5 }
     config.sorting = "name asc"

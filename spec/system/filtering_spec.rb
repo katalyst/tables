@@ -11,6 +11,7 @@ RSpec.describe "index/filtering" do
     visit people_path
 
     fill_in "Search", with: "1"
+    click_on "Filter"
 
     expect(page).to have_current_path(people_path(search: "1"))
     expect(page).to have_css("input[type=search][value='1']")
@@ -24,9 +25,10 @@ RSpec.describe "index/filtering" do
     expect(page).to have_no_css("td", text: "Person 3")
 
     find("input[type=search]").click
-    page.driver.browser.keyboard.type(:backspace)
+    page.driver.browser.keyboard.type(:escape)
+    page.driver.browser.keyboard.type(:enter)
 
-    expect(page).to have_current_path(people_path)
+    expect(page).to have_current_path(people_path(search: ""))
     expect(page).to have_css("td", text: "Person 3")
 
     expect(page).to have_css("input[type=search]:focus")
@@ -37,20 +39,6 @@ RSpec.describe "index/filtering" do
       visit people_path(search: "xxxxxx")
 
       expect(page).to have_css("caption", text: "No people found.")
-    end
-  end
-
-  context "when the content changes" do
-    it "retains focus" do
-      visit people_path
-
-      find("input[type=search]").click
-      expect(page).to have_css("input[type=search]:focus")
-
-      fill_in "Search", with: "Person"
-
-      expect(page).to have_current_path(people_path(search: "Person"))
-      expect(page).to have_css("input[type=search]:focus")
     end
   end
 
@@ -82,6 +70,7 @@ RSpec.describe "index/filtering" do
       visit people_path
 
       fill_in "Search", with: "Person"
+      click_on "Filter"
 
       expect(page).to have_current_path(people_path(search: "Person"))
 
