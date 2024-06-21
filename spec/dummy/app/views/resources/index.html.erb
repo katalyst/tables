@@ -1,5 +1,8 @@
 <%# locals: { collection: } %>
 
+<h1>Resources</h1>
+<%= link_to "Home", root_path %>
+
 <%= table_query_with(collection:) %>
 
 <%= table_selection_with(collection:) do %>
@@ -9,3 +12,5 @@
 
 <%# generating ids for rows is not required for selection, but it makes testing easier %>
 <%= table_with(collection:, generate_ids: true) %>
+
+<%== pagy_nav(collection.pagination) %>
