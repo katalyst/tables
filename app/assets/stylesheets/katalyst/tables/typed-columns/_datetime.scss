@@ -1,4 +1,4 @@
 // where psuedo selector has a specificity of 0 so it can be easily overwritten with simple selectors
-:where(th.type-datetime, td.type-date) {
+:where(th.type-datetime, td.type-datetime) {
   width: var(--width-medium);
 }
