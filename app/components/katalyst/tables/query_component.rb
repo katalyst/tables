@@ -79,13 +79,14 @@ module Katalyst
       def default_html_attributes
         {
           data: {
-            controller: "tables--query",
-            action:     %w[
+            controller:   "tables--query",
+            turbo_action: :replace,
+            action:       %w[
               click@window->tables--query#closeModal
               click->tables--query#openModal:stop
               focusin@window->tables--query#closeModal
               focusin->tables--query#openModal:stop
-              keydown.esc->tables--query#clear:stop
+              keyup.esc->tables--query#clear:stop
               submit->tables--query#submit
             ],
           },
