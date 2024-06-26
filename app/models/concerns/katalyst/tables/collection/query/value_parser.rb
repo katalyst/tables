@@ -7,9 +7,9 @@ module Katalyst
         class ValueParser
           attr_accessor :query
 
-          def initialize(collection:, attribute:)
-            @collection = collection
-            @attribute  = attribute
+          def initialize(parser:, attribute:)
+            @parser = parser
+            @attribute = attribute
           end
 
           def take_quoted_value

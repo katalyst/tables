@@ -46,8 +46,8 @@ module Katalyst
           def value=(value)
             return if @attribute.type_cast(value).nil? # undefined attribute
 
-            current = @collection.attributes[@attribute.name]
-            @collection.assign_attributes(@attribute.name => current + [value])
+            current = @parser.attributes[@attribute.name] || []
+            @parser.attributes[@attribute.name] = current + [value]
           end
         end
       end

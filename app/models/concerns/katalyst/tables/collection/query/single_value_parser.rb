@@ -15,7 +15,7 @@ module Katalyst
           def value=(value)
             return if @attribute.type_cast(value).nil? # undefined attribute
 
-            @collection.assign_attributes(@attribute.name => value)
+            @parser.attributes[@attribute.name] = value
           end
         end
       end

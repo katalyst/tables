@@ -22,14 +22,8 @@ module Katalyst
           attribute :q, :query, default: ""
           alias_attribute :query, :q
 
-          # Note: this is defined inline so that we can overwrite query=
-          def q=(value)
-            query = super
-
-            Parser.new(self).parse(query)
-
-            query
-          end
+          attribute :p, :integer, filter: false
+          alias_attribute :position, :p
         end
 
         using Type::Helpers::Extensions
@@ -40,6 +34,19 @@ module Katalyst
             public_send(values_method)
           elsif @attributes.key?(key)
             @attributes[key].type.examples_for(items, @attributes[key])
+          end
+        end
+
+        private
+
+        def _assign_attributes(new_attributes)
+          result = super
+
+          if q_changed?
+            parser = Parser.new(self).parse(query)
+            result.merge(super(parser.attributes))
+          else
+            result
           end
         end
       end

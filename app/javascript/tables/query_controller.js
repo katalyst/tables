@@ -40,6 +40,9 @@ export default class QueryController extends Controller {
   }
 
   submit() {
+    const hasFocus = this.query === document.activeElement;
+    const position = hasFocus && this.query.selectionStart;
+
     if (this.pending) {
       clearTimeout(this.pending);
       delete this.pending;
@@ -47,7 +50,6 @@ export default class QueryController extends Controller {
 
     // prevent an unnecessary `?q=` parameter from appearing in the URL
     if (this.query.value === "") {
-      const hasFocus = this.query === document.activeElement;
       this.query.disabled = true;
 
       // restore input and focus after form submission
@@ -55,6 +57,15 @@ export default class QueryController extends Controller {
         this.query.disabled = false;
         if (hasFocus) this.query.focus();
       }, 0);
+    }
+
+    // add/remove current cursor position
+    if (hasFocus && position) {
+      this.position.value = position;
+      this.position.disabled = false;
+    } else {
+      this.position.value = "";
+      this.position.disabled = true;
     }
   }
 
@@ -74,5 +85,9 @@ export default class QueryController extends Controller {
 
   get query() {
     return this.element.querySelector("input[type=search]");
+  }
+
+  get position() {
+    return this.element.querySelector("input[name=p]");
   }
 }

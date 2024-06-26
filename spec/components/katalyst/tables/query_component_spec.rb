@@ -20,6 +20,7 @@ RSpec.describe Katalyst::Tables::QueryComponent do
       <div class="query-input">
         <label hidden="hidden" for="q">Search</label>
         <input type="search" autocomplete="off" data-turbo-permanent="true" data-action="keyup.enter->tables--query#closeModal" value="" name="q" id="q">
+        <input autocomplete="off" type="hidden" name="p" id="p">
         <button type="submit" tabindex="-1">Apply</button>
       </div>
       <div class="query-modal" data-tables--query-target="modal" data-action="turbo:before-morph-attribute->tables--query#beforeMorphAttribute">

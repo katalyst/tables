@@ -7,10 +7,11 @@ module Katalyst
         class Parser # :nodoc:
           # query [StringScanner]
           attr_accessor :query
-          attr_reader :collection, :untagged
+          attr_reader :collection, :untagged, :attributes
 
           def initialize(collection)
             @collection = collection
+            @attributes = {}
             @untagged   = []
           end
 
@@ -26,7 +27,7 @@ module Katalyst
             end
 
             if untagged.any? && (search = collection.class.search_attribute)
-              collection.assign_attributes(search => untagged.join(" "))
+              attributes[search] = untagged.join(" ")
             end
 
             self
@@ -61,9 +62,9 @@ module Katalyst
             attribute = collection.class._default_attributes[key]
 
             if attribute.type.multiple? || attribute.value.is_a?(::Array)
-              ArrayValueParser.new(collection:, attribute:)
+              ArrayValueParser.new(parser: self, attribute:)
             else
-              SingleValueParser.new(collection:, attribute:)
+              SingleValueParser.new(parser: self, attribute:)
             end
           end
         end
