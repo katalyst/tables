@@ -239,9 +239,20 @@ module Katalyst
 
     # Generates a column from numeric values formatted appropriately.
     #
+    # Supports Rails' built in number formatters, i.e.
+    #  * +phone+: ActiveSupport::NumberHelper#number_to_phone
+    #  * +currency+: ActiveSupport::NumberHelper#number_to_currency
+    #  * +percentage+: ActiveSupport::NumberHelper#number_to_percentage
+    #  * +delimited+: ActiveSupport::NumberHelper#number_to_delimited
+    #  * +rounded+: ActiveSupport::NumberHelper#number_to_rounded
+    #  * +human_size+: ActiveSupport::NumberHelper#number_to_human_size
+    #  * +human+: ActiveSupport::NumberHelper#number_to_human
+    #
     # @param column [Symbol] the column's name, called as a method on the record
     # @param label [String|nil] the label to use for the column header
     # @param heading [boolean] if true, data cells will use `th` tags
+    # @param format [String|Symbol] Rails number_to_X format option, defaults to +delimited+
+    # @param options [Hash] options to be passed to `number_to_<format>`
     # @param ** [Hash] HTML attributes to be added to column cells
     # @param & [Proc] optional block to alter the cell content
     #
@@ -252,9 +263,9 @@ module Katalyst
     #
     # @example Render the number of comments on a post
     #   <% row.number :comment_count %> # => <td>0</td>
-    def number(column, label: nil, heading: false, **, &)
+    def number(column, label: nil, heading: false, format: :delimited, options: {}, **, &)
       with_cell(Tables::Cells::NumberComponent.new(
-                  collection:, row:, column:, record:, label:, heading:, **,
+                  collection:, row:, column:, record:, label:, heading:, format:, options:, **,
                 ), &)
     end
 

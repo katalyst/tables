@@ -76,9 +76,24 @@ RSpec.describe Katalyst::Tables::Cells::NumberComponent do
   context "with a large data value" do
     let(:collection) { build_list(:resource, 1, count: 1_000_000_000) }
 
-    it "renders data as human" do
+    it "renders data with commas" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-number">1 Billion</td>
+        <td class="type-number">1,000,000,000</td>
+      HTML
+    end
+  end
+
+  context "with a format argument" do
+    let(:rendered) do
+      render_inline(table) do |row|
+        row.number(:count, label: "", format: :human, options: { units: { unit: "m", thousand: "km" } })
+      end
+    end
+    let(:collection) { build_list(:resource, 1, count: 1024) }
+
+    it "renders data with unit" do
+      expect(data).to match_html(<<~HTML)
+        <td class="type-number">1.02 km</td>
       HTML
     end
   end
