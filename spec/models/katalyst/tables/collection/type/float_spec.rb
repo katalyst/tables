@@ -42,19 +42,28 @@ RSpec.describe Katalyst::Tables::Collection::Type::Float do
     end
 
     it "supports ranges" do
-      collection = new_collection(value: ">0") do
+      collection = new_collection(value: "0.0..") do
         attribute :value, :float
       end
 
       expect(filter(collection).to_sql).to eq(Resource.where(value: 0.0..).to_sql)
     end
 
-    it "supports invalid" do
+    it "supports unset" do
       collection = new_collection(value: nil) do
-        attribute :value, :float
+        attribute :value, :integer
       end
 
-      expect(filter(collection).to_sql).to eq(Resource.none.to_sql)
+      expect(filter(collection).to_sql).to eq(Resource.all.to_sql)
+    end
+
+    it "supports invalid" do
+      collection = new_collection(value: "invalid") do
+        attribute :value, :integer
+      end
+
+      # note: this defined by Ruby behaviour: "invalid".to_f => 0
+      expect(filter(collection).to_sql).to eq(Resource.where(value: 0).to_sql)
     end
 
     it "supports defaults" do
@@ -91,8 +100,8 @@ RSpec.describe Katalyst::Tables::Collection::Type::Float do
     it { expect(type.cast(0.0)).to eq 0.0 }
     it { expect(type.cast("0.0")).to eq 0.0 }
     it { expect(type.cast([])).to be_nil }
-    it { expect(type.cast("<0.0")).to eq(..0.0) }
-    it { expect(type.cast(">0.0")).to eq(0.0..) }
+    it { expect(type.cast("..0.0")).to eq(..0.0) }
+    it { expect(type.cast("0.0..")).to eq(0.0..) }
     it { expect(type.cast("0.0..1.0")).to eq(0.0..1.0) }
     it { expect(type.cast(0.0..1.0)).to eq(0.0..1.0) }
 
@@ -104,7 +113,7 @@ RSpec.describe Katalyst::Tables::Collection::Type::Float do
       it { expect(type.cast("0.0")).to eq 0.0 }
       it { expect(type.cast([])).to eq [] }
       it { expect(type.cast(["0.0"])).to eq [0.0] }
-      it { expect(type.cast(["<0.0"])).to eq([0.0]) }
+      it { expect(type.cast(["..0.0"])).to eq([0.0]) }
     end
   end
 

@@ -21,7 +21,13 @@ module Katalyst
           end
 
           def filter?(attribute, value)
-            filterable? && (value.present? || attribute.came_from_user?)
+            return false unless filterable?
+
+            if attribute.came_from_user?
+              attribute.value_before_type_cast.present?
+            else
+              value.present?
+            end
           end
 
           def filter(scope, attribute)
@@ -30,7 +36,7 @@ module Katalyst
             return scope unless filter?(attribute, value)
 
             scope, model, column = model_and_column_for(scope, attribute)
-            condition            = filter_condition(model, column, value)
+            condition = filter_condition(model, column, value)
 
             scope.merge(condition)
           end
