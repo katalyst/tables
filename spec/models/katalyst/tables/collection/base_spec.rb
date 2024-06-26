@@ -17,16 +17,12 @@ RSpec.describe Katalyst::Tables::Collection::Base do
 
     let(:params) { ActionController::Parameters.new(search: "query") }
 
-    before do
-      allow(items).to receive(:search).and_return(items)
-    end
-
     it { is_expected.to be_filtered }
     it { is_expected.to have_attributes(to_params: { "search" => "query" }) }
 
     it "applies filter" do
       collection.apply(items)
-      expect(items).to have_received(:search).with("query")
+      expect(collection.items.to_sql).to eq(Person.table_search("query").to_sql)
     end
 
     context "when empty" do
@@ -37,7 +33,7 @@ RSpec.describe Katalyst::Tables::Collection::Base do
 
       it "does not apply filter" do
         collection.apply(items)
-        expect(items).not_to have_received(:search)
+        expect(collection.items.to_sql).to eq(Person.all.to_sql)
       end
     end
   end
@@ -138,27 +134,26 @@ RSpec.describe Katalyst::Tables::Collection::Base do
     end
   end
 
-  context "with sort, paginate, and filter options" do
+  context "with sort, paginate, and filter" do
     subject(:collection) do
       Examples::SearchCollection.new(sorting: "name", paginate: true).with_params(params)
     end
 
-    let(:params) { ActionController::Parameters.new(search: "query") }
+    let(:params) { ActionController::Parameters.new(search: "person", page: 2, sort: "name desc") }
 
-    # rubocop:disable RSpec/MultipleExpectations, RSpec/ExampleLength, RSpec/VerifiedDoubles
-    it "applies filtering then sort then pagination" do
-      items = spy(ActiveRecord::Relation)
-      model = spy(Resource)
-      allow(items).to receive_messages(model:, count: 50)
-      allow(model).to receive(:has_attribute?).and_return(true)
+    it { is_expected.to be_filtered }
 
-      collection.apply(items)
-
-      expect(items).to have_received(:search).ordered # filter
-      expect(items).to have_received(:reorder).ordered # sort
-      expect(items).to have_received(:offset).ordered # pagination
-      expect(items).to have_received(:limit).ordered # pagination
+    it "includes filters and sort/page params" do
+      expect(collection).to have_attributes(to_params: { "search" => "person",
+                                                         "page"   => 2,
+                                                         "sort"   => "name desc" })
     end
-    # rubocop:enable RSpec/MultipleExpectations, RSpec/ExampleLength, RSpec/VerifiedDoubles
+
+    it "applies filtering then sort then pagination" do
+      create_list(:person, 22) # rubocop:disable FactoryBot/ExcessiveCreateList
+      collection.apply(items)
+      expect(collection.items.to_sql)
+        .to eq(Person.table_search("person").reorder(name: :desc).limit(20).offset(20).to_sql)
+    end
   end
 end

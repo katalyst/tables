@@ -48,6 +48,16 @@ module Katalyst
           self
         end
 
+        def apply(items)
+          if items.is_a?(Class) && items < ActiveRecord::Base
+            super(items.all)
+          elsif items.is_a?(ActiveRecord::Relation)
+            super
+          else
+            raise ArgumentError, "Collection requires an ActiveRecord scope, given #{items.class}"
+          end
+        end
+
         def inspect
           "#<#{self.class.name} @attributes=#{attributes.inspect} @model_name=\"#{model_name}\" @count=#{items&.count}>"
         end

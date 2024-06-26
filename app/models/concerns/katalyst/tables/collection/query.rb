@@ -31,6 +31,17 @@ module Katalyst
             query
           end
         end
+
+        using Type::Helpers::Extensions
+
+        def examples_for(key)
+          values_method = "#{key.parameterize.underscore}_values"
+          if respond_to?(values_method)
+            public_send(values_method)
+          elsif @attributes.key?(key)
+            @attributes[key].type.examples_for(items, @attributes[key])
+          end
+        end
       end
     end
   end

@@ -86,8 +86,9 @@ module Katalyst
               click->tables--query#openModal:stop
               focusin@window->tables--query#closeModal
               focusin->tables--query#openModal:stop
-              keyup.esc->tables--query#clear:stop
+              keydown.esc->tables--query#clear:stop
               submit->tables--query#submit
+              input->tables--query#update
             ],
           },
         }

@@ -38,13 +38,25 @@
     pointer-events: unset;
   }
 
-  table {
-    table-layout: fixed;
+  dl {
+    display: grid;
+    grid-auto-flow: row;
+    grid-auto-rows: 1fr;
+    grid-template-columns: 1fr 4fr;
   }
 
-  th.label,
-  th.key {
-    width: 15%;
+  dt {
+    grid-column-start: 1;
+    font-weight: bold;
+  }
+
+  dd {
+    color: #666;
+  }
+
+  ul {
+    list-style: none;
+    padding-left: 0;
   }
 
   .footer {

@@ -1,25 +1,26 @@
 <%= tag.div(**html_attributes) do %>
-  <table>
-    <thead>
-    <tr>
-      <th class="label"></th>
-      <th class="key">Key</th>
-      <th class="values">Values</th>
-    </tr>
-    </thead>
-    <tbody>
-    <% attributes.each do |key, attribute| %>
-      <tr>
-        <th class="label"><%= collection.model.human_attribute_name(key) %></th>
-        <td class="key"><%= key %></td>
-        <td class="values"><%= values_for(key, attribute) %></td>
-      </tr>
+  <% if show_values? %>
+    <h4>Possible values for <code><%= current_key %>:</code></h4>
+    <ul>
+      <% values_for(current_key).each do |value| %>
+        <li><code><%= value %></code></li>
+      <% end %>
+    </ul>
+  <% else %>
+    <% if current_key.present? %>
+      <p>Unknown filter <code><%= current_key %></code></p>
     <% end %>
-    </tbody>
-  </table>
-  <% if footer? %>
-    <div class="footer">
-      <%= footer %>
-    </div>
+    <p><strong>Available filters:</strong></p>
+    <dl>
+      <% attributes.each do |key, attribute| %>
+        <dt><code><%= key %>:</code></dt>
+        <dd>Filter on values for <%= collection.model.human_attribute_name(key).downcase %></dd>
+      <% end %>
+    </dl>
   <% end %>
+<% end %>
+<% if footer? %>
+  <div class="footer">
+    <%= footer %>
+  </div>
 <% end %>

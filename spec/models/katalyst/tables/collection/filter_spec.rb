@@ -8,7 +8,7 @@ RSpec.describe Katalyst::Tables::Collection::Filter do
       attribute :search, default: ""
 
       def filter
-        self.items = items.search(search) if search.present?
+        self.items = items.table_search(search) if search.present?
       end
     end.new(sorting: "name", paginate: true).with_params(params)
   end
@@ -28,44 +28,31 @@ RSpec.describe Katalyst::Tables::Collection::Filter do
       end
     end
 
-    before do
-      allow(items).to receive(:search).and_return(items)
-    end
-
     it { is_expected.to be_filtered }
     it { is_expected.to have_attributes(to_params: { "filters" => { "search" => "query" } }) }
 
     it "applies filter" do
       collection.apply(items)
-      expect(items).to have_received(:search).with("query")
+      expect(collection.items.to_sql).to eq(Person.table_search("query").reorder(name: :asc).limit(20).offset(0).to_sql)
     end
   end
 
   context "with sort, paginate, and filter" do
-    let(:params) { ActionController::Parameters.new(filters: { search: "query" }, page: 2, sort: "name desc") }
+    let(:params) { ActionController::Parameters.new(filters: { search: "person" }, page: 2, sort: "name desc") }
 
     it { is_expected.to be_filtered }
 
     it "includes filters and sort/page params" do
-      expect(collection).to have_attributes(to_params: { "filters" => { "search" => "query" },
+      expect(collection).to have_attributes(to_params: { "filters" => { "search" => "person" },
                                                          "page"    => 2,
                                                          "sort"    => "name desc" })
     end
 
-    # rubocop:disable RSpec/MultipleExpectations, RSpec/ExampleLength, RSpec/VerifiedDoubles
     it "applies filtering then sort then pagination" do
-      items = spy(ActiveRecord::Relation)
-      model = spy(Resource)
-      allow(items).to receive_messages(model:, count: 50)
-      allow(model).to receive(:has_attribute?).and_return(true)
-
+      create_list(:person, 22) # rubocop:disable FactoryBot/ExcessiveCreateList
       collection.apply(items)
-
-      expect(items).to have_received(:search).ordered # filter
-      expect(items).to have_received(:reorder).ordered # sort
-      expect(items).to have_received(:offset).ordered # pagination
-      expect(items).to have_received(:limit).ordered # pagination
+      expect(collection.items.to_sql)
+        .to eq(Person.table_search("person").reorder(name: :desc).limit(20).offset(20).to_sql)
     end
-    # rubocop:enable RSpec/MultipleExpectations, RSpec/ExampleLength, RSpec/VerifiedDoubles
   end
 end
