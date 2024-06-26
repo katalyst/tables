@@ -13,6 +13,8 @@ module Katalyst
             _default_attributes.each_value do |attribute|
               return attribute.name if attribute.type.type == :search
             end
+
+            nil
           end
         end
 

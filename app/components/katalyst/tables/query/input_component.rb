@@ -15,11 +15,18 @@ module Katalyst
         end
 
         def name
-          collection.class.attribute_types.detect { |_, a| a.type == :query }.first
+          query_attribute || raise(ArgumentError, "No query attribute. " \
+                                                  "Does your collection include Katalyst::Tables::Collection::Query?")
         end
 
         def collection
           form.object
+        end
+
+        private
+
+        def query_attribute
+          collection.class.attribute_types.detect { |_, a| a.type == :query }&.first
         end
       end
     end
