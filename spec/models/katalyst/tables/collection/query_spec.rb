@@ -74,7 +74,7 @@ RSpec.describe Katalyst::Tables::Collection::Query do
     end
 
     it "supports date ranges" do
-      collection.with_params(q: "created_at:>1970-01-01")
+      collection.with_params(q: "created_at:1970-01-01..")
       expect(collection.filters).to eq("created_at" => Date.parse("1970-01-01")..)
     end
   end

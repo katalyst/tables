@@ -25,11 +25,11 @@ RSpec.describe Katalyst::Tables::Collection::Type::Date do
       end
 
       it "translates user input lower bound to range" do
-        expect(type.cast(">1970-01-01")).to eq(Date.parse("1970-01-01")..)
+        expect(type.cast("1970-01-01..")).to eq(Date.parse("1970-01-01")..)
       end
 
       it "translates user input upper bound to range" do
-        expect(type.cast("<1970-01-01")).to eq(..Date.parse("1970-01-01"))
+        expect(type.cast("..1970-01-01")).to eq(..Date.parse("1970-01-01"))
       end
 
       it "translates user input bounds to range" do
@@ -54,11 +54,11 @@ RSpec.describe Katalyst::Tables::Collection::Type::Date do
       end
 
       it "translates lower bound range to user input" do
-        expect(type.serialize(Date.parse("1970-01-01")..)).to eq(">1970-01-01")
+        expect(type.serialize(Date.parse("1970-01-01")..)).to eq("1970-01-01..")
       end
 
       it "translates upper bound range to user input" do
-        expect(type.serialize(..Date.parse("1970-01-01"))).to eq("<1970-01-01")
+        expect(type.serialize(..Date.parse("1970-01-01"))).to eq("..1970-01-01")
       end
 
       it "translates bounds range to user input" do
@@ -95,7 +95,7 @@ RSpec.describe Katalyst::Tables::Collection::Type::Date do
     end
 
     it "supports date ranges with lower bound" do
-      collection = new_collection(created_at: ">1970-01-01") do
+      collection = new_collection(created_at: "1970-01-01..") do
         attribute :created_at, :date
       end
 
@@ -103,7 +103,7 @@ RSpec.describe Katalyst::Tables::Collection::Type::Date do
     end
 
     it "supports date ranges with upper bound" do
-      collection = new_collection(created_at: "<2200-01-01") do
+      collection = new_collection(created_at: "..2200-01-01") do
         attribute :created_at, :date
       end
 
