@@ -26,7 +26,7 @@ class HTMLMatcher < RSpec::Matchers::BuiltIn::BaseMatcher
   # @return [Boolean] `true` if response matches the expected html
   def matches?(response)
     case response
-    when Nokogiri::XML::Node
+    when Nokogiri::XML::Node, Nokogiri::XML::NodeSet
       @actual_html = response.to_html
       @actual_doc  = Nokogiri::HTML.fragment(@actual_html)
     else

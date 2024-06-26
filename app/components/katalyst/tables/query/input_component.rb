@@ -23,6 +23,15 @@ module Katalyst
           form.object
         end
 
+        def default_html_attributes
+          {
+            data: {
+              turbo_permanent: true,
+              action:          "keyup.enter->tables--query#closeModal",
+            },
+          }
+        end
+
         private
 
         def query_attribute

@@ -3,6 +3,10 @@ import { Controller } from "@hotwired/stimulus";
 export default class QueryController extends Controller {
   static targets = ["modal"];
 
+  disconnect() {
+    delete this.pending;
+  }
+
   focus() {
     if (document.activeElement === this.query) return;
 
@@ -17,22 +21,54 @@ export default class QueryController extends Controller {
     this.query.focus();
   }
 
-  closeModal(e) {
+  closeModal() {
     delete this.modalTarget.dataset.open;
+
+    if (document.activeElement === this.query) document.activeElement.blur();
   }
 
-  openModal(e) {
-    this.modalTarget.dataset.open = "true";
+  openModal() {
+    this.modalTarget.dataset.open = true;
   }
 
   clear() {
-    this.query.value = "";
-    this.element.requestSubmit();
+    if (this.query.value === "") {
+      // if the user presses escape once, browser clears  the input
+      // if the user presses escape again, get them out of here
+      this.closeModal();
+    }
   }
 
   submit() {
+    if (this.pending) {
+      clearTimeout(this.pending);
+      delete this.pending;
+    }
+
+    // prevent an unnecessary `?q=` parameter from appearing in the URL
     if (this.query.value === "") {
+      const hasFocus = this.query === document.activeElement;
       this.query.disabled = true;
+
+      // restore input and focus after form submission
+      setTimeout(() => {
+        this.query.disabled = false;
+        if (hasFocus) this.query.focus();
+      }, 0);
+    }
+  }
+
+  update() {
+    this.pending ||= setTimeout(() => {
+      this.element.requestSubmit();
+    }, 300);
+  }
+
+  beforeMorphAttribute(e) {
+    switch (e.detail.attributeName) {
+      case "data-open":
+        e.preventDefault();
+        break;
     }
   }
 

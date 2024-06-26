@@ -19,6 +19,10 @@ module Katalyst
               def filterable?
                 false
               end
+
+              def examples_for(...)
+                []
+              end
             end
           end
         end

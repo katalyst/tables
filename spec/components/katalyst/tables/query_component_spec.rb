@@ -16,45 +16,28 @@ RSpec.describe Katalyst::Tables::QueryComponent do
 
   it "renders filter form + modal" do
     create_collection
-    expect(render_inline(component)).to match_html(<<~HTML)
-      <form data-controller="tables--query"
-            data-action="click@window->tables--query#closeModal click->tables--query#openModal:stop focusin@window->tables--query#closeModal focusin->tables--query#openModal:stop keydown.esc->tables--query#clear:stop submit->tables--query#submit"
-            action="/resources" accept-charset="UTF-8" method="get">
-        <div class="query-input">
-          <label hidden="hidden" for="q">Search</label>
-          <input type="search" autocomplete="off" value="" name="q" id="q">
-          <button type="submit" tabindex="-1">Apply</button>
-        </div>
-        <div class="query-modal" data-tables--query-target="modal">
-          <table>
-            <thead>
-              <tr>
-                <th class="label"></th>
-                <th class="key">Key</th>
-                <th class="values">Values</th>
-              </tr>
-            </thead>
-            <tbody>
-            </tbody>
-          </table>
-        </div>
-      </form>
+    expect(render_inline(component).css("form > *")).to match_html(<<~HTML)
+      <div class="query-input">
+        <label hidden="hidden" for="q">Search</label>
+        <input type="search" autocomplete="off" data-turbo-permanent="true" data-action="keyup.enter->tables--query#closeModal" value="" name="q" id="q">
+        <button type="submit" tabindex="-1">Apply</button>
+      </div>
+      <div class="query-modal" data-tables--query-target="modal" data-action="turbo:before-morph-attribute->tables--query#beforeMorphAttribute">
+        <p><strong>Available filters:</strong></p>
+        <dl>
+        </dl>
+      </div>
     HTML
   end
 
   it "renders with custom content" do
     create_collection
-    expect(render_inline(component) do
+    expect((render_inline(component) do
       component.form(class: "custom") do |form|
         component.concat(form.hidden_field(:example))
       end
-    end).to match_html(<<~HTML)
-      <form class="custom"
-            data-controller="tables--query"
-            data-action="click@window->tables--query#closeModal click->tables--query#openModal:stop focusin@window->tables--query#closeModal focusin->tables--query#openModal:stop keydown.esc->tables--query#clear:stop submit->tables--query#submit"
-            action="/resources" accept-charset="UTF-8" method="get">
-        <input autocomplete="off" type="hidden" name="example" id="example">
-      </form>
+    end).at_css("form.custom > input[name=example]")).to match_html(<<~HTML)
+      <input autocomplete="off" type="hidden" name="example" id="example">
     HTML
   end
 
@@ -65,151 +48,45 @@ RSpec.describe Katalyst::Tables::QueryComponent do
     HTML
   end
 
-  it "describes booleans" do
+  it "describes keys" do
     create_collection do
       attribute :active, :boolean
     end
-    expect(render_inline(component).at_css("tbody > tr:first-of-type")).to match_html(<<~HTML)
-      <tr>
-        <th class="label">Active</th>
-        <td class="key">active</td>
-        <td class="values">
-          <code>true</code>, <code>false</code>
-        </td>
-      </tr>
+    expect(render_inline(component).css(".query-modal > *")).to match_html(<<~HTML)
+      <p><strong>Available filters:</strong></p>
+      <dl>
+        <dt><code>active:</code></dt>
+        <dd>Filter on values for active</dd>
+      </dl>
     HTML
   end
 
-  it "describes date ranges" do
-    create_collection do
-      attribute :created_at, :date
+  it "describes errors" do
+    create_collection(q: "index:") do
+      attribute :active, :boolean
     end
-    expect(render_inline(component).at_css("tbody > tr:first-of-type")).to match_html(<<~HTML)
-      <tr>
-        <th class="label">Created at</th>
-        <td class="key">created_at</td>
-        <td class="values">
-          <code>YYYY-MM-DD</code>,
-          <code>>YYYY-MM-DD</code>,
-          <code>&lt;YYYY-MM-DD</code>,
-          <code>YYYY-MM-DD..YYYY-MM-DD</code>
-        </td>
-      </tr>
+    expect(render_inline(component).css(".query-modal > *")).to match_html(<<~HTML)
+      <p>Unknown filter <code>index</code></p>
+      <p><strong>Available filters:</strong></p>
+      <dl>
+        <dt><code>active:</code></dt>
+        <dd>Filter on values for active</dd>
+      </dl>
     HTML
   end
 
-  it "describes enums" do
-    create_collection do
-      attribute :category, :enum
-    end
-    expect(render_inline(component).at_css("tbody > tr:first-of-type")).to match_html(<<~HTML)
-      <tr>
-        <th class="label">Category</th>
-        <td class="key">category</td>
-        <td class="values">[<code>article</code>, <code>documentation</code>, <code>report</code>]</td>
-      </tr>
-    HTML
-  end
-
-  it "describes integers" do
-    create_collection do
+  it "describes values" do
+    create_list(:resource, 3)
+    create_collection(q: "index:") do
       attribute :index, :integer
     end
-    expect(render_inline(component).at_css("tbody > tr:first-of-type")).to match_html(<<~HTML)
-      <tr>
-        <th class="label">Index</th>
-        <td class="key">index</td>
-        <td class="values">
-          <code>10</code>, <code>&gt;10</code>, <code>&lt;10</code>, <code>0..10</code>
-        </td>
-      </tr>
-    HTML
-  end
-
-  it "describes integers with multiple: true" do
-    create_collection do
-      attribute :index, :integer, multiple: true
-    end
-    expect(render_inline(component).at_css("tbody > tr:first-of-type")).to match_html(<<~HTML)
-      <tr>
-        <th class="label">Index</th>
-        <td class="key">index</td>
-        <td class="values">[<code>0</code>, <code>1</code>, <code>...</code>]</td>
-      </tr>
-    HTML
-  end
-
-  it "describes floats" do
-    create_collection do
-      attribute :factor, :float
-    end
-    expect(render_inline(component).at_css("tbody > tr:first-of-type")).to match_html(<<~HTML)
-      <tr>
-        <th class="label">Factor</th>
-        <td class="key">factor</td>
-        <td class="values">
-          <code>0.5</code>, <code>&gt;0.5</code>, <code>&lt;0.5</code>, <code>-0.5..0.5</code>
-        </td>
-      </tr>
-    HTML
-  end
-
-  it "describes floats with multiple: true" do
-    create_collection do
-      attribute :factor, :float, multiple: true
-    end
-    expect(render_inline(component).at_css("tbody > tr:first-of-type")).to match_html(<<~HTML)
-      <tr>
-        <th class="label">Factor</th>
-        <td class="key">factor</td>
-        <td class="values">[<code>0.5</code>, <code>1</code>, <code>...</code>]</td>
-      </tr>
-    HTML
-  end
-
-  it "describes strings" do
-    create_collection do
-      attribute :"parent.name", :string
-    end
-    expect(render_inline(component).at_css("tbody > tr:first-of-type")).to match_html(<<~HTML)
-      <tr>
-        <th class="label">Name</th>
-        <td class="key">parent.name</td>
-        <td class="values"><code>example</code>, <code>"an example"</code> (fuzzy match)</td></td>
-      </tr>
-    HTML
-  end
-
-  it "describes strings with exact matching" do
-    create_collection do
-      attribute :"parent.name", :string, exact: true
-    end
-    expect(render_inline(component).at_css("tbody > tr:first-of-type")).to match_html(<<~HTML)
-      <tr>
-        <th class="label">Name</th>
-        <td class="key">parent.name</td>
-        <td class="values"><code>example</code>, <code>"an example"</code> (exact match)</td></td>
-      </tr>
-    HTML
-  end
-
-  it "describes association attribute when provided" do
-    @collection = Class.new(Katalyst::Tables::Collection::Base) do
-      include Katalyst::Tables::Collection::Query
-
-      attribute :"parent.name", :string
-
-      def parent_name_values
-        %w[one two]
-      end
-    end.new.apply(Resource)
-
-    expect(render_inline(component).at_css("tbody > tr:first-of-type")).to match_html(<<~HTML)
-      <tr>
-        <th class="label">Name</th>
-        <td class="key">parent.name</td>
-        <td class="values"><code>one</code>, <code>two</code></td>
-      </tr>
+    expect(render_inline(component).css(".query-modal > *")).to match_html(<<~HTML)
+      <h4>Possible values for <code>index:</code></h4>
+      <ul>
+        <li><code>1</code></li>
+        <li><code>2</code></li>
+        <li><code>3</code></li>
+      </ul>
     HTML
   end
 end

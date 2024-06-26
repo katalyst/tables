@@ -13,6 +13,7 @@ RSpec.describe Katalyst::Tables::Collection::Query do
       attribute :active, :boolean
       attribute :created_at, :date
       attribute :category, :enum
+      attribute :index, :integer
       attribute :"parent.name", :string
       attribute :"parent.id", :integer, multiple: true
     end.new
@@ -110,6 +111,28 @@ RSpec.describe Katalyst::Tables::Collection::Query do
     it "supports complex keys with ids" do
       collection.with_params(q: "parent.id:15")
       expect(collection.filters).to eq("parent.id" => [15])
+    end
+  end
+
+  describe "#examples_for" do
+    it "supports basic types" do
+      create_list(:resource, 1, active: true)
+      expect(collection.apply(Resource).examples_for("active")).to eq([true])
+    end
+
+    it "limits example count" do
+      create_list(:resource, 11) # rubocop:disable FactoryBot/ExcessiveCreateList
+      expect(collection.apply(Resource).examples_for("index")).to eq((1..10).to_a)
+    end
+
+    it "deduplicates values" do
+      create_list(:resource, 5, index: 1)
+      expect(collection.apply(Resource).examples_for("index")).to eq([1])
+    end
+
+    it "supports complex keys" do
+      create_list(:child, 1)
+      expect(collection.apply(Nested::Child).examples_for("parent.name")).to eq(["Child 1"])
     end
   end
 end

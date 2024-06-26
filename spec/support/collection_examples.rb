@@ -6,7 +6,7 @@ module Examples
     attribute :search, :string, default: ""
 
     def filter
-      self.items = items.search(search) if search.present?
+      self.items = items.table_search(search) if search.present?
     end
   end
 

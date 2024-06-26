@@ -41,6 +41,14 @@ module Katalyst
             scope.merge(condition)
           end
 
+          def examples_for(scope, attribute)
+            scope, model, column = model_and_column_for(scope, attribute)
+
+            return unless model.attribute_types.has_key?(column)
+
+            scope.group(column).distinct.limit(10).reorder(column => :asc).pluck(column)
+          end
+
           private
 
           def filter_value(attribute)

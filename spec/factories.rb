@@ -29,7 +29,7 @@ FactoryBot.define do
     sequence(:name) { |i| "Parent #{i}" }
   end
 
-  factory :child do
+  factory :child, class: "Nested::Child" do
     sequence(:name) { |i| "Child #{i}" }
     parent
   end
