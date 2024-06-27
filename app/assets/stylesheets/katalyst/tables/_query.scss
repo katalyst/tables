@@ -2,14 +2,36 @@
   position: relative;
 
   .query-input {
-    display: flex;
+    display: grid;
+    grid-template-areas: "input button";
+    grid-template-columns: 1fr auto;
 
     input[type="search"] {
-      flex: 1;
+      grid-area: input;
+      background: transparent;
     }
 
     button {
+      grid-area: button;
       flex: 0;
+    }
+
+    .highlight {
+      grid-area: input;
+      border: 2px solid transparent;
+      color: transparent;
+      z-index: -1;
+      font-size: 1rem;
+      padding-block: 1px;
+      padding-inline: 2px;
+
+      .filter-tag {
+        display: inline-block;
+        background-color: hsla(187, 100%, 50%, 0.67);
+        border-radius: 4px;
+        line-height: 1.2;
+        outline: 1px solid hsla(187, 100%, 50%, 0.67);
+      }
     }
   }
 }

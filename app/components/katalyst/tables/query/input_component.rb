@@ -26,8 +26,11 @@ module Katalyst
         def default_html_attributes
           {
             data: {
-              turbo_permanent: true,
-              action:          "keyup.enter->tables--query#closeModal",
+              action:                     %w[
+                input->tables--query-input#update
+                keyup.enter->tables--query#closeModal
+              ],
+              tables__query_input_target: "input",
             },
           }
         end

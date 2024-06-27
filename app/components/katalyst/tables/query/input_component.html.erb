@@ -1,4 +1,4 @@
-<div class="query-input">
+<div class="query-input" data-controller="tables--query-input" data-turbo-permanent>
   <%= form.label name, "Search", hidden: "" %>
   <%= form.text_field(
         name,
@@ -6,6 +6,7 @@
         autocomplete: "off",
         **html_attributes,
       ) %>
+  <div aria-hidden="true" class="highlight" data-tables--query-input-target="highlight"></div>
   <%= form.hidden_field(:p) %>
   <%= form.button("Apply", type: :submit, name: nil, tabindex: -1) %>
 </div>

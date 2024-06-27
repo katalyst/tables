@@ -4,6 +4,7 @@ import OrderableFormController from "./orderable/form_controller";
 import SelectionFormController from "./selection/form_controller";
 import SelectionItemController from "./selection/item_controller";
 import QueryController from "./query_controller";
+import QueryInputController from "./query_input_controller";
 
 const Definitions = [
   {
@@ -30,6 +31,10 @@ const Definitions = [
     identifier: "tables--query",
     controllerConstructor: QueryController,
   },
+  {
+    identifier: "tables--query-input",
+    controllerConstructor: QueryInputController,
+  }
 ];
 
 export { Definitions as default };
