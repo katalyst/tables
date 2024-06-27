@@ -5,6 +5,8 @@ export default class QueryController extends Controller {
 
   disconnect() {
     delete this.pending;
+
+    document.removeEventListener("selectionchange", this.selection);
   }
 
   focus() {
@@ -25,10 +27,14 @@ export default class QueryController extends Controller {
     delete this.modalTarget.dataset.open;
 
     if (document.activeElement === this.query) document.activeElement.blur();
+
+    document.removeEventListener("selectionchange", this.selection);
   }
 
   openModal() {
     this.modalTarget.dataset.open = true;
+
+    document.addEventListener("selectionchange", this.selection);
   }
 
   clear() {
@@ -40,7 +46,7 @@ export default class QueryController extends Controller {
   }
 
   submit() {
-    const hasFocus = this.query === document.activeElement;
+    const hasFocus = this.isFocused;
     const position = hasFocus && this.query.selectionStart;
 
     if (this.pending) {
@@ -69,11 +75,16 @@ export default class QueryController extends Controller {
     }
   }
 
-  update() {
-    this.pending ||= setTimeout(() => {
+  update = () => {
+    if (this.pending) clearTimeout(this.pending);
+    this.pending = setTimeout(() => {
       this.element.requestSubmit();
     }, 300);
-  }
+  };
+
+  selection = () => {
+    if (this.isFocused) this.update();
+  };
 
   beforeMorphAttribute(e) {
     switch (e.detail.attributeName) {
@@ -89,5 +100,9 @@ export default class QueryController extends Controller {
 
   get position() {
     return this.element.querySelector("input[name=p]");
+  }
+
+  get isFocused() {
+    return this.query === document.activeElement;
   }
 }

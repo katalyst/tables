@@ -36,12 +36,13 @@ module Katalyst
         end
 
         def current_key
-          if instance_variable_defined?(:@current_key)
-            @current_key
-          else
-            match = /(?<key>[\w\.]+):\s?\z/.match(collection.query.to_s)
-            @current_key = (match[:key] if match)
+          unless instance_variable_defined?(:@current_key)
+            attributes.each_key do |key|
+              @current_key = key if collection.query_active?(key)
+            end
           end
+
+          @current_key ||= nil
         end
 
         def attributes
@@ -51,7 +52,7 @@ module Katalyst
         end
 
         def values_for(key)
-          collection.examples_for(key)
+          collection.examples_for(key).map(&:to_s).compact_blank
         end
       end
     end

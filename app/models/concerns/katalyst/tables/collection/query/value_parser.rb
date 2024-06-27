@@ -5,11 +5,20 @@ module Katalyst
     module Collection
       module Query
         class ValueParser
-          attr_accessor :query
+          attr_accessor :query, :value
 
-          def initialize(parser:, attribute:)
-            @parser = parser
+          def initialize(attribute:, pos:)
             @attribute = attribute
+            @start = pos
+            @matched = false
+          end
+
+          def matched?
+            @matched
+          end
+
+          def range
+            @start..@end
           end
 
           def take_quoted_value

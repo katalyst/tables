@@ -46,7 +46,7 @@ module Katalyst
         end
 
         included do
-          attr_accessor :items
+          attr_accessor :items, :unscoped_items
 
           delegate :each, :count, :empty?, to: :items, allow_nil: true
         end
@@ -73,7 +73,7 @@ module Katalyst
         end
 
         def apply(items)
-          @items = items
+          @unscoped_items = @items = items
           reducers.build do |_|
             filter
             self

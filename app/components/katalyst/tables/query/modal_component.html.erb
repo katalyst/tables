@@ -3,7 +3,7 @@
     <h4>Possible values for <code><%= current_key %>:</code></h4>
     <ul>
       <% values_for(current_key).each do |value| %>
-        <li><code><%= value %></code></li>
+        <li><code><%= /\A\w*\z/.match?(value) ? value : %Q("#{value}") %></code></li>
       <% end %>
     </ul>
   <% else %>

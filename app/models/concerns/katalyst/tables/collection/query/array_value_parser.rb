@@ -5,6 +5,12 @@ module Katalyst
     module Collection
       module Query
         class ArrayValueParser < ValueParser
+          def initialize(...)
+            super
+
+            @value = []
+          end
+
           # @param query [StringScanner]
           def parse(query)
             @query = query
@@ -16,6 +22,10 @@ module Katalyst
             else
               take_value
             end
+
+            @end = query.charpos
+
+            self
           end
 
           def take_values
@@ -46,8 +56,8 @@ module Katalyst
           def value=(value)
             return if @attribute.type_cast(value).nil? # undefined attribute
 
-            current = @parser.attributes[@attribute.name] || []
-            @parser.attributes[@attribute.name] = current + [value]
+            @matched = true
+            @value << value
           end
         end
       end

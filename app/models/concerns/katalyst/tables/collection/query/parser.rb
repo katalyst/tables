@@ -7,12 +7,12 @@ module Katalyst
         class Parser # :nodoc:
           # query [StringScanner]
           attr_accessor :query
-          attr_reader :collection, :untagged, :attributes
+          attr_reader :collection, :untagged, :tagged
 
           def initialize(collection)
             @collection = collection
-            @attributes = {}
-            @untagged   = []
+            @tagged = {}
+            @untagged = []
           end
 
           # @param query [String]
@@ -26,10 +26,6 @@ module Katalyst
               break unless take_tagged || take_untagged
             end
 
-            if untagged.any? && (search = collection.class.search_attribute)
-              attributes[search] = untagged.join(" ")
-            end
-
             self
           end
 
@@ -40,12 +36,14 @@ module Katalyst
           end
 
           def take_tagged
+            pos = query.charpos
+
             return unless query.scan(/(\w+(\.\w+)?):/)
 
             key, = query.values_at(1)
             skip_whitespace
 
-            parser_for(key).parse(query)
+            tagged[key] = parser_for(key, pos).parse(query)
           end
 
           def take_untagged
@@ -58,13 +56,13 @@ module Katalyst
 
           using Type::Helpers::Extensions
 
-          def parser_for(key)
+          def parser_for(key, pos)
             attribute = collection.class._default_attributes[key]
 
             if attribute.type.multiple? || attribute.value.is_a?(::Array)
-              ArrayValueParser.new(parser: self, attribute:)
+              ArrayValueParser.new(attribute:, pos:)
             else
-              SingleValueParser.new(parser: self, attribute:)
+              SingleValueParser.new(attribute:, pos:)
             end
           end
         end

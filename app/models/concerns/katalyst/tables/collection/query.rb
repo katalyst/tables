@@ -29,12 +29,17 @@ module Katalyst
         using Type::Helpers::Extensions
 
         def examples_for(key)
+          key = key.to_s
           values_method = "#{key.parameterize.underscore}_values"
           if respond_to?(values_method)
             public_send(values_method)
           elsif @attributes.key?(key)
-            @attributes[key].type.examples_for(items, @attributes[key])
+            @attributes[key].type.examples_for(unscoped_items, @attributes[key])
           end
+        end
+
+        def query_active?(attribute)
+          @attributes[attribute].query_range&.cover?(position)
         end
 
         private
@@ -42,12 +47,22 @@ module Katalyst
         def _assign_attributes(new_attributes)
           result = super
 
-          if q_changed?
+          if query_changed?
             parser = Parser.new(self).parse(query)
-            result.merge(super(parser.attributes))
-          else
-            result
+
+            parser.tagged.each do |k, p|
+              next unless p.matched?
+
+              _assign_attribute(k, p.value)
+              @attributes[k].query_range = p.range
+            end
+
+            if parser.untagged.any? && (search = self.class.search_attribute)
+              _assign_attribute(search, parser.untagged.join(" "))
+            end
           end
+
+          result
         end
       end
     end

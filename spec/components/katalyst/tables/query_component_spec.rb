@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-# rubocop:disable RSpec/InstanceVariable
+# rubocop:disable RSpec/InstanceVariable, RSpec/ExampleLength
 RSpec.describe Katalyst::Tables::QueryComponent do
   subject(:component) { described_class.new(collection: @collection, url: "/resources") }
 
@@ -78,17 +78,47 @@ RSpec.describe Katalyst::Tables::QueryComponent do
 
   it "describes values" do
     create_list(:resource, 3)
-    create_collection(q: "index:") do
+    create_collection(q: "index:", p: 6) do
       attribute :index, :integer
     end
     expect(render_inline(component).css(".query-modal > *")).to match_html(<<~HTML)
       <h4>Possible values for <code>index:</code></h4>
       <ul>
-        <li><code>1</code></li>
-        <li><code>2</code></li>
-        <li><code>3</code></li>
+          <li><code>1</code></li>
+          <li><code>2</code></li>
+          <li><code>3</code></li>
+      </ul>
+    HTML
+  end
+
+  it "excludes scopes when describing values" do
+    create_list(:resource, 3)
+    create_collection(q: "example index:", p: 13) do
+      attribute :search, :search, scope: :table_search
+      attribute :index, :integer
+    end
+    expect(render_inline(component).css(".query-modal > *")).to match_html(<<~HTML)
+      <h4>Possible values for <code>index:</code></h4>
+      <ul>
+          <li><code>1</code></li>
+          <li><code>2</code></li>
+          <li><code>3</code></li>
+      </ul>
+    HTML
+  end
+
+  it "filters against the active key while ignoring other scopes" do
+    create_list(:resource, 3)
+    create_collection(q: "example index: 2", p: 13) do
+      attribute :search, :search, scope: :table_search
+      attribute :index, :integer
+    end
+    expect(render_inline(component).css(".query-modal > *")).to match_html(<<~HTML)
+      <h4>Possible values for <code>index:</code></h4>
+      <ul>
+          <li><code>2</code></li>
       </ul>
     HTML
   end
 end
-# rubocop:enable RSpec/InstanceVariable
+# rubocop:enable RSpec/InstanceVariable, RSpec/ExampleLength
