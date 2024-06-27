@@ -51,8 +51,37 @@ module Katalyst
             .to_h
         end
 
+        def available_filters
+          keys = attributes.keys
+
+          if current_token.present?
+            keys = keys.select { |k| k.include?(current_token) }
+          end
+
+          keys.map do |key|
+            [key, collection.model.human_attribute_name(key)]
+          end
+        end
+
         def values_for(key)
           collection.examples_for(key).map(&:to_s).compact_blank
+        end
+
+        def format_value(value)
+          if /\A[\w.-]*\z/.match?(value)
+            value
+          else
+            %("#{value}")
+          end
+        end
+
+        def current_token
+          return nil unless collection.position&.in?(0..collection.query.length)
+
+          prefix = collection.query[...collection.position].match(/\w*\z/)
+          suffix = collection.query[collection.position..].match(/\A\w*/)
+
+          "#{prefix}#{suffix}"
         end
       end
     end

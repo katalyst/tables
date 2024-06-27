@@ -51,10 +51,12 @@ module Katalyst
             parser = Parser.new(self).parse(query)
 
             parser.tagged.each do |k, p|
-              next unless p.matched?
-
-              _assign_attribute(k, p.value)
-              @attributes[k].query_range = p.range
+              if p.matched?
+                _assign_attribute(k, p.value)
+                @attributes[k].query_range = p.range
+              else
+                errors.add(k, :unknown)
+              end
             end
 
             if parser.untagged.any? && (search = self.class.search_attribute)

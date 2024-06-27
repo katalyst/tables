@@ -108,6 +108,11 @@ RSpec.describe Katalyst::Tables::Collection::Query do
       expect(collection.filters).not_to include("boom.name" => "test")
     end
 
+    it "adds unknown keys to errors" do
+      collection.with_params(q: "boom.name:test")
+      expect(collection.errors).to include(:"boom.name")
+    end
+
     it "supports complex keys with ids" do
       collection.with_params(q: "parent.id:15")
       expect(collection.filters).to eq("parent.id" => [15])
@@ -117,7 +122,7 @@ RSpec.describe Katalyst::Tables::Collection::Query do
   describe "#examples_for" do
     it "supports basic types" do
       create_list(:resource, 1, active: true)
-      expect(collection.apply(Resource).examples_for("active")).to eq([true])
+      expect(collection.apply(Resource).examples_for("active")).to eq([true, false])
     end
 
     it "limits example count" do

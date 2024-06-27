@@ -157,4 +157,12 @@ RSpec.describe Katalyst::Tables::Collection::Type::Boolean do
       it { expect(type.deserialize(["1"])).to eq [true] }
     end
   end
+
+  describe "#examples_for" do
+    let(:collection) { new_collection { attribute :active, :boolean }.apply(Resource) }
+
+    it "returns all enum values" do
+      expect(collection.examples_for(:active)).to contain_exactly(true, false)
+    end
+  end
 end

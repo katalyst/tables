@@ -87,4 +87,21 @@ RSpec.describe Katalyst::Tables::Collection::Type::Enum do
     it { expect(type.deserialize([])).to eq [] }
     it { expect(type.deserialize(["article"])).to eq ["article"] }
   end
+
+  describe "#examples_for" do
+    let(:collection) { new_collection(params) { attribute :category, :enum }.apply(Resource) }
+    let(:params) { {} }
+
+    it "returns all enum values" do
+      expect(collection.examples_for(:category)).to contain_exactly("article", "documentation", "report")
+    end
+
+    context "when a partial value is provided" do
+      let(:params) { { q: "category: a" } }
+
+      it "filters the available values" do
+        expect(collection.examples_for(:category)).to contain_exactly("article", "documentation")
+      end
+    end
+  end
 end

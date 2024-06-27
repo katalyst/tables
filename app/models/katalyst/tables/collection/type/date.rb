@@ -21,6 +21,16 @@ module Katalyst
             end
           end
 
+          def examples_for(...)
+            [
+              ::Date.current,
+              ::Date.yesterday,
+              ::Date.current.beginning_of_week..,
+              ::Date.current.beginning_of_month..,
+              ::Date.current.beginning_of_year..,
+            ].map { |d| serialize(d) }
+          end
+
           private
 
           ISO_DATE = /\A(?<year>\d{4})-(?<month>\d\d)-(?<day>\d\d)\z/

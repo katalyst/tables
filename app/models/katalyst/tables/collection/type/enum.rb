@@ -14,6 +14,17 @@ module Katalyst
           def type
             :enum
           end
+
+          def examples_for(scope, attribute)
+            _, model, column = model_and_column_for(scope, attribute)
+            keys = model.defined_enums[column]&.keys
+
+            if attribute.value_before_type_cast.present?
+              keys.select { |key| key.include?(attribute.value_before_type_cast.last) }
+            else
+              keys
+            end
+          end
         end
       end
     end

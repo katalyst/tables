@@ -126,4 +126,15 @@ RSpec.describe Katalyst::Tables::Collection::Type::Date do
       expect(filter(collection).to_sql).to eq(Resource.none.to_sql)
     end
   end
+
+  describe "#examples_for" do
+    let(:collection) { new_collection(params) { attribute :created_at, :date }.apply(Resource) }
+    let(:params) { {} }
+
+    before { create_list(:resource, 2) }
+
+    it "returns date suggestions based on current date" do
+      expect(collection.examples_for(:created_at)).to include(Date.current.to_fs(:db))
+    end
+  end
 end

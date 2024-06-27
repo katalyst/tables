@@ -46,7 +46,13 @@ module Katalyst
 
             return unless model.attribute_types.has_key?(column)
 
-            filter(scope, attribute).group(column).distinct.limit(10).reorder(column => :asc).pluck(column)
+            filter(scope, attribute)
+              .group(column)
+              .distinct
+              .limit(10)
+              .reorder(column => :asc)
+              .pluck(column)
+              .map { |v| serialize(v) }
           end
 
           private

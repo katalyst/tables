@@ -21,6 +21,10 @@ module Katalyst
               !value.nil? && !value.eql?([])
             end
           end
+
+          def examples_for(...)
+            [true, false]
+          end
         end
       end
     end

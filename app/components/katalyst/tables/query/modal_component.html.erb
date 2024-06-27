@@ -3,18 +3,19 @@
     <h4>Possible values for <code><%= current_key %>:</code></h4>
     <ul>
       <% values_for(current_key).each do |value| %>
-        <li><code><%= /\A\w*\z/.match?(value) ? value : %Q("#{value}") %></code></li>
+        <li><code><%= format_value(value) %></code></li>
       <% end %>
     </ul>
   <% else %>
-    <% if current_key.present? %>
-      <p>Unknown filter <code><%= current_key %></code></p>
+    <% collection.errors.each do |error| %>
+      <% next unless error.type == :unknown %>
+      <p>Unknown filter <code><%= error.attribute %></code></p>
     <% end %>
     <p><strong>Available filters:</strong></p>
     <dl>
-      <% attributes.each do |key, attribute| %>
+      <% available_filters.each do |key, description| %>
         <dt><code><%= key %>:</code></dt>
-        <dd>Filter on values for <%= collection.model.human_attribute_name(key).downcase %></dd>
+        <dd>Filter on values for <%= description.downcase %></dd>
       <% end %>
     </dl>
   <% end %>
