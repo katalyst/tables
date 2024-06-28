@@ -34,7 +34,7 @@ const Definitions = [
   {
     identifier: "tables--query-input",
     controllerConstructor: QueryInputController,
-  }
+  },
 ];
 
 export { Definitions as default };

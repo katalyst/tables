@@ -1,27 +1,33 @@
-<%= tag.div(**html_attributes) do %>
-  <% if show_values? %>
-    <h4>Possible values for <code><%= current_key %>:</code></h4>
-    <ul>
-      <% values_for(current_key).each do |value| %>
-        <li><code><%= format_value(value) %></code></li>
+<%= tag.section(**html_attributes) do %>
+  <% if collection.errors.any? %>
+    <header>
+      <% collection.errors.each do |error| %>
+        <% next unless error.type == :unknown %>
+        <div class="error">Sorry, we don&rsquo;t support the <code><%= error.attribute %></code> filter.</div>
       <% end %>
-    </ul>
-  <% else %>
-    <% collection.errors.each do |error| %>
-      <% next unless error.type == :unknown %>
-      <p>Unknown filter <code><%= error.attribute %></code></p>
-    <% end %>
-    <p><strong>Available filters:</strong></p>
-    <dl>
-      <% available_filters.each do |key, description| %>
-        <dt><code><%= key %>:</code></dt>
-        <dd>Filter on values for <%= description.downcase %></dd>
-      <% end %>
-    </dl>
+    </header>
   <% end %>
-<% end %>
-<% if footer? %>
-  <div class="footer">
-    <%= footer %>
+  <div class="content">
+    <% if show_values? %>
+      <h4>Possible values for <code><%= current_key %>:</code></h4>
+      <ul>
+        <% values_for(current_key).each do |value| %>
+          <li><code><%= format_value(value) %></code></li>
+        <% end %>
+      </ul>
+    <% else %>
+      <h4>Available filters:</h4>
+      <dl>
+        <% available_filters.each do |key, description| %>
+          <dt><code><%= key %>:</code></dt>
+          <dd>Filter on values for <%= description.downcase %></dd>
+        <% end %>
+      </dl>
+    <% end %>
   </div>
+  <% if footer? %>
+    <footer>
+      <%= footer %>
+    </footer>
+  <% end %>
 <% end %>

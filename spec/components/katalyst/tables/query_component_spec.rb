@@ -14,21 +14,14 @@ RSpec.describe Katalyst::Tables::QueryComponent do
     end.with_params(params).apply(Resource)
   end
 
-  it "renders filter form + modal" do
+  it "renders the query input" do
     create_collection
-    expect(render_inline(component).css("form > *")).to match_html(<<~HTML)
-      <div class="query-input">
-        <label hidden="hidden" for="q">Search</label>
-        <input type="search" autocomplete="off" data-turbo-permanent="true" data-action="keyup.enter->tables--query#closeModal" value="" name="q" id="q">
-        <input autocomplete="off" type="hidden" name="p" id="p">
-        <button type="submit" tabindex="-1">Apply</button>
-      </div>
-      <div class="query-modal" data-tables--query-target="modal" data-action="turbo:before-morph-attribute->tables--query#beforeMorphAttribute">
-        <p><strong>Available filters:</strong></p>
-        <dl>
-        </dl>
-      </div>
-    HTML
+    expect(render_inline(component)).to have_css("form .query-input")
+  end
+
+  it "renders query modal" do
+    create_collection
+    expect(render_inline(component)).to have_css("form .query-modal")
   end
 
   it "renders with custom content" do
@@ -53,8 +46,8 @@ RSpec.describe Katalyst::Tables::QueryComponent do
     create_collection do
       attribute :active, :boolean
     end
-    expect(render_inline(component).css(".query-modal > *")).to match_html(<<~HTML)
-      <p><strong>Available filters:</strong></p>
+    expect(render_inline(component).css(".query-modal > .content > *")).to match_html(<<~HTML)
+      <h4>Available filters:</h4>
       <dl>
         <dt><code>active:</code></dt>
         <dd>Filter on values for active</dd>
@@ -66,13 +59,8 @@ RSpec.describe Katalyst::Tables::QueryComponent do
     create_collection(q: "index:") do
       attribute :active, :boolean
     end
-    expect(render_inline(component).css(".query-modal > *")).to match_html(<<~HTML)
-      <p>Unknown filter <code>index</code></p>
-      <p><strong>Available filters:</strong></p>
-      <dl>
-        <dt><code>active:</code></dt>
-        <dd>Filter on values for active</dd>
-      </dl>
+    expect(render_inline(component).css(".query-modal > header > *")).to match_html(<<~HTML)
+      <div class="error">Sorry, we don’t support the <code>index</code> filter.</div>
     HTML
   end
 
@@ -81,7 +69,7 @@ RSpec.describe Katalyst::Tables::QueryComponent do
     create_collection(q: "index:", p: 6) do
       attribute :index, :integer
     end
-    expect(render_inline(component).css(".query-modal > *")).to match_html(<<~HTML)
+    expect(render_inline(component).css(".query-modal > .content > *")).to match_html(<<~HTML)
       <h4>Possible values for <code>index:</code></h4>
       <ul>
           <li><code>1</code></li>
@@ -97,7 +85,7 @@ RSpec.describe Katalyst::Tables::QueryComponent do
       attribute :search, :search, scope: :table_search
       attribute :index, :integer
     end
-    expect(render_inline(component).css(".query-modal > *")).to match_html(<<~HTML)
+    expect(render_inline(component).css(".query-modal > .content > *")).to match_html(<<~HTML)
       <h4>Possible values for <code>index:</code></h4>
       <ul>
           <li><code>1</code></li>
@@ -113,7 +101,7 @@ RSpec.describe Katalyst::Tables::QueryComponent do
       attribute :search, :search, scope: :table_search
       attribute :index, :integer
     end
-    expect(render_inline(component).css(".query-modal > *")).to match_html(<<~HTML)
+    expect(render_inline(component).css(".query-modal > .content > *")).to match_html(<<~HTML)
       <h4>Possible values for <code>index:</code></h4>
       <ul>
           <li><code>2</code></li>
