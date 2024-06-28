@@ -104,17 +104,19 @@ RSpec.describe Katalyst::Tables::Collection::Type::Boolean do
     subject(:type) { described_class.new }
 
     it { expect(type.cast(nil)).to be_nil }
-    it { expect(type.cast(1)).to be_truthy }
-    it { expect(type.cast("1")).to be_truthy }
-    it { expect(type.cast([])).to be_truthy }
-    it { expect(type.cast(["1"])).to be_truthy }
+    it { expect(type.cast(1)).to be(true) }
+    it { expect(type.cast("1")).to be(true) }
+    it { expect(type.cast([])).to be(true) }
+    it { expect(type.cast(["1"])).to be(true) }
 
     context "when multiple: true" do
       subject(:type) { described_class.new(multiple: true) }
 
-      it { expect(type.cast(nil)).to be_nil }
-      it { expect(type.cast(1)).to be_truthy }
-      it { expect(type.cast("1")).to be_truthy }
+      it { expect(type.cast(nil)).to eq [] }
+      it { expect(type.cast(1)).to eq [true] }
+      it { expect(type.cast("1")).to eq [true] }
+      it { expect(type.cast(0)).to eq [false] }
+      it { expect(type.cast("0")).to eq [false] }
       it { expect(type.cast([])).to eq [] }
       it { expect(type.cast(["1"])).to eq [true] }
     end
@@ -124,17 +126,17 @@ RSpec.describe Katalyst::Tables::Collection::Type::Boolean do
     subject(:type) { described_class.new }
 
     it { expect(type.serialize(nil)).to be_nil }
-    it { expect(type.cast(1)).to be_truthy }
-    it { expect(type.cast("1")).to be_truthy }
-    it { expect(type.cast([])).to be_truthy }
-    it { expect(type.cast(["1"])).to be_truthy }
+    it { expect(type.cast(1)).to be(true) }
+    it { expect(type.cast("1")).to be(true) }
+    it { expect(type.cast([])).to be(true) }
+    it { expect(type.cast(["1"])).to be(true) }
 
     context "when multiple: true" do
       subject(:type) { described_class.new(multiple: true) }
 
       it { expect(type.serialize(nil)).to be_nil }
-      it { expect(type.serialize(1)).to be_truthy }
-      it { expect(type.serialize("1")).to be_truthy }
+      it { expect(type.serialize(1)).to be(true) }
+      it { expect(type.serialize("1")).to be(true) }
       it { expect(type.serialize([])).to eq [] }
       it { expect(type.serialize(["1"])).to eq [true] }
     end
@@ -144,15 +146,15 @@ RSpec.describe Katalyst::Tables::Collection::Type::Boolean do
     subject(:type) { described_class.new }
 
     it { expect(type.deserialize(nil)).to be_nil }
-    it { expect(type.deserialize(1)).to be_truthy }
-    it { expect(type.deserialize("1")).to be_truthy }
+    it { expect(type.deserialize(1)).to be(true) }
+    it { expect(type.deserialize("1")).to be(true) }
 
     context "when multiple: true" do
       subject(:type) { described_class.new(multiple: true) }
 
-      it { expect(type.deserialize(nil)).to be_nil }
-      it { expect(type.deserialize(1)).to be_truthy }
-      it { expect(type.deserialize("1")).to be_truthy }
+      it { expect(type.deserialize(nil)).to eq [] }
+      it { expect(type.deserialize(1)).to eq [true] }
+      it { expect(type.deserialize("1")).to eq [true] }
       it { expect(type.deserialize([])).to eq [] }
       it { expect(type.deserialize(["1"])).to eq [true] }
     end

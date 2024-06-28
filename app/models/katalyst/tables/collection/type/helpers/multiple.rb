@@ -17,6 +17,36 @@ module Katalyst
               @multiple
             end
 
+            def cast(value)
+              return (multiple? ? [] : nil) if value.nil?
+
+              if multiple? && value.is_a?(::Array)
+                value.map { |v| super(v) }
+              elsif multiple?
+                [super]
+              else
+                super
+              end
+            end
+
+            def deserialize(value)
+              if multiple? && value.is_a?(::Array)
+                value.map { |v| super(v) }.flatten
+              elsif multiple?
+                [super].flatten.compact
+              else
+                super
+              end
+            end
+
+            def serialize(value)
+              if multiple? && value.is_a?(::Array)
+                value.map { |v| super(v) }.flatten
+              else
+                super
+              end
+            end
+
             using Extensions
 
             def default_value

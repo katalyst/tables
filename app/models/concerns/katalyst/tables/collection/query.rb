@@ -51,7 +51,7 @@ module Katalyst
             parser = Parser.new(self).parse(query)
 
             parser.tagged.each do |k, p|
-              if p.matched?
+              if @attributes.key?(k)
                 _assign_attribute(k, p.value)
                 @attributes[k].query_range = p.range
               else

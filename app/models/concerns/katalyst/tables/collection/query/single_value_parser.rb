@@ -23,9 +23,6 @@ module Katalyst
           end
 
           def value=(value)
-            return if @attribute.type_cast(value).nil? # undefined attribute
-
-            @matched = true
             @value = value
           end
         end

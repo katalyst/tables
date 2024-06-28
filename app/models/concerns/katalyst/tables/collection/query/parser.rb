@@ -36,14 +36,14 @@ module Katalyst
           end
 
           def take_tagged
-            pos = query.charpos
+            start = query.charpos
 
             return unless query.scan(/(\w+(\.\w+)?):/)
 
             key, = query.values_at(1)
             skip_whitespace
 
-            tagged[key] = parser_for(key, pos).parse(query)
+            tagged[key] = value_parser(start).parse(query)
           end
 
           def take_untagged
@@ -56,14 +56,18 @@ module Katalyst
 
           using Type::Helpers::Extensions
 
-          def parser_for(key, pos)
-            attribute = collection.class._default_attributes[key]
-
-            if attribute.type.multiple? || attribute.value.is_a?(::Array)
-              ArrayValueParser.new(attribute:, pos:)
+          def value_parser(start)
+            if query.check(/#{'\['}\s*/)
+              ArrayValueParser.new(start:)
             else
-              SingleValueParser.new(attribute:, pos:)
+              SingleValueParser.new(start:)
             end
+
+            # if attribute.type.multiple? || attribute.value.is_a?(::Array)
+            #   ArrayValueParser.new(attribute:, pos:)
+            # else
+            #   SingleValueParser.new(attribute:, pos:)
+            # end
           end
         end
       end

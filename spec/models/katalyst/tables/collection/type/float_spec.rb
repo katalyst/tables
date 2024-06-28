@@ -109,8 +109,8 @@ RSpec.describe Katalyst::Tables::Collection::Type::Float do
       subject(:type) { described_class.new(multiple: true) }
 
       it { expect(type.cast(nil)).to be_nil }
-      it { expect(type.cast(0.0)).to eq 0.0 }
-      it { expect(type.cast("0.0")).to eq 0.0 }
+      it { expect(type.cast(0.0)).to eq [0.0] }
+      it { expect(type.cast("0.0")).to eq [0.0] }
       it { expect(type.cast([])).to eq [] }
       it { expect(type.cast(["0.0"])).to eq [0.0] }
       it { expect(type.cast(["..0.0"])).to eq([0.0]) }
@@ -146,9 +146,9 @@ RSpec.describe Katalyst::Tables::Collection::Type::Float do
     context "when multiple: true" do
       subject(:type) { described_class.new(multiple: true) }
 
-      it { expect(type.deserialize(nil)).to be_nil }
-      it { expect(type.deserialize(0.0)).to eq 0.0 }
-      it { expect(type.deserialize("0.0")).to eq 0.0 }
+      it { expect(type.deserialize(nil)).to eq [] }
+      it { expect(type.deserialize(0.0)).to eq [0.0] }
+      it { expect(type.deserialize("0.0")).to eq [0.0] }
       it { expect(type.deserialize([])).to eq [] }
       it { expect(type.deserialize(["0.0"])).to eq [0.0] }
     end

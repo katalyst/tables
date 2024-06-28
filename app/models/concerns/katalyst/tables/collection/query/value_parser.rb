@@ -7,14 +7,8 @@ module Katalyst
         class ValueParser
           attr_accessor :query, :value
 
-          def initialize(attribute:, pos:)
-            @attribute = attribute
-            @start = pos
-            @matched = false
-          end
-
-          def matched?
-            @matched
+          def initialize(start:)
+            @start = start
           end
 
           def range
@@ -28,7 +22,9 @@ module Katalyst
           end
 
           def take_unquoted_value
-            return unless query.scan(/([^" \],]*)/)
+            # note, we allow unquoted values to begin with a " so that partial
+            # inputs can be accepted
+            return unless query.scan(/"?([^ \],]*)/)
 
             self.value, = query.values_at(1)
           end

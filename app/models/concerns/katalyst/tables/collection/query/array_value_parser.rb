@@ -15,48 +15,25 @@ module Katalyst
           def parse(query)
             @query = query
 
-            skip_whitespace
+            query.scan(/#{'\['}\s*/)
 
-            if query.scan(/#{'\['}/)
-              take_values
-            else
-              take_value
+            until query.eos?
+              break unless take_quoted_value || take_unquoted_value
+              break unless take_delimiter
             end
+
+            query.scan(/\s*#{'\]'}?/)
 
             @end = query.charpos
 
             self
           end
 
-          def take_values
-            until query.eos?
-              skip_whitespace
-              break unless take_quoted_value || take_unquoted_value
-
-              skip_whitespace
-              break unless take_delimiter
-            end
-
-            skip_whitespace
-            take_end_of_list
-          end
-
-          def take_value
-            take_quoted_value || take_unquoted_value
-          end
-
           def take_delimiter
-            query.scan(/#{','}/)
-          end
-
-          def take_end_of_list
-            query.scan(/#{']'}/)
+            query.scan(/\s*#{','}\s*/)
           end
 
           def value=(value)
-            return if @attribute.type_cast(value).nil? # undefined attribute
-
-            @matched = true
             @value << value
           end
         end
