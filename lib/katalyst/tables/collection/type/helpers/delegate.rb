@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "katalyst/tables/collection/type/helpers/extensions"
+
 module Katalyst
   module Tables
     module Collection
