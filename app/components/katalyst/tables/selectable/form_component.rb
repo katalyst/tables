@@ -34,6 +34,14 @@ module Katalyst
         def form_target(value)
           "#{FORM_CONTROLLER}-target=#{value}"
         end
+
+        def singular_name
+          @collection.model_name.human(count: 1, default: @collection.model_name.human).downcase
+        end
+
+        def plural_name
+          @collection.model_name.human(count: 2, default: @collection.model_name.human.pluralize).downcase
+        end
       end
     end
   end
