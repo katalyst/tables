@@ -30,9 +30,9 @@ module Katalyst
 
         def examples_for(key)
           key = key.to_s
-          values_method = "#{key.parameterize.underscore}_values"
-          if respond_to?(values_method)
-            public_send(values_method)
+          examples_method = "#{key.parameterize.underscore}_examples"
+          if respond_to?(examples_method)
+            public_send(examples_method)
           elsif @attributes.key?(key)
             @attributes[key].type.examples_for(unscoped_items, @attributes[key])
           end

@@ -78,9 +78,9 @@ Continuous values like dates, integers, and floats support range inputs. These a
 users can filter on a range by specifying open or closed ranges. For example:
 
 ```ruby
-collection.with_params(q: "created_at:<2024-01-01")
+collection.with_params(q: "created_at:..2024-01-01")
 # => { "created_at" => ..2024-01-01 }
-collection.with_params(q: "created_at:>2024-01-01")
+collection.with_params(q: "created_at:2024-01-01..")
 # => { "created_at" => 2024-01-01.. }
 collection.with_params(q: "created_at:2024-01-01..2025-01-01")
 # => { "created_at" => 2024-01-01..2025-01-01 }
@@ -118,6 +118,36 @@ collection.with_params(q: "unknown:true")
 # => {}
 collection.with_params(q: "boom.name:test")
 # => {}
+```
+
+### Synthetic attributes
+
+If you want to provide filtering on an attribute that is not backed by a database column, you can configure a scope to
+use instead. For example:
+
+```ruby
+attribute :active, :enum, scope: :active, multiple: false, default: "active"
+
+# in your model:
+scope :active, ->(active) do
+  case active
+  when "active"
+    where.not(activated_at: nil)
+  when "inactive"
+    where(activated_at: nil)
+  else
+    unscope(where: :activated_at)
+  end
+end
+```
+
+If your scope needs examples from the database, you can define `<attribute>_examples` in your collection:
+
+```ruby
+
+def active_examples
+  %w[active inactive all]
+end
 ```
 
 ### Example
