@@ -137,7 +137,7 @@ RSpec.describe Katalyst::Tables::Collection::Query do
 
     it "supports complex keys" do
       create_list(:child, 1)
-      expect(collection.apply(Nested::Child).examples_for("parent.name")).to eq(["Child 1"])
+      expect(collection.apply(Nested::Child).examples_for("parent.name")).to eq(["Parent 1"])
     end
   end
 end
