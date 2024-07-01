@@ -1,13 +1,11 @@
-<%= tag.table(**html_attributes) do %>
-  <%= render caption if caption? %>
-  <% if header_row? %>
-    <%= tag.thead(**thead_attributes) do %>
-      <%= header_row %>
-    <% end %>
+<%= render caption if caption? %>
+<% if header_row? %>
+  <%= tag.thead(**thead_attributes) do %>
+    <%= header_row %>
   <% end %>
-  <%= tag.tbody(**tbody_attributes) do %>
-    <% body_rows.each do |body_row| %>
-      <%= body_row %>
-    <% end %>
+<% end %>
+<%= tag.tbody(**tbody_attributes) do %>
+  <% body_rows.each do |body_row| %>
+    <%= body_row %>
   <% end %>
 <% end %>
