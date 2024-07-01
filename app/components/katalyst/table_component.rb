@@ -359,5 +359,14 @@ module Katalyst
         collection
       end
     end
+
+    # Output bare tags using preamble/postamble so html_attributes are rendered after content
+    def output_preamble
+      "<table #{tag.attributes(html_attributes)}>".html_safe # rubocop:disable Rails/OutputSafety
+    end
+
+    def output_postamble
+      "</table>".html_safe
+    end
   end
 end

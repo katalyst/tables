@@ -6,10 +6,8 @@
   <% end %>
 <% end %>
 
-<%= tag.table(**html_attributes) do %>
-  <%= tag.tbody(**tbody_attributes) do %>
-    <% summary_rows.each do |summary_row| %>
-      <%= summary_row %>
-    <% end %>
+<%= tag.tbody(**tbody_attributes) do %>
+  <% summary_rows.each do |summary_row| %>
+    <%= summary_row %>
   <% end %>
 <% end %>
