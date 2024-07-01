@@ -46,6 +46,8 @@ module Katalyst
 
             return unless model.attribute_types.has_key?(column)
 
+            column = model.arel_table[column]
+
             filter(scope, attribute)
               .group(column)
               .distinct
