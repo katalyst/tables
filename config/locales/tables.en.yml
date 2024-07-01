@@ -1,6 +1,8 @@
 en:
   katalyst:
     tables:
+      query:
+        placeholder: "Filter %{name}"
       orderable:
         value:
           "⠿"

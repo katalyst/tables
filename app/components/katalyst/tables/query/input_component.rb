@@ -37,6 +37,10 @@ module Katalyst
 
         private
 
+        def placeholder
+          t("katalyst.tables.query.placeholder", name: collection.model_name.human.pluralize.downcase)
+        end
+
         def query_attribute
           collection.class.attribute_types.detect { |_, a| a.type == :query }&.first
         end
