@@ -48,23 +48,40 @@ RSpec.describe Katalyst::Tables::Collection::Type::Date do
   end
 
   describe "#serialize" do
-    context "when saving to db" do
-      it "translates Date to user input" do
-        expect(type.serialize(Date.parse("1970-01-01"))).to eq("1970-01-01")
-      end
+    it "translates Date to user input" do
+      expect(type.serialize(Date.parse("1970-01-01"))).to eq(Date.parse("1970-01-01"))
+    end
 
-      it "translates lower bound range to user input" do
-        expect(type.serialize(Date.parse("1970-01-01")..)).to eq("1970-01-01..")
-      end
+    it "translates lower bound range to user input" do
+      expect(type.serialize(Date.parse("1970-01-01")..)).to eq(Date.parse("1970-01-01")..)
+    end
 
-      it "translates upper bound range to user input" do
-        expect(type.serialize(..Date.parse("1970-01-01"))).to eq("..1970-01-01")
-      end
+    it "translates upper bound range to user input" do
+      expect(type.serialize(..Date.parse("1970-01-01"))).to eq(..Date.parse("1970-01-01"))
+    end
 
-      it "translates bounds range to user input" do
-        expect(type.serialize(Date.parse("1970-01-01")..Date.parse("2200-01-01")))
-          .to eq("1970-01-01..2200-01-01")
-      end
+    it "translates bounds range to user input" do
+      expect(type.serialize(Date.parse("1970-01-01")..Date.parse("2200-01-01")))
+        .to eq(Date.parse("1970-01-01")..Date.parse("2200-01-01"))
+    end
+  end
+
+  describe "#to_param" do
+    it "translates Date to user input" do
+      expect(type.to_param(Date.parse("1970-01-01"))).to eq("1970-01-01")
+    end
+
+    it "translates lower bound range to user input" do
+      expect(type.to_param(Date.parse("1970-01-01")..)).to eq("1970-01-01..")
+    end
+
+    it "translates upper bound range to user input" do
+      expect(type.to_param(..Date.parse("1970-01-01"))).to eq("..1970-01-01")
+    end
+
+    it "translates bounds range to user input" do
+      expect(type.to_param(Date.parse("1970-01-01")..Date.parse("2200-01-01")))
+        .to eq("1970-01-01..2200-01-01")
     end
   end
 

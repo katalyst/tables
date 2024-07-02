@@ -19,14 +19,42 @@ module Katalyst
               end
             end
 
+            def deserialize(value)
+              if value.is_a?(::Range)
+                if value.begin.nil?
+                  make_range(nil, deserialize(value.end))
+                elsif value.end.nil?
+                  make_range(deserialize(value.begin), nil)
+                else
+                  make_range(deserialize(value.begin), deserialize(value.end))
+                end
+              else
+                super
+              end
+            end
+
             def serialize(value)
               if value.is_a?(::Range)
                 if value.begin.nil?
-                  "..#{serialize(value.end)}"
+                  make_range(nil, serialize(value.end))
                 elsif value.end.nil?
-                  "#{serialize(value.begin)}.."
+                  make_range(serialize(value.begin), nil)
                 else
-                  "#{serialize(value.begin)}..#{serialize(value.end)}"
+                  make_range(serialize(value.begin), serialize(value.end))
+                end
+              else
+                super
+              end
+            end
+
+            def to_param(value)
+              if value.is_a?(::Range)
+                if value.begin.nil?
+                  "..#{to_param(value.end)}"
+                elsif value.end.nil?
+                  "#{to_param(value.begin)}.."
+                else
+                  "#{to_param(value.begin)}..#{to_param(value.end)}"
                 end
               else
                 super
@@ -42,14 +70,24 @@ module Katalyst
               when self.class.const_get(:SINGLE_VALUE)
                 super($~[:value])
               when self.class.const_get(:LOWER_BOUND)
-                ((super($~[:lower]))..)
+                make_range(super($~[:lower]), nil)
               when self.class.const_get(:UPPER_BOUND)
-                (..(super($~[:upper])))
+                make_range(nil, super($~[:upper]))
               when self.class.const_get(:BOUNDED)
-                ((super($~[:lower]))..(super($~[:upper])))
+                make_range(super($~[:lower]), super($~[:upper]))
               else
                 super
               end
+            end
+
+            private
+
+            def make_range(from, to)
+              # when a value that accepts multiple is given a range, it double-packs the value so we get ..[0]
+              # unpack the array value
+              from = from.first if from.is_a?(::Array) && from.length == 1
+              to = to.first if to.is_a?(::Array) && to.length == 1
+              (from..to)
             end
           end
         end

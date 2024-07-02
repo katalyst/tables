@@ -114,7 +114,8 @@ RSpec.describe Katalyst::Tables::Collection::Type::Integer do
       it { expect(type.cast("0")).to eq [0] }
       it { expect(type.cast([])).to eq [] }
       it { expect(type.cast(["0"])).to eq [0] }
-      it { expect(type.cast(["..0"])).to eq([0]) }
+      it { expect(type.cast("..0")).to eq(..0) }
+      it { expect(type.cast(["..0"])).to eq [] }
     end
   end
 
@@ -124,8 +125,8 @@ RSpec.describe Katalyst::Tables::Collection::Type::Integer do
     it { expect(type.serialize(nil)).to be_nil }
     it { expect(type.serialize(0)).to eq 0 }
     it { expect(type.serialize("0")).to eq 0 }
-    it { expect(type.serialize([])).to be_nil }
-    it { expect(type.serialize(["0"])).to be_nil }
+    it { expect(type.serialize("")).to be_nil }
+    it { expect(type.serialize(0..)).to eq 0.. }
 
     context "when multiple: true" do
       subject(:type) { described_class.new(multiple: true) }
@@ -134,7 +135,27 @@ RSpec.describe Katalyst::Tables::Collection::Type::Integer do
       it { expect(type.serialize(0)).to eq 0 }
       it { expect(type.serialize("0")).to eq 0 }
       it { expect(type.serialize([])).to eq [] }
-      it { expect(type.serialize(["0"])).to eq [0] }
+      it { expect(type.serialize([0])).to eq [0] }
+    end
+  end
+
+  describe "#to_param" do
+    subject(:type) { described_class.new }
+
+    it { expect(type.to_param(nil)).to be_nil }
+    it { expect(type.to_param(0)).to eq 0 }
+    it { expect(type.to_param("0")).to eq 0 }
+    it { expect(type.to_param([])).to be_nil }
+    it { expect(type.to_param("")).to be_nil }
+    it { expect(type.to_param(0..)).to eq "0.." }
+
+    context "when multiple: true" do
+      subject(:type) { described_class.new(multiple: true) }
+
+      it { expect(type.to_param(nil)).to be_nil }
+      it { expect(type.to_param(0)).to eq 0 }
+      it { expect(type.to_param([])).to eq "[]" }
+      it { expect(type.to_param([0])).to eq "[0]" }
     end
   end
 
@@ -144,6 +165,7 @@ RSpec.describe Katalyst::Tables::Collection::Type::Integer do
     it { expect(type.deserialize(nil)).to be_nil }
     it { expect(type.deserialize(0)).to eq 0 }
     it { expect(type.deserialize("0")).to eq 0 }
+    it { expect(type.deserialize(0..)).to eq 0.. }
 
     context "when multiple: true" do
       subject(:type) { described_class.new(multiple: true) }

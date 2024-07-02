@@ -21,9 +21,9 @@ module Katalyst
               return (multiple? ? [] : nil) if value.nil?
 
               if multiple? && value.is_a?(::Array)
-                value.map { |v| super(v) }
+                value_for_multiple(value.flat_map { |v| cast(v) })
               elsif multiple?
-                [super]
+                value_for_multiple(super)
               else
                 super
               end
@@ -31,7 +31,7 @@ module Katalyst
 
             def deserialize(value)
               if multiple? && value.is_a?(::Array)
-                value.map { |v| super(v) }.flatten
+                value.map { |v| deserialize(v) }.flatten
               elsif multiple?
                 [super].flatten.compact
               else
@@ -41,7 +41,15 @@ module Katalyst
 
             def serialize(value)
               if multiple? && value.is_a?(::Array)
-                value.map { |v| super(v) }.flatten
+                value.map { |v| serialize(v) }.flatten
+              else
+                super
+              end
+            end
+
+            def to_param(value)
+              if multiple? && value.is_a?(::Array)
+                "[#{value.map { |v| to_param(v) }.flatten.join(', ')}]"
               else
                 super
               end
@@ -51,6 +59,17 @@ module Katalyst
 
             def default_value
               multiple? ? [] : super
+            end
+
+            def value_for_multiple(value)
+              case value
+              when ::Array
+                value.reject { |v| v.is_a?(::Range) }
+              when ::Range
+                value
+              else
+                [value]
+              end
             end
           end
         end

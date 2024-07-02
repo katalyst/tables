@@ -13,7 +13,7 @@ module Katalyst
             :date
           end
 
-          def serialize(value)
+          def to_param(value)
             if value.is_a?(::Date)
               value.to_fs(:db)
             else
@@ -28,7 +28,7 @@ module Katalyst
               ::Date.current.beginning_of_week..,
               ::Date.current.beginning_of_month..,
               ::Date.current.beginning_of_year..,
-            ].map { |d| serialize(d) }
+            ].map { |d| to_param(d) }
           end
 
           private

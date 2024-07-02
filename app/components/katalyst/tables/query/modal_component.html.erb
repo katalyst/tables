@@ -8,11 +8,11 @@
     </header>
   <% end %>
   <div class="content">
-    <% if show_values? %>
+    <% if show_examples? %>
       <h4>Possible values for <code><%= current_key %>:</code></h4>
       <ul>
-        <% values_for(current_key).each do |value| %>
-          <li><code><%= format_value(value) %></code></li>
+        <% examples_for(current_key).each do |example| %>
+          <li><code><%= format_value(example) %></code></li>
         <% end %>
       </ul>
     <% else %>

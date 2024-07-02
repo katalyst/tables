@@ -31,7 +31,7 @@ module Katalyst
 
         using Collection::Type::Helpers::Extensions
 
-        def show_values?
+        def show_examples?
           current_key && attributes[current_key]
         end
 
@@ -63,8 +63,8 @@ module Katalyst
           end
         end
 
-        def values_for(key)
-          collection.examples_for(key).map(&:to_s).compact_blank
+        def examples_for(key)
+          collection.examples_for(key)&.map(&:to_s)&.compact_blank || []
         end
 
         def format_value(value)

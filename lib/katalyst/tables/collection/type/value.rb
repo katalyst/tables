@@ -41,6 +41,10 @@ module Katalyst
             scope.merge(condition)
           end
 
+          def to_param(value)
+            serialize(value)
+          end
+
           def examples_for(scope, attribute)
             scope, model, column = model_and_column_for(scope, attribute)
 
@@ -54,7 +58,7 @@ module Katalyst
               .limit(10)
               .reorder(column => :asc)
               .pluck(column)
-              .map { |v| serialize(v) }
+              .map { |v| to_param(deserialize(v)) }
           end
 
           private
@@ -69,7 +73,7 @@ module Katalyst
             elsif scope
               model.public_send(scope, value)
             else
-              model.where(column => value)
+              model.where(column => serialize(value))
             end
           end
 
