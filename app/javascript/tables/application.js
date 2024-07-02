@@ -3,6 +3,7 @@ import OrderableListController from "./orderable/list_controller";
 import OrderableFormController from "./orderable/form_controller";
 import SelectionFormController from "./selection/form_controller";
 import SelectionItemController from "./selection/item_controller";
+import SelectionTableController from "./selection/table_controller";
 import QueryController from "./query_controller";
 import QueryInputController from "./query_input_controller";
 
@@ -26,6 +27,10 @@ const Definitions = [
   {
     identifier: "tables--selection--item",
     controllerConstructor: SelectionItemController,
+  },
+  {
+    identifier: "tables--selection--table",
+    controllerConstructor: SelectionTableController,
   },
   {
     identifier: "tables--query",
