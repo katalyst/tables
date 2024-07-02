@@ -27,7 +27,23 @@ export default class SelectionFormController extends Controller {
       );
     }
 
-    this.countValue = this.inputs.length;
+    this.countValue = this.visibleInputs.length;
+
+    return !input;
+  }
+
+  /**
+   * @param id to toggle visibility
+   * @return {boolean} true if visible, false if not visible
+   */
+  visible(id, visible) {
+    const input = this.input(id);
+
+    if (input) {
+      input.disabled = !visible;
+    }
+
+    this.countValue = this.visibleInputs.length;
 
     return !input;
   }
@@ -43,6 +59,10 @@ export default class SelectionFormController extends Controller {
     return this.element.querySelectorAll(
       `input[name="${this.primaryKeyValue}[]"]`,
     );
+  }
+
+  get visibleInputs() {
+    return Array.from(this.inputs).filter((i) => !i.disabled);
   }
 
   input(id) {

@@ -12,17 +12,27 @@ RSpec.describe Katalyst::Tables::Selectable do
     component = Katalyst::TableComponent.new(collection:)
     html = render_inline(component) { |row, _| row.select }
     expect(html).to match_html(<<~HTML)
-      <table>
-        <thead><tr><th class="selection"></th></tr></thead>
+      <table data-controller="tables--selection--table"
+             data-tables--selection--table-tables--selection--form-outlet="#people_selection_form"
+             data-action="tables--selection--item:select->tables--selection--table#update">
+        <thead>
+          <tr>
+            <th class="selection"
+                data-tables--selection--table-target="header"
+                data-action="change->tables--selection--table#toggleHeader">
+              <label><input type="checkbox"></label>
+            </th>
+          </tr>
+        </thead>
         <tbody>
           <tr>
             <td class="selection"
                 data-controller="tables--selection--item"
+                data-action="change->tables--selection--item#change"
                 data-tables--selection--item-params-value='{"id":1}'
                 data-tables--selection--item-tables--selection--form-outlet="#people_selection_form"
-                data-action="change->tables--selection--item#change"
-                data-turbo-permanent="">
-              <input type="checkbox">
+                data-tables--selection--table-target="item">
+              <label><input type="checkbox"></label>
             </td>
           </tr>
         </tbody>

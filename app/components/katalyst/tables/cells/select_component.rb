@@ -7,28 +7,38 @@ module Katalyst
         def initialize(params:, form_id:, **)
           super(**)
 
-          @params  = params
+          @params = params
           @form_id = form_id
         end
 
+        def label
+          tag.label(tag.input(type: :checkbox))
+        end
+
         def rendered_value
-          tag.input(type: :checkbox)
+          tag.label(tag.input(type: :checkbox))
         end
 
         private
 
         def default_html_attributes
           if @row.header?
-            { class: "selection" }
+            {
+              class: "selection",
+              data:  {
+                "#{Selectable::TABLE_CONTROLLER}-target" => "header",
+                action: "change->#{Selectable::TABLE_CONTROLLER}#toggleHeader",
+              },
+            }
           else
             {
               class: "selection",
               data:  {
-                controller:                                    Selectable::ITEM_CONTROLLER,
-                "#{Selectable::ITEM_CONTROLLER}-params-value"              => @params.to_json,
+                controller: Selectable::ITEM_CONTROLLER,
+                action: "change->#{Selectable::ITEM_CONTROLLER}#change",
+                "#{Selectable::ITEM_CONTROLLER}-params-value" => @params.to_json,
                 "#{Selectable::ITEM_CONTROLLER}-#{Selectable::FORM_CONTROLLER}-outlet" => "##{@form_id}",
-                action:                                        "change->#{Selectable::ITEM_CONTROLLER}#change",
-                turbo_permanent:                               "",
+                "#{Selectable::TABLE_CONTROLLER}-target" => "item",
               },
             }
           end
