@@ -19,20 +19,22 @@ export default class SelectionItemController extends Controller {
   };
 
   tablesSelectionFormOutletConnected(form) {
-    this.tablesSelectionFormOutlet?.visible(this.id, true);
+    form.visible(this.id, true);
     this.checkedValue = form.isSelected(this.id);
   }
 
   disconnect() {
     // Remove from form's list of visible selections.
     // This should be an outlet disconnect, but those events are not reliable in turbo 8.0
-    this.tablesSelectionFormOutlet?.visible(this.id, false);
+    if (this.hasTablesSelectionFormOutlet) {
+      this.tablesSelectionFormOutlet.visible(this.id, false);
+    }
   }
 
   change(e) {
     e.preventDefault();
 
-    this.checkedValue = this.tablesSelectionFormOutlet?.toggle(this.id);
+    this.checkedValue = this.tablesSelectionFormOutlet.toggle(this.id);
   }
 
   get id() {
@@ -43,16 +45,18 @@ export default class SelectionItemController extends Controller {
    * Update checked to match match selection form. This occurs when the item is re-used by turbo-morph.
    */
   paramsValueChanged(params, previous) {
+    if (!this.hasTablesSelectionFormOutlet) return;
+
     // if id is changing (e.g. morph) then let the form know that the previous id is now not visible
     if (previous.id !== params.id) {
-      this.tablesSelectionFormOutlet?.visible(previous.id, false);
+      this.tablesSelectionFormOutlet.visible(previous.id, false);
     }
 
     // tell form that our id is now visible in the table
-    this.tablesSelectionFormOutlet?.visible(params.id, true);
+    this.tablesSelectionFormOutlet.visible(params.id, true);
 
     // id has changed, so update checked from form
-    this.checkedValue = this.tablesSelectionFormOutlet?.isSelected(params.id);
+    this.checkedValue = this.tablesSelectionFormOutlet.isSelected(params.id);
 
     // propagate changes
     this.update();
@@ -62,8 +66,10 @@ export default class SelectionItemController extends Controller {
    * Update input to match checked. This occurs when the item is toggled, connected, or morphed.
    */
   checkedValueChanged() {
+    if (!this.hasTablesSelectionFormOutlet) return;
+
     // ensure that checked matches the form, i.e. if morphed
-    this.checkedValue = this.tablesSelectionFormOutlet?.isSelected(this.id);
+    this.checkedValue = this.tablesSelectionFormOutlet.isSelected(this.id);
 
     // propagate changes
     this.update();
