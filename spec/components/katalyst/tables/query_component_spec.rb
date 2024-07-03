@@ -71,11 +71,11 @@ RSpec.describe Katalyst::Tables::QueryComponent do
     end
     expect(render_inline(component).css(".query-modal > .content > *")).to match_html(<<~HTML)
       <h4>Possible values for <code>index:</code></h4>
-      <ul>
-          <li><code>1</code></li>
-          <li><code>2</code></li>
-          <li><code>3</code></li>
-      </ul>
+      <dl>
+        <dt><code>1</code></dt>
+        <dt><code>2</code></dt>
+        <dt><code>3</code></dt>
+      </dl>
     HTML
   end
 
@@ -87,11 +87,11 @@ RSpec.describe Katalyst::Tables::QueryComponent do
     end
     expect(render_inline(component).css(".query-modal > .content > *")).to match_html(<<~HTML)
       <h4>Possible values for <code>index:</code></h4>
-      <ul>
-          <li><code>1</code></li>
-          <li><code>2</code></li>
-          <li><code>3</code></li>
-      </ul>
+      <dl>
+        <dt><code>1</code></dt>
+        <dt><code>2</code></dt>
+        <dt><code>3</code></dt>
+      </dl>
     HTML
   end
 
@@ -103,9 +103,27 @@ RSpec.describe Katalyst::Tables::QueryComponent do
     end
     expect(render_inline(component).css(".query-modal > .content > *")).to match_html(<<~HTML)
       <h4>Possible values for <code>index:</code></h4>
-      <ul>
-          <li><code>2</code></li>
-      </ul>
+      <dl>
+        <dt><code>2</code></dt>
+      </dl>
+    HTML
+  end
+
+  it "renders value descriptions when available" do
+    create_list(:resource, 1)
+    create_collection(q: "category:", p: 9) do
+      attribute :category, :enum
+    end
+    expect(render_inline(component).css(".query-modal > .content > *")).to match_html(<<~HTML)
+      <h4>Possible values for <code>category:</code></h4>
+      <dl>
+        <dt><code>article</code></dt>
+        <dd>Resource category is Article</dd>
+        <dt><code>documentation</code></dt>
+        <dd>Resource category is Documentation</dd>
+        <dt><code>report</code></dt>
+        <dd>Resource category is Report</dd>
+      </dl>
     HTML
   end
 end

@@ -7,6 +7,7 @@ require "katalyst/tables/collection/type/helpers/extensions"
 require "katalyst/tables/collection/type/helpers/multiple"
 require "katalyst/tables/collection/type/helpers/range"
 
+require "katalyst/tables/collection/type/example"
 require "katalyst/tables/collection/type/value"
 
 require "katalyst/tables/collection/type/boolean"

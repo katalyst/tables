@@ -14,21 +14,22 @@ module Katalyst
           end
 
           def to_param(value)
-            if value.is_a?(::Date)
-              value.to_fs(:db)
+            case value
+            when ::Date, ::DateTime, ::Time, ActiveSupport::TimeWithZone
+              value.to_date.to_fs(:db)
             else
               super
             end
           end
 
-          def examples_for(...)
+          def examples_for(scope, attribute)
             [
-              ::Date.current,
-              ::Date.yesterday,
-              ::Date.current.beginning_of_week..,
-              ::Date.current.beginning_of_month..,
-              ::Date.current.beginning_of_year..,
-            ].map { |d| to_param(d) }
+              *super(scope, attribute, limit: 6),
+              example(::Date.current.beginning_of_week.., "this week"),
+              example(::Date.current.beginning_of_month.., "this month"),
+              example(1.month.ago.all_month, "last month"),
+              example(1.year.ago.all_year, "last year"),
+            ]
           end
 
           private

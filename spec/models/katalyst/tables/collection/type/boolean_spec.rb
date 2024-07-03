@@ -164,7 +164,7 @@ RSpec.describe Katalyst::Tables::Collection::Type::Boolean do
     let(:collection) { new_collection { attribute :active, :boolean }.apply(Resource) }
 
     it "returns all enum values" do
-      expect(collection.examples_for(:active)).to contain_exactly(true, false)
+      expect(collection.examples_for(:active).map(&:value)).to contain_exactly(true, false)
     end
   end
 end

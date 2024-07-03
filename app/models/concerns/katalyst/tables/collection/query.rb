@@ -32,7 +32,7 @@ module Katalyst
           key = key.to_s
           examples_method = "#{key.parameterize.underscore}_examples"
           if respond_to?(examples_method)
-            public_send(examples_method)
+            public_send(examples_method)&.map { |e| e.is_a?(Example) ? e : Example.new(example) }
           elsif @attributes.key?(key)
             @attributes[key].type.examples_for(unscoped_items, @attributes[key])
           end

@@ -110,12 +110,12 @@ RSpec.describe Katalyst::Tables::Collection::Type::String do
 
     it "returns values from database" do
       create_list(:resource, 2)
-      expect(collection.examples_for(:name)).to contain_exactly("Resource 1", "Resource 2")
+      expect(collection.examples_for(:name).map(&:value)).to contain_exactly("Resource 1", "Resource 2")
     end
 
     it "removes duplicates" do
       create_list(:resource, 2, name: "duplicate")
-      expect(collection.examples_for(:name)).to contain_exactly("duplicate")
+      expect(collection.examples_for(:name).map(&:value)).to contain_exactly("duplicate")
     end
 
     context "with a belongs_to association" do
@@ -123,13 +123,13 @@ RSpec.describe Katalyst::Tables::Collection::Type::String do
 
       it "returns values from parent" do
         create_list(:child, 2)
-        expect(collection.examples_for(:"parent.name")).to contain_exactly("Parent 1", "Parent 2")
+        expect(collection.examples_for(:"parent.name").map(&:value)).to contain_exactly("Parent 1", "Parent 2")
       end
 
       it "does not return unrelated parents" do
         create(:parent)
         create(:child)
-        expect(collection.examples_for(:"parent.name")).to contain_exactly("Parent 2")
+        expect(collection.examples_for(:"parent.name").map(&:value)).to contain_exactly("Parent 2")
       end
     end
   end

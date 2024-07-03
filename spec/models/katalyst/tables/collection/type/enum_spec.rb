@@ -93,14 +93,14 @@ RSpec.describe Katalyst::Tables::Collection::Type::Enum do
     let(:params) { {} }
 
     it "returns all enum values" do
-      expect(collection.examples_for(:category)).to contain_exactly("article", "documentation", "report")
+      expect(collection.examples_for(:category).map(&:value)).to contain_exactly("article", "documentation", "report")
     end
 
     context "when a partial value is provided" do
       let(:params) { { q: "category: a" } }
 
       it "filters the available values" do
-        expect(collection.examples_for(:category)).to contain_exactly("article", "documentation")
+        expect(collection.examples_for(:category).map(&:value)).to contain_exactly("article", "documentation")
       end
     end
   end

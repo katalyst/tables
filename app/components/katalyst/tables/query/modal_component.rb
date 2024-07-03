@@ -64,12 +64,12 @@ module Katalyst
         end
 
         def examples_for(key)
-          collection.examples_for(key)&.map(&:to_s)&.compact_blank || []
+          collection.examples_for(key)&.reject { |e| e.value.to_s.blank? } || []
         end
 
         def format_value(value)
-          if /\A[\w.-]*\z/.match?(value)
-            value
+          if /\A[\w.-]*\z/.match?(value.to_s)
+            value.to_s
           else
             %("#{value}")
           end

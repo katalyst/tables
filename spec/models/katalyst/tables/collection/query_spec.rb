@@ -122,22 +122,22 @@ RSpec.describe Katalyst::Tables::Collection::Query do
   describe "#examples_for" do
     it "supports basic types" do
       create_list(:resource, 1, active: true)
-      expect(collection.apply(Resource).examples_for("active")).to eq([true, false])
+      expect(collection.apply(Resource).examples_for("active").map(&:value)).to eq([true, false])
     end
 
     it "limits example count" do
       create_list(:resource, 11) # rubocop:disable FactoryBot/ExcessiveCreateList
-      expect(collection.apply(Resource).examples_for("index")).to eq((1..10).to_a)
+      expect(collection.apply(Resource).examples_for("index").map(&:value)).to eq((1..10).to_a)
     end
 
     it "deduplicates values" do
       create_list(:resource, 5, index: 1)
-      expect(collection.apply(Resource).examples_for("index")).to eq([1])
+      expect(collection.apply(Resource).examples_for("index").map(&:value)).to eq([1])
     end
 
     it "supports complex keys" do
       create_list(:child, 1)
-      expect(collection.apply(Nested::Child).examples_for("parent.name")).to eq(["Parent 1"])
+      expect(collection.apply(Nested::Child).examples_for("parent.name").map(&:value)).to eq(["Parent 1"])
     end
   end
 end

@@ -23,7 +23,7 @@ module Katalyst
           end
 
           def examples_for(...)
-            [true, false]
+            [example(true), example(false)]
           end
         end
       end

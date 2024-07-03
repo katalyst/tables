@@ -45,7 +45,7 @@ module Katalyst
             serialize(value)
           end
 
-          def examples_for(scope, attribute)
+          def examples_for(scope, attribute, limit: 10, order: :asc)
             scope, model, column = model_and_column_for(scope, attribute)
 
             return unless model.attribute_types.has_key?(column)
@@ -55,13 +55,17 @@ module Katalyst
             filter(scope, attribute)
               .group(column)
               .distinct
-              .limit(10)
-              .reorder(column => :asc)
+              .limit(limit)
+              .reorder(column => order)
               .pluck(column)
-              .map { |v| to_param(deserialize(v)) }
+              .map { |v| example(deserialize(v)) }
           end
 
           private
+
+          def example(value, description = "")
+            Example.new(to_param(value), description)
+          end
 
           def filter_value(attribute)
             attribute.value

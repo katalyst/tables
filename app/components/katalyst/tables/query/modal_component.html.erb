@@ -10,11 +10,12 @@
   <div class="content">
     <% if show_examples? %>
       <h4>Possible values for <code><%= current_key %>:</code></h4>
-      <ul>
+      <dl>
         <% examples_for(current_key).each do |example| %>
-          <li><code><%= format_value(example) %></code></li>
+          <dt><code><%= format_value(example.value) %></code></dt>
+          <% if example.description.present? %><dd><%= example.description %></dd><% end %>
         <% end %>
-      </ul>
+      </dl>
     <% else %>
       <h4>Available filters:</h4>
       <dl>
