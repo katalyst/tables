@@ -2,8 +2,14 @@
   width: var(--width-small);
 }
 
-:where(td.type-enum small) {
-  background: var(--tag-color);
-  border-radius: 0.25rem;
-  padding: 0.25rem 0.5rem;
+:where(td.type-enum) {
+  // ensure ellipsis is the correct color
+  color: var(--on-tag-color);
+
+  small {
+    background: var(--tag-color);
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    font-size: small;
+  }
 }

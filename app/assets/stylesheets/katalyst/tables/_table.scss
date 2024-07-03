@@ -9,6 +9,7 @@ $row-border-color: $grey !default;
 $row-height: 48px !default;
 $cell-spacing: 0.5rem !default;
 $tag-color: $grey !default;
+$on-tag-color: black !default;
 
 $width-small: 6rem !default;
 $width-medium: 12rem !default;
@@ -20,6 +21,7 @@ table {
   --table-header-color: #{$table-header-color};
   --row-border-color: #{$row-border-color};
   --tag-color: #{$tag-color};
+  --on-tag-color: #{$on-tag-color};
 
   --width-small: #{$width-small};
   --width-medium: #{$width-medium};
