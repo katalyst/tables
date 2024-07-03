@@ -24,7 +24,7 @@ module Katalyst
 
           def examples_for(scope, attribute)
             [
-              *super(scope, attribute, limit: 6),
+              *super(scope, attribute, limit: 6, order: :desc),
               example(::Date.current.beginning_of_week.., "this week"),
               example(::Date.current.beginning_of_month.., "this month"),
               example(1.month.ago.all_month, "last month"),
