@@ -9,7 +9,11 @@
   small {
     background: var(--tag-color);
     border-radius: 0.25rem;
-    padding: 0.25rem 0.5rem;
+    padding: 0.25rem;
     font-size: small;
   }
+}
+
+table td.type-enum {
+  text-overflow: unset;
 }
