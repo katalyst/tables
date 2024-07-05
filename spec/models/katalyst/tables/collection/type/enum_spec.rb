@@ -68,6 +68,7 @@ RSpec.describe Katalyst::Tables::Collection::Type::Enum do
     it { expect(type.cast("article")).to eq ["article"] }
     it { expect(type.cast([])).to eq [] }
     it { expect(type.cast(["article"])).to eq ["article"] }
+    it { expect(type.cast([:article])).to eq ["article"] }
   end
 
   describe "#serialize" do
