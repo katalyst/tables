@@ -17,7 +17,10 @@ module Katalyst
 
           def examples_for(scope, attribute)
             _, model, column = model_and_column_for(scope, attribute)
-            keys = model.defined_enums[column]&.keys
+
+            raise ArgumentError, "Unknown enum #{column} for #{model}" unless model.defined_enums.has_key?(column)
+
+            keys = model.defined_enums[column].keys
 
             if attribute.value_before_type_cast.present?
               keys = keys.select { |key| key.include?(attribute.value_before_type_cast.last) }
@@ -28,9 +31,10 @@ module Katalyst
 
           private
 
-          def describe_key(model, attribute, key)
-            key = I18n.t("active_record.attributes.#{model.model_name.i18n_key}/#{key}", default: key.to_s.titleize)
-            "#{model.model_name.human} #{model.human_attribute_name(attribute).downcase} is #{key}"
+          def describe_key(model, name, key)
+            label = model.human_attribute_name(name).downcase
+            value = model.human_attribute_name("#{name}.#{key}").downcase
+            "#{model.model_name.human} #{label} is #{value}"
           end
         end
       end

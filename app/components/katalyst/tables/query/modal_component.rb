@@ -64,7 +64,14 @@ module Katalyst
         end
 
         def examples_for(key)
-          collection.examples_for(key)&.reject { |e| e.value.to_s.blank? } || []
+          collection.examples_for(key).filter_map do |example|
+            case example
+            when Collection::Type::Example
+              example if example.value.to_s.present?
+            else
+              raise ArgumentError, "Invalid example #{example.inspect} for #{collection.model_name}.#{key}"
+            end
+          end
         end
 
         def format_value(value)

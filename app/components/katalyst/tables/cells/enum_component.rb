@@ -7,7 +7,7 @@ module Katalyst
       class EnumComponent < CellComponent
         def rendered_value
           if (value = self.value).present?
-            label = t(i18n_enum_label_key(value), default: value)
+            label = collection.model.human_attribute_name("#{column}.#{value}")
             content_tag(:small, label, data: { enum: column, value: })
           end
         end
@@ -16,10 +16,6 @@ module Katalyst
 
         def default_html_attributes
           { class: "type-enum" }
-        end
-
-        def i18n_enum_label_key(value)
-          "active_record.attributes.#{collection.model_name.i18n_key}/#{column}.#{value}"
         end
       end
     end

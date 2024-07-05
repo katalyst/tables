@@ -118,11 +118,11 @@ RSpec.describe Katalyst::Tables::QueryComponent do
       <h4>Possible values for <code>category:</code></h4>
       <dl>
         <dt><code>article</code></dt>
-        <dd>Resource category is Article</dd>
+        <dd>Resource category is article</dd>
         <dt><code>documentation</code></dt>
-        <dd>Resource category is Documentation</dd>
+        <dd>Resource category is documentation</dd>
         <dt><code>report</code></dt>
-        <dd>Resource category is Report</dd>
+        <dd>Resource category is report</dd>
       </dl>
     HTML
   end
