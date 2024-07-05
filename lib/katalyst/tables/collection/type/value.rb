@@ -48,7 +48,10 @@ module Katalyst
           def examples_for(scope, attribute, limit: 10, order: :asc)
             scope, model, column = model_and_column_for(scope, attribute)
 
-            return unless model.attribute_types.has_key?(column)
+            unless model.attribute_types.has_key?(column)
+              raise(ArgumentError, "Unknown column '#{column}' for #{model}. " \
+                                   "Consider defining '#{attribute.name.parameterize.underscore}_examples'")
+            end
 
             column = model.arel_table[column]
 
