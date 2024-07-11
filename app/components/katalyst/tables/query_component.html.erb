@@ -2,7 +2,8 @@
     <%= content %>
 <% else %>
   <%= form do |form| %>
-    <%= render query_input(form:) %>
-    <%= modal %>
+    <%= render query_input(form:) do %>
+      <%= modal %>
+    <% end %>
   <% end %>
 <% end %>

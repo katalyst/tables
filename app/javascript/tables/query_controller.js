@@ -25,6 +25,7 @@ export default class QueryController extends Controller {
 
   closeModal() {
     delete this.modalTarget.dataset.open;
+    this.clearHeight();
 
     if (document.activeElement === this.query) document.activeElement.blur();
 
@@ -33,6 +34,7 @@ export default class QueryController extends Controller {
 
   openModal() {
     this.modalTarget.dataset.open = true;
+    this.setHeight();
 
     document.addEventListener("selectionchange", this.selection);
   }
@@ -91,7 +93,18 @@ export default class QueryController extends Controller {
       case "data-open":
         e.preventDefault();
         break;
+      case "style":
+        Promise.resolve().then(() => this.setHeight());
+        break;
     }
+  }
+
+  setHeight() {
+    this.element.style.setProperty("--modal-height", `${this.modalTarget.scrollHeight}px`);
+  }
+
+  clearHeight() {
+  this.element.style.removeProperty("--modal-height");
   }
 
   get query() {

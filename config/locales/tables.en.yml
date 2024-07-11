@@ -2,7 +2,11 @@ en:
   katalyst:
     tables:
       query:
+        describe_examples_html:
+          Possible values for <code>%{key}</code>
         placeholder: "Filter %{name}"
+        unknown_key_html:
+          Sorry, we don&rsquo;t support the <code>%{key}</code> filter.
       orderable:
         value:
           "⠿"

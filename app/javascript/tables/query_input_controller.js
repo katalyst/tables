@@ -19,6 +19,10 @@ export default class QueryInputController extends Controller {
       this.highlightTarget.appendChild(token.render());
     });
   }
+
+  beforeMorph(e) {
+    console.log(e);
+  }
 }
 
 class Parser {

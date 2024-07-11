@@ -89,6 +89,7 @@ module Katalyst
               keydown.esc->tables--query#clear:stop
               submit->tables--query#submit
               input->tables--query#update
+              turbo:before-morph-attribute->tables--query#beforeMorphAttribute
             ],
           },
         }

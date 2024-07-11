@@ -1,54 +1,68 @@
-[data-controller="tables--query"] {
+form:has(.query-input) {
+  --modal-height: 0rem;
+}
+
+.query-input {
   position: relative;
+  display: grid;
+  grid-template-areas: "input button" "modal modal";
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto var(--modal-height);
+  border: 1px solid rgba(0, 0, 0, 0);
+  margin-bottom: 0;
+  z-index: 1;
+  transition: 125ms;
+  background: white;
+  overflow: hidden;
 
-  .query-input {
-    display: grid;
-    grid-template-areas: "input button";
-    grid-template-columns: 1fr auto;
+  &:has(.query-modal[data-open]) {
+    border-color: rgba(0, 0, 0, 0.16);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16),
+    0 3px 6px rgba(0, 0, 0, 0.23);
+    margin: -0.5rem;
+    padding: 0.5rem;
+    margin-bottom: calc(-0.5rem - var(--modal-height));
+    border-radius: 0.5rem;
+  }
 
-    input[type="search"] {
-      grid-area: input;
-      background: transparent;
-      color: transparent;
-      caret-color: black;
-    }
+  input[type="search"] {
+    grid-area: input;
+    background: transparent;
+    caret-color: black;
+  }
 
-    button {
-      grid-area: button;
-      flex: 0;
-    }
+  &[data-tables--query-input-query-value] input[type="search"] {
+    // hide un-styled text when highlights are visible
+    color: transparent;
+  }
 
-    .highlight {
-      grid-area: input;
-      border: 2px solid transparent;
-      color: black;
-      z-index: -1;
-      font-size: 1rem;
-      padding-block: 1px;
-      padding-inline: 2px;
+  button {
+    grid-area: button;
+    flex: 0;
+  }
 
-      .value {
-        color: #666666;
-      }
+  .highlight {
+    grid-area: input;
+    border: 2px solid transparent;
+    color: black;
+    z-index: -1;
+    font-size: 1rem;
+    padding-block: 1px;
+    padding-inline: 2px;
+
+    .value {
+      color: #666666;
     }
   }
 }
 
 .query-modal {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  border: 1px solid rgba(0, 0, 0, 0.16);
-  box-shadow:
-    0 3px 6px rgba(0, 0, 0, 0.16),
-    0 3px 6px rgba(0, 0, 0, 0.23);
+  grid-area: modal;
   margin-top: 0.5rem;
   background: white;
   border-radius: 4px;
   z-index: 1;
   opacity: 0;
-  transition: opacity 0.125s;
   pointer-events: none;
   display: grid;
   grid-template-areas: "header" "content" "footer";
@@ -65,8 +79,6 @@
 
   .content {
     grid-area: content;
-    padding-inline: 1rem;
-    padding-block: 0.5rem 0;
   }
 
   dl {

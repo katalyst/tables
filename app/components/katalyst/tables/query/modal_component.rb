@@ -22,10 +22,7 @@ module Katalyst
         def default_html_attributes
           {
             class: "query-modal",
-            data:  {
-              tables__query_target: "modal",
-              action:               ["turbo:before-morph-attribute->tables--query#beforeMorphAttribute"],
-            },
+            data:  { tables__query_target: "modal" },
           }
         end
 

@@ -6,6 +6,8 @@ module Katalyst
       class InputComponent < ViewComponent::Base
         include Katalyst::HtmlAttributes
 
+        define_html_attribute_methods :input_attributes
+
         attr_reader :form
 
         def initialize(form:, **)
@@ -25,12 +27,23 @@ module Katalyst
 
         def default_html_attributes
           {
+            class: "query-input",
+            data:  {
+              controller: "tables--query-input",
+              action:     ["turbo:before-morph->tables--query-input#beforeMorph"],
+            },
+          }
+        end
+
+        def default_input_attributes
+          {
             data: {
               action:                     %w[
                 input->tables--query-input#update
                 keyup.enter->tables--query#closeModal
               ],
               tables__query_input_target: "input",
+              turbo_permanent:            "",
             },
           }
         end
