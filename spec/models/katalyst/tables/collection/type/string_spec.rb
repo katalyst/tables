@@ -105,31 +105,43 @@ RSpec.describe Katalyst::Tables::Collection::Type::String do
     it { expect(type.deserialize([])).to eq "[]" }
   end
 
-  describe "#examples_for" do
-    let(:collection) { new_collection { attribute :name, :string }.apply(Resource) }
+  describe "#suggestions" do
+    let(:collection) { new_collection { attribute :name, :string }.with_params(params).apply(Resource) }
+    let(:params) { { q: "name:", p: 5 } }
 
     it "returns values from database" do
       create_list(:resource, 2)
-      expect(collection.examples_for(:name).map(&:value)).to contain_exactly("Resource 1", "Resource 2")
+      expect(collection.suggestions.map(&:value)).to contain_exactly("Resource 1", "Resource 2")
     end
 
     it "removes duplicates" do
       create_list(:resource, 2, name: "duplicate")
-      expect(collection.examples_for(:name).map(&:value)).to contain_exactly("duplicate")
+      expect(collection.suggestions.map(&:value)).to contain_exactly("duplicate")
+    end
+
+    context "when cursor is on a partial value" do
+      let(:params) { { q: "name:pa", p: 7 } }
+
+      it "returns value suggestions" do
+        create(:resource, name: "Paul")
+        create(:resource, name: "George")
+        expect(collection.suggestions.map(&:value)).to contain_exactly("Paul")
+      end
     end
 
     context "with a belongs_to association" do
-      let(:collection) { new_collection { attribute :"parent.name", :string }.apply(Nested::Child) }
+      let(:collection) { new_collection { attribute :"parent.name", :string }.with_params(params).apply(Nested::Child) }
+      let(:params) { { q: "parent.name:", p: 12 } }
 
       it "returns values from parent" do
         create_list(:child, 2)
-        expect(collection.examples_for(:"parent.name").map(&:value)).to contain_exactly("Parent 1", "Parent 2")
+        expect(collection.suggestions.map(&:value)).to contain_exactly("Parent 1", "Parent 2")
       end
 
       it "does not return unrelated parents" do
         create(:parent)
         create(:child)
-        expect(collection.examples_for(:"parent.name").map(&:value)).to contain_exactly("Parent 2")
+        expect(collection.suggestions.map(&:value)).to contain_exactly("Parent 2")
       end
     end
   end

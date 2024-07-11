@@ -38,7 +38,7 @@ module Katalyst
         private
 
         def placeholder
-          t("katalyst.tables.query.placeholder", name: collection.model_name.human.pluralize.downcase)
+          t(".placeholder", name: collection.model_name.human.pluralize.downcase)
         end
 
         def query_attribute

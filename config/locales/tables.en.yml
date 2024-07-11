@@ -2,7 +2,15 @@ en:
   katalyst:
     tables:
       query:
-        placeholder: "Filter %{name}"
+        input_component:
+          placeholder: "Filter %{name}"
+        modal_component:
+          suggestions_title: "Search options"
       orderable:
         value:
           "⠿"
+  errors:
+    attributes:
+      query:
+        unknown_key: "Searching for %{input} is not supported"
+        no_suggestions: "Searching for %{input} is not supported"

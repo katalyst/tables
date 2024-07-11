@@ -160,11 +160,28 @@ RSpec.describe Katalyst::Tables::Collection::Type::Boolean do
     end
   end
 
-  describe "#examples_for" do
-    let(:collection) { new_collection { attribute :active, :boolean }.apply(Resource) }
+  describe "#suggestions" do
+    let(:collection) { new_collection(params) { attribute :active, :boolean }.apply(Resource) }
+    let(:params) { { q: "active:", p: 7 } }
 
-    it "returns all enum values" do
-      expect(collection.examples_for(:active).map(&:value)).to contain_exactly(true, false)
+    it "returns values" do
+      expect(collection.suggestions.map(&:value)).to contain_exactly(true, false)
+    end
+
+    context "when focus is a partial value" do
+      let(:params) { { q: "active: f", p: 9 } }
+
+      it "filters the available values" do
+        expect(collection.suggestions.map(&:value)).to contain_exactly(false)
+      end
+    end
+
+    context "when focus is an incomplete array" do
+      let(:params) { { q: "active: [true,", p: 14 } }
+
+      it "filters the available values" do
+        expect(collection.suggestions.map(&:value)).to contain_exactly(true, false)
+      end
     end
   end
 end

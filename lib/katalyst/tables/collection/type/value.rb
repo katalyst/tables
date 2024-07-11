@@ -30,9 +30,7 @@ module Katalyst
             end
           end
 
-          def filter(scope, attribute)
-            value = filter_value(attribute)
-
+          def filter(scope, attribute, value: filter_value(attribute))
             return scope unless filter?(attribute, value)
 
             scope, model, column = model_and_column_for(scope, attribute)
@@ -45,29 +43,33 @@ module Katalyst
             serialize(value)
           end
 
-          def examples_for(scope, attribute, limit: 10, order: :asc)
+          def suggestions(scope, attribute, limit: 10, order: :asc)
             scope, model, column = model_and_column_for(scope, attribute)
 
             unless model.attribute_types.has_key?(column)
               raise(ArgumentError, "Unknown column '#{column}' for #{model}. " \
-                                   "Consider defining '#{attribute.name.parameterize.underscore}_examples'")
+                                   "Consider defining '#{attribute.name.parameterize.underscore}_suggestions'")
             end
 
-            column = model.arel_table[column]
+            arel_column = model.arel_table[column]
 
             filter(scope, attribute)
-              .group(column)
+              .group(arel_column)
               .distinct
               .limit(limit)
-              .reorder(column => order)
-              .pluck(column)
-              .map { |v| example(deserialize(v)) }
+              .reorder(arel_column => order)
+              .pluck(arel_column)
+              .map { |v| database_suggestion(attribute:, model:, column:, value: deserialize(v)) }
           end
 
           private
 
-          def example(value, description = "")
-            Example.new(to_param(value), description)
+          def constant_suggestion(attribute:, model:, column:, value:)
+            Tables::Suggestions::ConstantValue.new(name: attribute.name, type: attribute.type, model:, column:, value:)
+          end
+
+          def database_suggestion(attribute:, model:, column:, value:)
+            Tables::Suggestions::DatabaseValue.new(name: attribute.name, type: attribute.type, model:, column:, value:)
           end
 
           def filter_value(attribute)

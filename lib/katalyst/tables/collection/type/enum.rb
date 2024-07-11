@@ -15,18 +15,18 @@ module Katalyst
             :enum
           end
 
-          def examples_for(scope, attribute)
+          def suggestions(scope, attribute)
             _, model, column = model_and_column_for(scope, attribute)
 
             raise ArgumentError, "Unknown enum #{column} for #{model}" unless model.defined_enums.has_key?(column)
 
-            keys = model.defined_enums[column].keys
+            values = model.defined_enums[column].keys
 
             if attribute.value_before_type_cast.present?
-              keys = keys.select { |key| key.include?(attribute.value_before_type_cast.last) }
+              values = values.select { |key| key.include?(attribute.value_before_type_cast) }
             end
 
-            keys.map { |key| example(key, describe_key(model, attribute, key)) }
+            values.map { |value| constant_suggestion(attribute:, model:, column:, value:) }
           end
 
           private

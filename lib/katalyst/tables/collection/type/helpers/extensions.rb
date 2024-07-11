@@ -20,7 +20,7 @@ module Katalyst
                 false
               end
 
-              def examples_for(...)
+              def suggestions(...)
                 []
               end
             end

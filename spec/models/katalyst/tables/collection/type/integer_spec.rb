@@ -177,4 +177,39 @@ RSpec.describe Katalyst::Tables::Collection::Type::Integer do
       it { expect(type.deserialize(["0"])).to eq [0] }
     end
   end
+
+  describe "#suggestions" do
+    let(:collection) { new_collection(params) { attribute :index, :integer, multiple: true }.apply(Resource) }
+    let(:params) { { q: "index:", p: 6 } }
+
+    before { create_list(:resource, 2) }
+
+    it "returns database values" do
+      expect(collection.suggestions.map(&:value)).to contain_exactly(1, 2)
+    end
+
+    context "when focus is a partial value" do
+      let(:params) { { q: "index: 1", p: 8 } }
+
+      it "filters the available values" do
+        expect(collection.suggestions.map(&:value)).to contain_exactly(1)
+      end
+    end
+
+    context "when cursor is inside an array value" do
+      let(:params) { { q: "index: [1", p: 9 } }
+
+      it "filters value suggestions" do
+        expect(collection.suggestions.map(&:value)).to contain_exactly(1)
+      end
+    end
+
+    context "when focus is an incomplete array" do
+      let(:params) { { q: "index: [1,", p: 10 } }
+
+      it "returns all available values" do
+        expect(collection.suggestions.map(&:value)).to contain_exactly(1, 2)
+      end
+    end
+  end
 end

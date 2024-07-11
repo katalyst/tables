@@ -89,19 +89,36 @@ RSpec.describe Katalyst::Tables::Collection::Type::Enum do
     it { expect(type.deserialize(["article"])).to eq ["article"] }
   end
 
-  describe "#examples_for" do
+  describe "#suggestions" do
     let(:collection) { new_collection(params) { attribute :category, :enum }.apply(Resource) }
-    let(:params) { {} }
+    let(:params) { { q: "category:", p: 9 } }
 
     it "returns all enum values" do
-      expect(collection.examples_for(:category).map(&:value)).to contain_exactly("article", "documentation", "report")
+      expect(collection.suggestions.map(&:value)).to contain_exactly("article", "documentation", "report")
     end
 
-    context "when a partial value is provided" do
-      let(:params) { { q: "category: a" } }
+    context "when focus is a partial value" do
+      let(:params) { { q: "category: a", p: 11 } }
 
       it "filters the available values" do
-        expect(collection.examples_for(:category).map(&:value)).to contain_exactly("article", "documentation")
+        expect(collection.suggestions.map(&:value)).to contain_exactly("article", "documentation")
+      end
+    end
+
+    context "when focus is an incomplete array" do
+      let(:params) { { q: "category: [article,", p: 19 } }
+
+      it "filters the available values" do
+        expect(collection.suggestions.map(&:value))
+          .to contain_exactly("article", "documentation", "report")
+      end
+    end
+
+    context "when cursor is inside an array value" do
+      let(:params) { { q: "category: [article, re", p: 22 } }
+
+      it "filters value suggestions" do
+        expect(collection.suggestions).to contain_exactly(have_attributes(type: :constant_value, value: "report"))
       end
     end
   end

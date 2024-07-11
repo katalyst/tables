@@ -69,21 +69,10 @@
     padding-block: 0.5rem 0;
   }
 
-  dl {
-    display: grid;
-    grid-auto-flow: row;
-    grid-auto-rows: auto;
-    grid-template-columns: auto 1fr;
-    gap: 0 1rem;
-  }
-
-  dt {
-    grid-column-start: 1;
-    font-weight: bold;
-  }
-
-  dd {
-    color: #666;
+  ul {
+    margin-block: 0;
+    padding-inline-start: 0;
+    list-style: none;
   }
 
   .error {

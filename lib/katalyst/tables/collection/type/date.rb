@@ -22,13 +22,15 @@ module Katalyst
             end
           end
 
-          def examples_for(scope, attribute)
+          def suggestions(scope, attribute)
+            _, model, column = model_and_column_for(scope, attribute)
+
             [
               *super(scope, attribute, limit: 6, order: :desc),
-              example(::Date.current.beginning_of_week.., "this week"),
-              example(::Date.current.beginning_of_month.., "this month"),
-              example(1.month.ago.all_month, "last month"),
-              example(1.year.ago.all_year, "last year"),
+              database_suggestion(attribute:, model:, column:, value: ::Date.current.beginning_of_week..),
+              database_suggestion(attribute:, model:, column:, value: ::Date.current.beginning_of_month..),
+              database_suggestion(attribute:, model:, column:, value: 1.month.ago.all_month),
+              database_suggestion(attribute:, model:, column:, value: 1.year.ago.all_year),
             ]
           end
 

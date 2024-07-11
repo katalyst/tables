@@ -2,28 +2,18 @@
   <% if collection.errors.any? %>
     <header>
       <% collection.errors.each do |error| %>
-        <% next unless error.type == :unknown %>
-        <div class="error">Sorry, we don&rsquo;t support the <code><%= error.attribute %></code> filter.</div>
+        <div class="error <%= error.type %>"><%= error.message %></div>
       <% end %>
     </header>
   <% end %>
   <div class="content">
-    <% if show_examples? %>
-      <h4>Possible values for <code><%= current_key %>:</code></h4>
-      <dl>
-        <% examples_for(current_key).each do |example| %>
-          <dt><code><%= format_value(example.value) %></code></dt>
-          <% if example.description.present? %><dd><%= example.description %></dd><% end %>
+    <% if suggestions? %>
+      <h4><%= t(".suggestions_title") %></h4>
+      <ul>
+        <% suggestions.each do |suggestion| %>
+          <%= render suggestion %>
         <% end %>
-      </dl>
-    <% else %>
-      <h4>Available filters:</h4>
-      <dl>
-        <% available_filters.each do |key, description| %>
-          <dt><code><%= key %>:</code></dt>
-          <dd>Filter on values for <%= description.downcase %></dd>
-        <% end %>
-      </dl>
+      </ul>
     <% end %>
   </div>
   <% if footer? %>

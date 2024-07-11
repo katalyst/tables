@@ -7,6 +7,7 @@ module Katalyst
         extend ActiveSupport::Concern
 
         include Filtering
+        include Suggestions
 
         class_methods do
           def search_attribute
@@ -21,26 +22,13 @@ module Katalyst
         included do
           attribute :q, :query, default: ""
           alias_attribute :query, :q
+        end
 
-          attribute :p, :integer, filter: false
-          alias_attribute :position, :p
+        def searchable?
+          self.class.search_attribute.present?
         end
 
         using Type::Helpers::Extensions
-
-        def examples_for(key)
-          key = key.to_s
-          examples_method = "#{key.parameterize.underscore}_examples"
-          if respond_to?(examples_method)
-            public_send(examples_method)&.map { |e| e.is_a?(Example) ? e : Example.new(example) }
-          elsif @attributes.key?(key)
-            @attributes[key].type.examples_for(unscoped_items, @attributes[key])
-          end
-        end
-
-        def query_active?(attribute)
-          @attributes[attribute].query_range&.cover?(position)
-        end
 
         private
 
@@ -55,7 +43,7 @@ module Katalyst
                 _assign_attribute(k, p.value)
                 @attributes[k].query_range = p.range
               else
-                errors.add(k, :unknown)
+                errors.add(:query, :unknown_key, input: k)
               end
             end
 

@@ -47,83 +47,47 @@ RSpec.describe Katalyst::Tables::QueryComponent do
       attribute :active, :boolean
     end
     expect(render_inline(component).css(".query-modal > .content > *")).to match_html(<<~HTML)
-      <h4>Available filters:</h4>
-      <dl>
-        <dt><code>active:</code></dt>
-        <dd>Filter on values for active</dd>
-      </dl>
+      <h4>Search options</h4>
+      <ul>
+        <li class="suggestion attribute"><span class="value">active</span></li>
+      </ul>
     HTML
   end
 
-  it "describes errors" do
-    create_collection(q: "index:") do
+  it "describes unknown keys" do
+    create_collection(q: "index:", p: 6) do
+      # stub model_name for anonymous testing collection
+      class_eval { instance_variable_set(:@_model_name, Katalyst::Tables::Collection::Base.model_name.dup) }
       attribute :active, :boolean
     end
     expect(render_inline(component).css(".query-modal > header > *")).to match_html(<<~HTML)
-      <div class="error">Sorry, we don’t support the <code>index</code> filter.</div>
+      <div class="error unknown_key">Searching for index is not supported</div>
+    HTML
+  end
+
+  it "describes unknown completions" do
+    create_collection(q: "unknown", p: 7) do
+      # stub model_name for anonymous testing collection
+      class_eval { instance_variable_set(:@_model_name, Katalyst::Tables::Collection::Base.model_name.dup) }
+      attribute :active, :boolean
+    end
+    expect(render_inline(component).css(".query-modal > header > *")).to match_html(<<~HTML)
+      <div class="error no_suggestions">Searching for unknown is not supported</div>
     HTML
   end
 
   it "describes values" do
     create_list(:resource, 3)
-    create_collection(q: "index:", p: 6) do
-      attribute :index, :integer
+    create_collection(q: "name:", p: 5) do
+      attribute :name, :string
     end
     expect(render_inline(component).css(".query-modal > .content > *")).to match_html(<<~HTML)
-      <h4>Possible values for <code>index:</code></h4>
-      <dl>
-        <dt><code>1</code></dt>
-        <dt><code>2</code></dt>
-        <dt><code>3</code></dt>
-      </dl>
-    HTML
-  end
-
-  it "excludes scopes when describing values" do
-    create_list(:resource, 3)
-    create_collection(q: "example index:", p: 13) do
-      attribute :search, :search, scope: :table_search
-      attribute :index, :integer
-    end
-    expect(render_inline(component).css(".query-modal > .content > *")).to match_html(<<~HTML)
-      <h4>Possible values for <code>index:</code></h4>
-      <dl>
-        <dt><code>1</code></dt>
-        <dt><code>2</code></dt>
-        <dt><code>3</code></dt>
-      </dl>
-    HTML
-  end
-
-  it "filters against the active key while ignoring other scopes" do
-    create_list(:resource, 3)
-    create_collection(q: "example index: 2", p: 13) do
-      attribute :search, :search, scope: :table_search
-      attribute :index, :integer
-    end
-    expect(render_inline(component).css(".query-modal > .content > *")).to match_html(<<~HTML)
-      <h4>Possible values for <code>index:</code></h4>
-      <dl>
-        <dt><code>2</code></dt>
-      </dl>
-    HTML
-  end
-
-  it "renders value descriptions when available" do
-    create_list(:resource, 1)
-    create_collection(q: "category:", p: 9) do
-      attribute :category, :enum
-    end
-    expect(render_inline(component).css(".query-modal > .content > *")).to match_html(<<~HTML)
-      <h4>Possible values for <code>category:</code></h4>
-      <dl>
-        <dt><code>article</code></dt>
-        <dd>Resource category is article</dd>
-        <dt><code>documentation</code></dt>
-        <dd>Resource category is documentation</dd>
-        <dt><code>report</code></dt>
-        <dd>Resource category is report</dd>
-      </dl>
+      <h4>Search options</h4>
+      <ul>
+        <li class="suggestion database_value"><span class="value">Resource 1</span></li>
+        <li class="suggestion database_value"><span class="value">Resource 2</span></li>
+        <li class="suggestion database_value"><span class="value">Resource 3</span></li>
+      </ul>
     HTML
   end
 end
