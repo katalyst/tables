@@ -1,18 +1,12 @@
 # frozen_string_literal: true
 
 require "active_support"
-require "active_support/rails"
-require "view_component"
-require "katalyst/html_attributes"
-
-require_relative "tables/config"
-require_relative "tables/engine"
 
 module Katalyst
   module Tables
     extend ActiveSupport::Autoload
 
-    autoload :Collection
+    autoload :Config
 
     class Error < StandardError; end
 
@@ -25,3 +19,5 @@ module Katalyst
     end
   end
 end
+
+require "katalyst/tables/engine"

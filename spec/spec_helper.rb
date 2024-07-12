@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "katalyst/tables"
-
 require "factory_bot"
 
 require "support/backend_examples"
