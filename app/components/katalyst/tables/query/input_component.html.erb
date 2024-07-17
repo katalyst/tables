@@ -1,13 +1,14 @@
-<div class="query-input" data-controller="tables--query-input" data-turbo-permanent>
+<%= tag.div(**html_attributes) do %>
   <%= form.label name, "Search", hidden: "" %>
-  <%= form.text_field(
+  <%= form.text_area(
         name,
-        type:         :search,
+        role:         "searchbox",
         placeholder:,
         autocomplete: "off",
-        **html_attributes,
+        rows:         1,
+        **input_attributes,
       ) %>
-  <div aria-hidden="true" class="highlight" data-tables--query-input-target="highlight"></div>
+  <div aria-hidden="true" class="highlight" data-tables--query-input-target="highlight"><%= form.object.query %></div>
   <%= form.hidden_field(:p) %>
   <%= form.button("Apply", type: :submit, name: nil, tabindex: -1) %>
-</div>
+<% end %>

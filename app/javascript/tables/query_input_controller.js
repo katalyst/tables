@@ -6,6 +6,11 @@ export default class QueryInputController extends Controller {
 
   connect() {
     this.queryValue = this.inputTarget.value;
+    this.element.dataset.connected = "";
+  }
+
+  disconnect() {
+    delete this.element.dataset.connected;
   }
 
   update() {

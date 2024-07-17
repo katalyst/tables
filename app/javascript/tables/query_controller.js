@@ -37,11 +37,17 @@ export default class QueryController extends Controller {
     document.addEventListener("selectionchange", this.selection);
   }
 
+  /**
+   * If the user presses escape once, clear the input.
+   * If the user presses escape again, get them out of here.
+   */
   clear() {
     if (this.query.value === "") {
-      // if the user presses escape once, browser clears  the input
-      // if the user presses escape again, get them out of here
       this.closeModal();
+    } else {
+      this.query.value = "";
+      this.query.dispatchEvent(new Event("input"));
+      this.query.dispatchEvent(new Event("change"));
     }
   }
 
@@ -95,7 +101,7 @@ export default class QueryController extends Controller {
   }
 
   get query() {
-    return this.element.querySelector("input[type=search]");
+    return this.element.querySelector("[role=searchbox]");
   }
 
   get position() {

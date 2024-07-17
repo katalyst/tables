@@ -8,10 +8,14 @@ module Katalyst
 
         attr_reader :form
 
-        def initialize(form:, **)
+        define_html_attribute_methods :input_attributes
+
+        def initialize(form:, input: {}, **)
           super(**)
 
           @form = form
+
+          update_input_attributes(**input)
         end
 
         def name
@@ -23,19 +27,30 @@ module Katalyst
           form.object
         end
 
+        private
+
         def default_html_attributes
+          {
+            class: "query-input",
+            data:  {
+              controller:      "tables--query-input",
+              turbo_permanent: "",
+            },
+          }
+        end
+
+        def default_input_attributes
           {
             data: {
               action:                     %w[
-                input->tables--query-input#update
-                keyup.enter->tables--query#closeModal
+                tables--query-input#update
+                keydown.enter->tables--query#closeModal:prevent
+                keydown.esc->tables--query#clear:prevent
               ],
               tables__query_input_target: "input",
             },
           }
         end
-
-        private
 
         def placeholder
           t(".placeholder", name: collection.model_name.human.pluralize.downcase)
