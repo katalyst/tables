@@ -15,6 +15,8 @@ module Katalyst
           def parse(query)
             @query = query
 
+            @value_start = query.charpos
+
             take_quoted_value || take_unquoted_value
 
             @end = query.charpos
@@ -22,8 +24,16 @@ module Katalyst
             self
           end
 
+          def value
+            @value
+          end
+
           def value=(value)
             @value = value
+          end
+
+          def value_at(position)
+            @value if (@value_start..@end).cover?(position)
           end
         end
       end

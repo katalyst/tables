@@ -41,7 +41,8 @@ module Katalyst
 
         def default_input_attributes
           {
-            data: {
+            spellcheck: false,
+            data:       {
               action:                     %w[
                 tables--query-input#update
                 keydown.enter->tables--query#closeModal:prevent

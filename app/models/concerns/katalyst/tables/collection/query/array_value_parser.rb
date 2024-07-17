@@ -18,6 +18,7 @@ module Katalyst
             query.scan(/#{'\['}\s*/)
 
             until query.eos?
+              @value_start = query.charpos
               break unless take_quoted_value || take_unquoted_value
               break unless take_delimiter
             end
@@ -33,8 +34,25 @@ module Katalyst
             query.scan(/\s*#{','}\s*/)
           end
 
+          def value
+            @value.map(&:value)
+          end
+
           def value=(value)
-            @value << value
+            @value << Value.new(value, @value_start, @query.charpos)
+          end
+
+          def value_at(position)
+            @value.detect { |v| v.range.cover?(position) }&.value
+          end
+
+          class Value
+            attr_accessor :range, :value
+
+            def initialize(value, start, fin)
+              @value = value
+              @range = (start..fin)
+            end
           end
         end
       end

@@ -29,6 +29,11 @@ module Katalyst
             self
           end
 
+          def token_at_position(position:)
+            tagged.values.detect { |v| v.range.cover?(position) } ||
+              untagged.detect { |v| v.range.cover?(position) }
+          end
+
           private
 
           def skip_whitespace
@@ -43,31 +48,27 @@ module Katalyst
             key, = query.values_at(1)
             skip_whitespace
 
-            tagged[key] = value_parser(start).parse(query)
+            tagged[key] = value_parser(key, start).parse(query)
           end
 
           def take_untagged
+            start = query.charpos
+
             return unless query.scan(/\S+/)
 
-            untagged << query.matched
+            untagged << UntaggedLiteral.new(value: query.matched, start:)
 
             untagged
           end
 
           using Type::Helpers::Extensions
 
-          def value_parser(start)
+          def value_parser(key, start)
             if query.check(/#{'\['}\s*/)
-              ArrayValueParser.new(start:)
+              ArrayValueParser.new(key:, start:)
             else
-              SingleValueParser.new(start:)
+              SingleValueParser.new(key:, start:)
             end
-
-            # if attribute.type.multiple? || attribute.value.is_a?(::Array)
-            #   ArrayValueParser.new(attribute:, pos:)
-            # else
-            #   SingleValueParser.new(attribute:, pos:)
-            # end
           end
         end
       end

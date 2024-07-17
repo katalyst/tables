@@ -66,10 +66,6 @@ RSpec.describe Katalyst::Tables::Collection::Suggestions do
     context "when partial input is an unknown key" do
       subject(:collection) { new_collection(q: "needle:", p: 7) }
 
-      it "returns an empty list" do
-        expect(suggestions).to be_empty
-      end
-
       it "returns an error" do
         suggestions # side-effect
         expect(collection.errors.where(:query))
@@ -95,7 +91,7 @@ RSpec.describe Katalyst::Tables::Collection::Suggestions do
       it "returns an error" do
         suggestions # side-effect
         expect(collection.errors.where(:query))
-          .to include(have_attributes(type: :no_suggestions, options: { input: "needle" }))
+          .to include(have_attributes(type: :no_untagged_search, options: { input: "needle" }))
       end
     end
 

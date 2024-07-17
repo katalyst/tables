@@ -36,19 +36,16 @@ module Katalyst
           result = super
 
           if query_changed?
-            parser = Parser.new(self).parse(query)
+            @query_parser = Parser.new(self).parse(query)
 
-            parser.tagged.each do |k, p|
-              if @attributes.key?(k)
-                _assign_attribute(k, p.value)
-                @attributes[k].query_range = p.range
-              else
-                errors.add(:query, :unknown_key, input: k)
-              end
+            @query_parser.tagged.each do |k, p|
+              next unless @attributes.key?(k)
+
+              _assign_attribute(k, p.value)
             end
 
-            if parser.untagged.any? && (search = self.class.search_attribute)
-              _assign_attribute(search, parser.untagged.join(" "))
+            if @query_parser.untagged.any? && (search = self.class.search_attribute)
+              _assign_attribute(search, @query_parser.untagged.map(&:value).join(" "))
             end
           end
 

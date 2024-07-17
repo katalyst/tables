@@ -13,49 +13,65 @@ module Katalyst
 
         using Type::Helpers::Extensions
 
-        # rubocop:disable Metrics/PerceivedComplexity
         def suggestions(position: self.position)
-          input = token_at_position(position:)
+          query_token = token_at_position(position:)
 
-          attribute = attribute_at_position(position:)
-          method    = suggestions_method(attribute)
+          attribute = attribute_for_token(query_token:)
+          method    = suggestions_method(attribute) if attribute.present?
 
           # build a suggestions list
           suggestions = if method && respond_to?(method)
                           user_suggestions(attribute:, method:)
                         elsif attribute
                           value_suggestions(attribute:)
-                        elsif errors.where(:query, :unknown_key).none?
-                          attribute_suggestions(input:)
                         else
-                          []
+                          attribute_suggestions(query_token:)
                         end
 
-          # augment to ensure the user always has some feedback on their input
-          if input.blank?
-            # nothing to add
-          elsif searchable? && errors.none? && !attribute
-            # user might be typing an untagged search term, indicate they can continue
-            suggestions << Tables::Suggestions::SearchValue.new(input)
-          elsif suggestions.any?
-            # nothing for us to add in this situation
-          elsif attribute
-            # the term they are typing can be searchable even if it's not in the suggestions list
-            suggestions << Tables::Suggestions::CustomValue.new(input, name: attribute.name, type: attribute.type)
-          else
-            errors.add(:query, :no_suggestions, input:)
-          end
+          add_context_suggestions(suggestions:, query_token:, attribute:) if query_token
 
           suggestions
         end
-        # rubocop:enable Metrics/PerceivedComplexity
 
         private
 
-        def attribute_suggestions(input:)
-          attributes = suggestable_attributes
+        def attribute_for_token(query_token:)
+          return unless query_token&.tagged?
 
-          attributes = attributes.select { |a| a.name.include?(input) } if input.present?
+          attribute = suggestable_attributes[query_token.key]
+
+          return unless attribute
+
+          # construct an attribute from the input token, so we can focus on what the user is currently typing instead
+          # of searching for the whole input for this attribute (e.g. if we're constructing an array filter)
+          ActiveModel::Attribute.from_user(attribute.name, query_token.value_at(position),
+                                           attribute.type, attribute)
+        end
+
+        # Augments suggestions to ensure the user always has some feedback on their input.
+        def add_context_suggestions(suggestions:, query_token:, attribute:)
+          if query_token.tagged?
+            if !attribute
+              # user has entered a `:` but we don't know the attribute
+              errors.add(:query, :unknown_key, input: query_token.key)
+            elsif suggestions.none?
+              # the user might know more than us about what values are valid
+              suggestions << Tables::Suggestions::SearchValue.new(query_token.value_at(position))
+            end
+          elsif searchable?
+            # user is typing an untagged search term, indicate they can continue
+            suggestions << Tables::Suggestions::SearchValue.new(query_token.value)
+          else
+            errors.add(:query, :no_untagged_search, input: query_token.value)
+          end
+        end
+
+        def attribute_suggestions(query_token:)
+          attributes = suggestable_attributes.values
+
+          if query_token&.literal?
+            attributes = attributes.select { |a| a.name.include?(query_token.value) }
+          end
 
           attributes.map { |a| Tables::Suggestions::Attribute.new(a.name) }
         end
@@ -91,30 +107,12 @@ module Katalyst
             next unless attribute.type.filterable?
             next if attribute.type.type == :search
 
-            attribute
-          end
-        end
-
-        def attribute_at_position(position: self.position)
-          attribute = suggestable_attributes.detect do |a|
-            a.query_range&.cover?(position)
-          end
-
-          if attribute
-            # construct an attribute from the input token, so we can focus on what the user is currently typing instead
-            # of searching for the whole input for this attribute (e.g. if we're constructing an array filter)
-            ActiveModel::Attribute.from_user(attribute.name, token_at_position(position:), attribute.type, attribute)
-          end
+            [name, attribute]
+          end.to_h
         end
 
         def token_at_position(position: self.position)
-          if position&.in?(0..query.length)
-            prefix = query[...position].match(/\w*\z/)
-            suffix = query[position..].match(/\A\w*/)
-            "#{prefix}#{suffix}"
-          else
-            ""
-          end
+          @query_parser&.token_at_position(position:)
         end
       end
     end

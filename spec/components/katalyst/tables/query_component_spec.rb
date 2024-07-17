@@ -61,7 +61,7 @@ RSpec.describe Katalyst::Tables::QueryComponent do
       attribute :active, :boolean
     end
     expect(render_inline(component).css(".query-modal > header > *")).to match_html(<<~HTML)
-      <div class="error unknown_key">Searching for index is not supported</div>
+      <div class="error unknown_key">The field 'index' isn’t searchable here. Please check your input.</div>
     HTML
   end
 
@@ -72,7 +72,7 @@ RSpec.describe Katalyst::Tables::QueryComponent do
       attribute :active, :boolean
     end
     expect(render_inline(component).css(".query-modal > header > *")).to match_html(<<~HTML)
-      <div class="error no_suggestions">Searching for unknown is not supported</div>
+      <div class="error no_untagged_search">'unknown' isn't searchable here. Please choose a field to search.</div>
     HTML
   end
 

@@ -24,16 +24,6 @@ module Katalyst
                 []
               end
             end
-
-            refine(::ActiveModel::Attribute) do
-              def query_range=(range)
-                @query_range = range
-              end
-
-              def query_range
-                @query_range
-              end
-            end
           end
         end
       end

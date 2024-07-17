@@ -48,6 +48,7 @@ export default class QueryController extends Controller {
       this.query.value = "";
       this.query.dispatchEvent(new Event("input"));
       this.query.dispatchEvent(new Event("change"));
+      this.update();
     }
   }
 

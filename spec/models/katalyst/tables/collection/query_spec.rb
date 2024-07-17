@@ -108,11 +108,6 @@ RSpec.describe Katalyst::Tables::Collection::Query do
       expect(collection.filters).not_to include("boom.name" => "test")
     end
 
-    it "adds unknown keys to errors" do
-      collection.with_params(q: "boom.name:test")
-      expect(collection.errors.where(:query)).to include(have_attributes(options: { input: "boom.name" }))
-    end
-
     it "supports complex keys with ids" do
       collection.with_params(q: "parent.id:15")
       expect(collection.filters).to eq("parent.id" => [15])
