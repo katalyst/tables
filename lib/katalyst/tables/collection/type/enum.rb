@@ -34,23 +34,6 @@ module Katalyst
           def cast_value(value)
             value.to_s
           end
-
-          def describe_key(model, attribute, key)
-            label = model.human_attribute_name(attribute.name).downcase
-            value = model.human_attribute_name("#{attribute.name}.#{key}").downcase
-
-            description = "#{model.model_name.human} #{label} is #{value}"
-            description += " (default)" if default?(attribute, key)
-            description
-          end
-
-          def default?(attribute, value)
-            if multiple?
-              attribute.original_value&.intersection(cast(value))&.any?
-            else
-              attribute.default_value.eql?(cast(value))
-            end
-          end
         end
       end
     end
