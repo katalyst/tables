@@ -1,17 +1,23 @@
 <h1>People</h1>
 <%= link_to "Home", root_path %>
+<%= link_to "Archived", archived_people_path %>
 
 <%# Note: deliberately testing without Query to ensure backwards compatibility %>
-<%= form_with model: @people, method: :get, data: {
+<%= form_with model: collection, method: :get, data: {
       turbo_action: "replace",
     } do |form| %>
   <%= form.label :search %>
   <%= form.text_field :search, type: :search %>
-  <%= form.hidden_field :sort unless @people.default_sort? %>
+  <%= form.hidden_field :sort unless collection.default_sort? %>
   <%= form.submit "Filter", name: nil %>
 <% end %>
 
-<%= table_with(collection: @people) do |row, person| %>
+<%= table_selection_with(collection:) do %>
+  <%= tag.button "Archive", formaction: archive_people_path, formmethod: :put %>
+<% end %>
+
+<%= table_with(collection:) do |row, person| %>
+  <% row.select %>
   <% row.text :name do |cell| %>
     <%= link_to cell, person %>
   <% end %>
@@ -22,4 +28,4 @@
   <% row.currency :id, label: "Currency" %>
 <% end %>
 
-<%== pagy_nav(@people.pagination) %>
+<%== pagy_nav(collection.pagination) %>

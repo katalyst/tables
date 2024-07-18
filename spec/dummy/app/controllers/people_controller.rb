@@ -2,7 +2,31 @@
 
 class PeopleController < ApplicationController
   def index
-    @people = Collection.with_params(params).apply(Person.all)
+    collection = Collection.with_params(params).apply(Person.active)
+
+    render locals: { collection: }
+  end
+
+  def archived
+    collection = Collection.with_params(params).apply(Person.archived)
+
+    render locals: { collection: }
+  end
+
+  def archive
+    Person.active.where(id: params[:id]).each do |person|
+      person.update!(active: false)
+    end
+
+    redirect_back fallback_location: people_path, status: :see_other
+  end
+
+  def restore
+    Person.archived.where(id: params[:id]).each do |person|
+      person.update!(active: true)
+    end
+
+    redirect_back fallback_location: people_path, status: :see_other
   end
 
   def show

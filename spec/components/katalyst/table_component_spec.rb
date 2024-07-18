@@ -326,7 +326,7 @@ RSpec.describe Katalyst::TableComponent do
         <table>
           <thead><tr><th class="type-boolean">Active</th></tr></thead>
           <tbody>
-            <tr><td class="type-boolean">No</td></tr>
+            <tr><td class="type-boolean">Yes</td></tr>
           </tbody>
         </table>
       HTML
@@ -347,7 +347,7 @@ RSpec.describe Katalyst::TableComponent do
         <table>
           <thead><tr><th class="type-boolean">Active</th></tr></thead>
           <tbody>
-            <tr><td class="type-boolean"><span>No</span></td></tr>
+            <tr><td class="type-boolean"><span>Yes</span></td></tr>
           </tbody>
         </table>
       HTML

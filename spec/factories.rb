@@ -9,6 +9,7 @@ FactoryBot.define do
 
   factory :person do
     sequence(:name) { |i| "Person #{i}" }
+    active { true }
   end
 
   factory :resource do

@@ -4,7 +4,11 @@ Rails.application.routes.draw do
   resources :faqs, only: %i[index show] do
     patch :order, on: :collection
   end
-  resources :people, only: %i[index show]
+  resources :people, only: %i[index show] do
+    get :archived, on: :collection
+    put :archive, on: :collection
+    put :restore, on: :collection
+  end
   resources :resources, only: %i[index show] do
     put :activate, path: "active", on: :collection
   end

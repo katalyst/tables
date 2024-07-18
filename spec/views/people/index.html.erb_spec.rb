@@ -5,21 +5,21 @@ require "rails_helper"
 RSpec.describe "people/index" do
   before do
     people
-    assign(:people, PeopleController::Collection.with_params(params).apply(Person.all))
     view.extend(Katalyst::Tables::Frontend)
     view.extend(Pagy::Frontend)
   end
 
+  let(:collection) { PeopleController::Collection.with_params(params).apply(Person.all) }
   let(:people) { create_list(:person, 2) }
   let(:params) { ActionController::Parameters.new }
 
   it "renders a name column" do
-    render
+    render(locals: { collection: })
     expect(rendered).to have_css("thead>tr>th", text: "Name")
   end
 
   it "renders a list of people" do
-    render
+    render(locals: { collection: })
     expect(rendered).to have_css("tr>td", text: /Person \d/, count: 2)
   end
 
@@ -27,7 +27,7 @@ RSpec.describe "people/index" do
     let(:people) { nil }
 
     it "shows a placeholder message" do
-      render
+      render(locals: { collection: })
       expect(rendered).to have_css("caption", text: "No people found.")
     end
   end
@@ -36,7 +36,7 @@ RSpec.describe "people/index" do
     let(:people) { create_list(:person, 10) }
 
     it "renders pagination options" do
-      render
+      render(locals: { collection: })
       expect(rendered).to have_css("a[data-turbo-action='replace']", text: "2")
     end
   end
