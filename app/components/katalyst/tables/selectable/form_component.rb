@@ -33,9 +33,8 @@ module Katalyst
             id:,
             class: "tables--selection--form",
             data:  {
-              controller:      form_controller,
-              turbo_action:    "replace",
-              turbo_permanent: "",
+              controller:   form_controller,
+              turbo_action: "replace",
             },
             html:  { action: false, hidden: "" },
           }

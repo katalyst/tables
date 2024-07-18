@@ -50,7 +50,6 @@ RSpec.describe Katalyst::Tables::Selectable do
             class="tables--selection--form"
             data-controller="tables--selection--form"
             data-turbo-action="replace"
-            data-turbo-permanent=""
             hidden="hidden"
             accept-charset="UTF-8"
             method="post">
