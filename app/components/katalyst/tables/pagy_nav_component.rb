@@ -20,9 +20,11 @@ module Katalyst
         @pagy_options = pagy_options
       end
 
+      # rubocop:disable Rails/OutputSafety
       def call
-        pagy_nav(@pagy, **pagy_options).html_safe # rubocop:disable Rails/OutputSafety
+        pagy_nav(@pagy, anchor_string: "data-turbo-action=\"replace\"", **pagy_options).html_safe
       end
+      # rubocop:enable Rails/OutputSafety
 
       def inspect
         "#<#{self.class.name} pagy: #{@pagy.inspect}>"

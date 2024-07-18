@@ -55,6 +55,14 @@ module Katalyst
         render(Selectable::FormComponent.new(collection:, id:, primary_key:), &)
       end
 
+      # Construct pagination navigation for the current page. Defaults to pagy_nav.
+      #
+      # @param collection [Katalyst::Tables::Collection::Core] the collection to render
+      def table_pagination_with(collection:, **)
+        component ||= default_table_pagination_component_class
+        render(component.new(collection:, **))
+      end
+
       # Construct a new query interface for filtering the current page.
       #
       # @param collection [Katalyst::Tables::Collection::Core] the collection to render
@@ -82,6 +90,11 @@ module Katalyst
 
       def default_table_component_class
         component = controller.try(:default_table_component) || TableComponent
+        component.respond_to?(:constantize) ? component.constantize : component
+      end
+
+      def default_table_pagination_component_class
+        component = controller.try(:default_table_pagination_component) || PagyNavComponent
         component.respond_to?(:constantize) ? component.constantize : component
       end
 

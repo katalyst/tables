@@ -39,10 +39,10 @@ Katalyst::Collection::Base.new(paginate: { items: 10 })
 
 When pagination is enabled, table rows will be automatically paginated
 prior to rendering the table. The pagy metadata will be available as `pagination` 
-for you to use your preferred method of pagination control rendering. 
+for you to use your preferred method of pagination control rendering.
 
-An example of how to render the pagination metadata using the `pagy_nav` helper provided by pagy:
+`Frontend` provides `table_pagination_with` for rendering with sensible defaults:
 
 ```erb
-<%== pagy_nav(@collection.pagination) %>
-``` 
+<%= table_pagination_with(collection:) %>
+```
