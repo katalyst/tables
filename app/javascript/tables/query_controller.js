@@ -90,7 +90,7 @@ export default class QueryController extends Controller {
   };
 
   selection = () => {
-    if (this.isFocused) this.update();
+    if (this.isFocused && this.query.value.length > 0) this.update();
   };
 
   beforeMorphAttribute(e) {
