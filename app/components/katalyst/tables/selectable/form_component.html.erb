@@ -1,10 +1,4 @@
-<%= form_with(method: :patch,
-              id:,
-              class:  "tables--selection--form",
-              data:   { controller:      form_controller,
-                        turbo_action:    "replace",
-                        turbo_permanent: "" },
-              html:   { action: false, hidden: "" }) do |form| %>
+<%= form_with(method: :patch, **html_attributes) do |form| %>
   <p class="tables--selection--summary">
     <span data-<%= form_target("count") %>>0</span>
     <span data-<%= form_target("singular") %> hidden><%= singular_name %></span>

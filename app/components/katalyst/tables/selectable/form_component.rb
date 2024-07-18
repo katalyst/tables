@@ -4,6 +4,7 @@ module Katalyst
   module Tables
     module Selectable
       class FormComponent < ViewComponent::Base # :nodoc:
+        include Katalyst::HtmlAttributes
         include Katalyst::Tables::Identifiable::Defaults
 
         attr_reader :id, :primary_key
@@ -14,7 +15,7 @@ module Katalyst
         def initialize(collection:,
                        id: nil,
                        primary_key: :id)
-          super
+          super()
 
           @collection  = collection
           @id          = id || Selectable.default_form_id(collection)
@@ -26,6 +27,19 @@ module Katalyst
         end
 
         private
+
+        def default_html_attributes
+          {
+            id:,
+            class: "tables--selection--form",
+            data:  {
+              controller:      form_controller,
+              turbo_action:    "replace",
+              turbo_permanent: "",
+            },
+            html:  { action: false, hidden: "" },
+          }
+        end
 
         def form_controller
           FORM_CONTROLLER
