@@ -13,4 +13,4 @@
 <%# generating ids for rows is not required for selection, but it makes testing easier %>
 <%= table_with(collection:, generate_ids: true) %>
 
-<%== pagy_nav(collection.pagination) %>
+<%= table_pagination_with(collection:) %>

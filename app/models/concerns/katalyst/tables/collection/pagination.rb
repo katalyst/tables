@@ -35,14 +35,7 @@ module Katalyst
         end
 
         def paginate_options
-          opts = @paginate.is_a?(Hash) ? @paginate : {}
-          opts = opts.dup
-          opts[:anchor_string] ||= anchor_string
-          opts
-        end
-
-        def anchor_string
-          "data-turbo-action=\"replace\""
+          @paginate.is_a?(Hash) ? @paginate.dup : {}
         end
 
         class Paginate # :nodoc:
@@ -57,7 +50,7 @@ module Katalyst
           def call(collection)
             @collection = @app.call(collection)
             if collection.paginate?
-              @collection.pagination, @collection.items = pagy(@collection.items, collection.paginate_options.dup)
+              @collection.pagination, @collection.items = pagy(@collection.items, **collection.paginate_options)
             end
             @collection
           end
