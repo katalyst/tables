@@ -16,8 +16,8 @@ RSpec.describe Katalyst::Tables::Collection::Pagination do
     expect(collection.apply(items)).to have_attributes(count: 0, pagination: nil)
   end
 
-  it "applies default pagination options" do
-    expect(collection.apply(items).paginate_options).to eql({ anchor_string: "data-turbo-action=\"replace\"" })
+  it "no pagination options by default" do
+    expect(collection.apply(items).paginate_options).to eql({})
   end
 
   context "with unchanged defaults" do
@@ -43,14 +43,14 @@ RSpec.describe Katalyst::Tables::Collection::Pagination do
 
     it "applies pagination" do
       allow(items).to receive(:count).and_return(50)
-      expect(collection.apply(items).pagination).to have_attributes(page: 1, items: 20, count: 50)
+      expect(collection.apply(items).pagination).to have_attributes(page: 1, limit: 20, count: 50)
     end
   end
 
   context "with pagination item count config" do
     subject(:collection) do
       Class.new(base) do
-        config.paginate = { items: 5 }
+        config.paginate = { limit: 5 }
       end.new
     end
 
@@ -61,7 +61,7 @@ RSpec.describe Katalyst::Tables::Collection::Pagination do
     end
 
     it "updates pagination vars" do
-      expect(collection.apply(items).pagination).to have_attributes(page: 1, items: 5, count: 6)
+      expect(collection.apply(items).pagination).to have_attributes(page: 1, limit: 5, count: 6)
     end
 
     it "does not mutate class options" do
@@ -75,20 +75,20 @@ RSpec.describe Katalyst::Tables::Collection::Pagination do
 
     it "applies pagination" do
       allow(items).to receive(:count).and_return(50)
-      expect(collection.apply(items).pagination).to have_attributes(page: 1, items: 20, count: 50)
+      expect(collection.apply(items).pagination).to have_attributes(page: 1, limit: 20, count: 50)
     end
   end
 
   context "with pagy options" do
-    subject(:collection) { base.new(paginate: { items: 5, anchor_string: "test" }) }
+    subject(:collection) { base.new(paginate: { limit: 5, anchor_string: "test" }) }
 
     it "applies options" do
       allow(items).to receive(:count).and_return(50)
-      expect(collection.apply(items).pagination).to have_attributes(page: 1, items: 5, count: 50)
+      expect(collection.apply(items).pagination).to have_attributes(page: 1, limit: 5, count: 50)
     end
 
     it "changes default options" do
-      expect(collection.apply(items).paginate_options).to eql({ anchor_string: "test", items: 5 })
+      expect(collection.apply(items).paginate_options).to eql({ anchor_string: "test", limit: 5 })
     end
   end
 
@@ -106,7 +106,7 @@ RSpec.describe Katalyst::Tables::Collection::Pagination do
     end
 
     it "passes param to pagy" do
-      expect(collection.apply(items).pagination).to have_attributes(page: 2, items: 20, count: 50)
+      expect(collection.apply(items).pagination).to have_attributes(page: 2, limit: 20, count: 50)
     end
 
     it "applies pagination" do
