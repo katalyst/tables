@@ -7,7 +7,11 @@ module Katalyst
       # Expect to see NoMethodError failures if pagy is not available
       "Pagy::Frontend".safe_constantize&.tap { |pagy| include(pagy) }
 
-      attr_reader :pagy_options
+      def self.pagy_legacy?
+        Pagy::VERSION.scan(/\d+/).first.to_i <= 8
+      end
+
+      delegate :pagy_legacy?, to: :class
 
       def initialize(collection: nil, pagy: nil, **pagy_options)
         super()
@@ -20,14 +24,22 @@ module Katalyst
         @pagy_options = pagy_options
       end
 
-      # rubocop:disable Rails/OutputSafety
       def call
-        pagy_nav(@pagy, anchor_string: "data-turbo-action=\"replace\"", **pagy_options).html_safe
+        pagy_nav(@pagy, **pagy_options).html_safe # rubocop:disable Rails/OutputSafety
       end
-      # rubocop:enable Rails/OutputSafety
+
+      def pagy_options
+        default_pagy_options.merge(@pagy_options)
+      end
 
       def inspect
         "#<#{self.class.name} pagy: #{@pagy.inspect}>"
+      end
+
+      private
+
+      def default_pagy_options
+        pagy_legacy? ? {} : { anchor_string: 'data-turbo-action="replace"' }
       end
     end
   end
