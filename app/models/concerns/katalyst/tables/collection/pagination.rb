@@ -35,7 +35,14 @@ module Katalyst
         end
 
         def paginate_options
-          @paginate.is_a?(Hash) ? @paginate.dup : {}
+          opts = @paginate.is_a?(Hash) ? @paginate : {}
+          opts = opts.dup
+
+          if PagyNavComponent.pagy_legacy?
+            opts[:anchor_string] ||= "data-turbo-action=\"replace\""
+          end
+
+          opts
         end
 
         class Paginate # :nodoc:
