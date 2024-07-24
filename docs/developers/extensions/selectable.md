@@ -1,3 +1,11 @@
+---
+layout: default
+title: Selectable
+parent: Extensions
+grand_parent: Developers
+nav_order: 6
+---
+
 # Katalyst::Tables::Selectable
 
 `Selectable` adds the ability to select multiple rows in a table and apply bulk

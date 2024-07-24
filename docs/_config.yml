@@ -1,0 +1,14 @@
+title: "Katalyst Tables"
+description: "A library for viewing and interacting with database tables in Ruby on Rails."
+baseurl: "/tables"
+url: "https://katalyst.github.io/tables"
+theme: just-the-docs
+search_enabled: true
+color_scheme: custom
+logo: "/logo/katalyst.svg"
+favicon_ico: "/logo/katalyst.ico"
+aux_links:
+  "Katalyst Tables on GitHub":
+    - "https://github.com/katalyst/tables"
+aux_links_new_tab: true
+gh_edit_link: false

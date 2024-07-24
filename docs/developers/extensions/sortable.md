@@ -1,3 +1,11 @@
+---
+layout: default
+title: Sortable
+parent: Extensions
+grand_parent: Developers
+nav_order: 7
+---
+
 # Katalyst::Tables::Sortable
 
 `Sortable` adds column sorting to tables by wrapping the contents of the header cell with a link.

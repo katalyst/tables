@@ -1,3 +1,11 @@
+---
+layout: default
+title: Filtering
+parent: Extensions
+grand_parent: Developers
+nav_order: 1
+---
+
 # Katalyst::Tables::Collection::Filtering
 
 `Filtering` - Automatically filter the items of a collections based off the attributes configured.

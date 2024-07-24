@@ -1,3 +1,11 @@
+---
+layout: default
+title: Orderable
+parent: Extensions
+grand_parent: Developers
+nav_order: 4
+---
+
 # Katalyst::Tables::Orderable
 
 `Orderable` adds the ability to bulk-update an 'order' column for

@@ -1,3 +1,11 @@
+---
+layout: default
+title: Pagination
+parent: Extensions
+grand_parent: Developers
+nav_order: 5
+---
+
 # Katalyst::Tables::Collection::Pagination
 
 `Pagination` - Adds pagination support for a collection.

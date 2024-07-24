@@ -1,6 +1,13 @@
-# Customization
+---
+layout: default
+title: Custom components
+parent: Developers
+nav_order: 7
+---
 
-A common pattern we use is to have a cell at the end of the table for actions. For example:
+# Custom components
+
+A common pattern we see is an anonymous column at the end of the table for actions. For example:
 
 ```html
 <table class="action-table">

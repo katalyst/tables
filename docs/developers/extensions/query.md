@@ -1,3 +1,11 @@
+---
+layout: default
+title: Query
+parent: Extensions
+grand_parent: Developers
+nav_order: 2
+---
+
 # Katalyst::Tables::Collection::Query
 
 `Query` - Adds query parsing support for filtering collections based on a query parameter.

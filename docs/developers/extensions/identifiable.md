@@ -1,3 +1,11 @@
+---
+layout: default
+title: Identifiable
+parent: Extensions
+grand_parent: Developers
+nav_order: 3
+---
+
 # Katalyst::Tables::Identifiable
 
 `Identifiable` adds default dom ids to the table and data rows:
