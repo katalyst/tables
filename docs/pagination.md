@@ -23,7 +23,7 @@ end
 #### Passing options to pagy
 ```ruby
 class Collection < Katalyst::Collection::Base
-  config.paginate = { items: 10 }
+  config.paginate = { limit: 10 }
 end
 ```
 
@@ -34,7 +34,7 @@ Katalyst::Collection::Base.new(paginate: true)
 
 #### Passing options to pagy
 ```ruby
-Katalyst::Collection::Base.new(paginate: { items: 10 })
+Katalyst::Collection::Base.new(paginate: { limit: 10 })
 ```
 
 When pagination is enabled, table rows will be automatically paginated

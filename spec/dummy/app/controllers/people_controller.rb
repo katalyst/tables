@@ -35,7 +35,7 @@ class PeopleController < ApplicationController
 
   # Note: legacy style collection, testing backwards compatibility (vs Query)
   class Collection < Katalyst::Tables::Collection::Base
-    config.paginate = { items: 5 }
+    config.paginate = { limit: 5 }
     config.sorting = "name asc"
 
     attribute :search, default: -> { "" }
