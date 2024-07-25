@@ -16,9 +16,11 @@
       </ul>
     <% end %>
   </div>
-  <% if footer? %>
-    <footer>
+  <footer>
+    <% if footer? %>
       <%= footer %>
-    </footer>
-  <% end %>
+    <% else %>
+      <a href="https://katalyst.github.io/tables/users/queries" target="_blank">Search syntax</a>
+    <% end %>
+  </footer>
 <% end %>
