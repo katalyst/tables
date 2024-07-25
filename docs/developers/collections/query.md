@@ -1,30 +1,31 @@
 ---
 layout: default
 title: Query
-parent: Extensions
+parent: Collections
 grand_parent: Developers
-nav_order: 2
+nav_order: 4
 ---
 
-# Katalyst::Tables::Collection::Query
+# Query
 
-`Query` - Adds query parsing support for filtering collections based on a query parameter.
+`Katalyst::Tables::Collection::Query` adds support to controllers that allows users to type a semi-structured query
+string that will be parsed, and arguments sanitized and assigned to [filter](filtering) attributes.
 
-The `Query` module allows you to define attributes in your collection model that can be populated using a human-friendly query input. The module parses the query string and extracts attribute values.
+When coupled with [table_query_with](../frontend/filtering) in the frontend, the collection can generate suggestions for
+the user based on the current position of their cursor (`p`) and live-update the frontend using Turbo Morph to show
+context help for the user as they type their query.
 
 ## Usage
 
-To use the `Query` module, include it in your collection class and define the attributes you want to filter on.
-
-#### Collection Configuration
+To use the `Query` module, include it in your collection class and define the attributes you want to filter on. Query
+automatically includes the `Filter` module as well.
 
 ```ruby
 class Collection < Katalyst::Tables::Collection::Base
   include Katalyst::Tables::Collection::Query
 
-
-  attribute :id, :integer, multiple: true
   attribute :search, :search, scope: :table_search
+  attribute :id, :integer, multiple: true
   attribute :name, :string
   attribute :active, :boolean
   attribute :category, :enum
@@ -33,20 +34,23 @@ class Collection < Katalyst::Tables::Collection::Base
 end
 ```
 
-## User inputs
+## Basic search
 
-The `Query` module supports basic string inputs, which it applies to a `search` attribute (type: `:search`) if defined.
+The `Query` module supports basic string inputs, which it passes to a `search` attribute (type: `:search`) if defined.
 
 ```ruby
-collection.with_params(q: "test")
-# => { "search" => "test" }
-collection.with_params(q: "active status")
-# => { "search" => "active status" }
-collection.with_params(q: '"active status"')
-# => { "search" => '"active status"' }
+class Collection < Katalyst::Tables::Collection::Base
+  include Katalyst::Tables::Collection::Query
+  
+  attribute :custom_search, :search, scope: :custom_search
+end
+
+collection.with_params(q: "test").apply(Resource.all).items
+# => Resource.custom_search("test")
 ```
 
-The named scope should be defined on your model and take a string as input. A good example would be a pg_search scope. 
+Search attributes require a scope (`custom_search`), which should be defined on your model and take a string as input.
+For example, you could refer to a `pg_search` scope defined in the model.
 
 ### Tagged inputs
 
@@ -55,12 +59,13 @@ Attributes with types can be completed using tagged and typed inputs. For exampl
 ```ruby
 # In the collection
 attribute :active, :boolean
+
 # In the controller
 collection.with_params(q: "active:true").filters
 # => { "active" => true }
 ```
 
-Values can be quoted, e.g. if they contain spaces:
+Values can be quoted, e.g., if they contain spaces:
 ```ruby
 collection.with_params(q: 'active:"true"').filters
 # => { "active" => true }
@@ -68,8 +73,8 @@ collection.with_params(q: 'active:"true"').filters
 
 ### Multi-value inputs
 
-Some attributes support multiple values. Enums support this by default, while integers, floats, and booleans
-can be configured to accept multiple inputs. Example: `attribute :id, :integer, multiple: true`.
+Some attributes support multiple values. Enums support this by default, while integers, floats, and booleans can be
+configured to accept multiple inputs. Example: `attribute :id, :integer, multiple: true`.
 
 ```ruby
 collection.with_params(q: "category:report")
@@ -82,8 +87,8 @@ collection.with_params(q: 'category:["article", "report"]')
 
 ### Range inputs
 
-Continuous values like dates, integers, and floats support range inputs. These are enabled by default and
-users can filter on a range by specifying open or closed ranges. For example:
+Continuous values like dates, integers, and floats support range inputs. These are enabled by default, and users can
+filter on a range by specifying open or closed ranges. For example:
 
 ```ruby
 collection.with_params(q: "created_at:..2024-01-01")
@@ -152,7 +157,6 @@ end
 If your scope needs examples from the database, you can define `<attribute>_examples` in your collection:
 
 ```ruby
-
 def active_examples
   %w[active inactive all]
 end

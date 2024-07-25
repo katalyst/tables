@@ -1,20 +1,19 @@
 ---
 layout: default
-title: Selectable
-parent: Extensions
+title: Bulk actions
+parent: Frontend
 grand_parent: Developers
-nav_order: 6
+nav_order: 7
 ---
 
-# Katalyst::Tables::Selectable
+# Bulk actions
 
-`Selectable` adds the ability to select multiple rows in a table and apply bulk
-actions to the selected data rows.
+`Katalyst::Tables::Selectable` adds the ability to select multiple rows in a table and apply bulk actions to the
+selected data rows.
 
 ## Usage
 
-The extension is included by default and can enabled for a specific table
-by adding a `select` column:
+The extension is included by default and can be enabled for a specific table by adding a `select` column:
 
 ```erb
 <%= table_with(collection:, generate_ids: true) do |row| %>
@@ -24,12 +23,11 @@ by adding a `select` column:
 <% end %>
 ```
 
-You will also need to create a form for holding and submitting the selected rows
-data and providing actions to perform on the selected data rows:
+You will also need to create a form for holding and submitting the selected rows data and providing actions to 
+perform on the selected data rows:
 
-The form itself does not have an `action`; instead, you must be specify actions and methods
-manually for each action you want to perform by setting `formaction` and `formmethod` on
-the action buttons you add the the form. For example:
+The form itself does not have an `action`; instead, you must specify actions and methods manually for each action 
+you want to perform by setting `formaction` and `formmethod` on the action buttons you add to the form. For example:
 
 ```erb
 <%= table_selection_with(collection:) do %>

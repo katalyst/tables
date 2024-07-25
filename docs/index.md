@@ -8,10 +8,10 @@ nav_order: 1
 
 A library for viewing and interacting with database tables in Ruby on Rails.
 
-## Users
-
-See [user documentation](users).
-
 ## Developers
 
 See [developer documentation](developers).
+
+## Users
+
+See [user documentation](users).
