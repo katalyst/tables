@@ -22,6 +22,12 @@ module Katalyst
           collection.suggestions.each do |suggestion|
             with_suggestion(suggestion:)
           end
+
+          unless footer?
+            with_footer do
+              link_to("Search syntax", "https://katalyst.github.io/tables/users/queries")
+            end
+          end
         end
 
         private
