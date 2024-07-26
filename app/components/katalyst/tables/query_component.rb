@@ -3,7 +3,9 @@
 module Katalyst
   module Tables
     # A component for rendering a data driven filter for a collection.
-    #   <%= Katalyst::Tables::QueryComponent.new(collection: @people, url: peoples_path) %>
+    #   <%= table_query_with(collection:) %>
+    # Equivalent to:
+    #   <%= render Katalyst::Tables::QueryComponent.new(collection: @people, url: peoples_path) %>
     #
     # By default, the component will render a form containing a single text field. Interacting with the
     # text field will display a dropdown outlining all available keys and values to be filtered on.
@@ -13,19 +15,20 @@ module Katalyst
     # to ensure the correct attributes and default form fields are collected.
     # You can pass additional options to the `form` method to modify it.
     #
-    #   <%= Katalyst::Tables::QueryComponent.new(collection: @people, url: peoples_path) do |query| %>
-    #     <%= query.form(builder: GOVUKFormBuilder) do |form| %>
-    #       <%= form.govuk_text_field :q %>
+    # Caution: `config.view_component.capture_compatibility_patch_enabled = true` is required for this to work.
+    #
+    #   <%= table_query_with(collection:) do |component| %>
+    #     <% component.with_form(builder: GOVUKFormBuilder) do |form| %>
+    #       <%= render component.query_input(form:) %>
     #       <%= form.govuk_submit "Apply" %>
-    #       <%= modal %>
     #     <% end %>
     #   <% end %>
     #
     # Additionally the component allows for access to the dropdown that displays when interacting with the input.
     # The dropdown supports additional "footer" content to be added.
     #
-    #   <%= Katalyst::Tables::QueryComponent.new(collection: @people, url: peoples_path) do |query| %>
-    #     <% query.with_modal(collection:) do |modal| %>
+    #   <%= table_query_with(collection:) do |component| %>
+    #     <% component.with_modal(collection:) do |modal| %>
     #       <% modal.with_footer do %>
     #         <%= link_to "Docs", docs_path %>
     #       <% end %>
@@ -35,9 +38,8 @@ module Katalyst
       include Katalyst::HtmlAttributes
       include Katalyst::Tables::Frontend
 
+      renders_one :query_input, Katalyst::Tables::Query::InputComponent
       renders_one :modal, Katalyst::Tables::Query::ModalComponent
-
-      define_html_attribute_methods :input_attributes
 
       attr_reader :collection, :url
 
@@ -46,26 +48,26 @@ module Katalyst
 
         @collection = collection
         @url        = url
+
+        # defaults, can be overwritten from content
+        with_modal(collection:)
+        with_form
       end
 
       def before_render
-        with_modal(collection:) unless modal?
+        content # content is discarded, but may alter slots
       end
 
-      def form(url: @url, **options, &)
-        form_with(model:  collection,
-                  url:,
-                  method: :get,
-                  **options,
-                  **html_attributes) do |form|
-          concat(sort_input(form:))
-
-          yield form if block_given?
-        end
+      # Override the default form options for query. Proxies all arguments to `form_with`.
+      #
+      # Caution: requires config.view_component.capture_compatibility_patch_enabled to be set
+      def with_form(model: collection, url: @url, method: :get, **options, &block)
+        @form_options = { model:, url:, method:, **options }
+        @form_block = block
       end
 
-      def query_input(form:)
-        Query::InputComponent.new(form:, **input_attributes)
+      def with_modal(collection: self.collection, **, &)
+        set_slot(:modal, nil, collection:, **, &)
       end
 
       def sort_input(form:)

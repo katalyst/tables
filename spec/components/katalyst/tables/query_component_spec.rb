@@ -27,11 +27,11 @@ RSpec.describe Katalyst::Tables::QueryComponent do
   it "renders with custom content" do
     create_collection
     expect((render_inline(component) do
-      component.form(class: "custom") do |form|
-        component.concat(form.hidden_field(:example))
+      component.with_form(class: "custom") do |form|
+        component.helpers.concat(form.text_field(:example))
       end
     end).at_css("form.custom > input[name=example]")).to match_html(<<~HTML)
-      <input autocomplete="off" type="hidden" name="example" id="example">
+      <input type="text" name="example" id="example">
     HTML
   end
 
