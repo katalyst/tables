@@ -1,8 +1,11 @@
-<% if content? %>
-    <%= content %>
-<% else %>
-  <%= form do |form| %>
-    <%= render query_input(form:) %>
+<%= form_with(**html_attributes, **@form_options) do |form| %>
+  <% with_query_input(form:) %>
+
+  <%= sort_input(form:) %>
+  <% if @form_block %>
+    <%= capture(form, &@form_block) %>
+  <% else %>
+    <%= query_input %>
     <%= modal %>
   <% end %>
 <% end %>

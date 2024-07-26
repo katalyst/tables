@@ -2,6 +2,7 @@
   position: relative;
 
   .query-input {
+    position: relative;
     display: grid;
     grid-template-areas: "input button";
     grid-template-columns: 1fr auto;
