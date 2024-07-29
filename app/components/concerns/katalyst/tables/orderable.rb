@@ -52,7 +52,8 @@ module Katalyst
         update_tbody_attributes(
           data: {
             controller: LIST_CONTROLLER,
-            action: "mousedown->#{LIST_CONTROLLER}#mousedown",
+            action: %W[mousedown->#{LIST_CONTROLLER}#mousedown
+                       turbo:before-morph-attribute->#{LIST_CONTROLLER}#beforeMorphAttribute],
             "#{LIST_CONTROLLER}-#{FORM_CONTROLLER}-outlet" => "##{Orderable.default_form_id(collection)}",
             "#{LIST_CONTROLLER}-#{ITEM_CONTROLLER}-outlet" => "td.ordinal",
           },

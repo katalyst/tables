@@ -100,7 +100,7 @@ export default class OrderableListController extends Controller {
 
     window.requestAnimationFrame(() => {
       this.ticking = false;
-      this.dragState.updateCursor(
+      this.dragState?.updateCursor(
         this.element,
         this.dragItem.row,
         event,
@@ -116,7 +116,7 @@ export default class OrderableListController extends Controller {
 
     window.requestAnimationFrame(() => {
       this.ticking = false;
-      this.dragState.updateScroll(
+      this.dragState?.updateScroll(
         this.element,
         this.dragItem.row,
         this.animate,
@@ -143,6 +143,19 @@ export default class OrderableListController extends Controller {
     if (this.isDragging) {
       // cache drag state in the form
       form.dragState = this.stopDragging();
+    }
+  }
+
+  beforeMorphAttribute(e) {
+    switch (e.detail.attributeName) {
+      case "dragging": // set to track the item being dragged
+        e.preventDefault();
+        break;
+      case "style": // used to animate rows moving up and down
+        if (e.target.tagName === "TBODY" || e.target.tagName === "TR") {
+          e.preventDefault();
+        }
+        break;
     }
   }
 

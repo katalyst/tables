@@ -16,7 +16,7 @@ RSpec.describe Katalyst::Tables::Orderable do
       <table>
         <thead><tr><th class="ordinal"></th></tr></thead>
         <tbody data-controller="tables--orderable--list"
-                data-action="mousedown->tables--orderable--list#mousedown"
+                data-action="mousedown->tables--orderable--list#mousedown turbo:before-morph-attribute->tables--orderable--list#beforeMorphAttribute"
                 data-tables--orderable--list-tables--orderable--form-outlet="##{form_id}"
                 data-tables--orderable--list-tables--orderable--item-outlet="td.ordinal">
           <tr>
