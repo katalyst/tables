@@ -9,7 +9,7 @@
   <div class="content">
     <% if suggestions? %>
       <h4><%= t(".suggestions_title") %></h4>
-      <ul>
+      <ul id="suggestions">
         <% suggestions.each do |suggestion| %>
           <%= render suggestion %>
         <% end %>

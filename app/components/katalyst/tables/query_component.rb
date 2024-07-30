@@ -90,6 +90,7 @@ module Katalyst
               focusin->tables--query#openModal:stop
               submit->tables--query#submit
               input->tables--query#update
+              keydown.tab->tables--query#selectFirstSuggestion
             ],
           },
         }

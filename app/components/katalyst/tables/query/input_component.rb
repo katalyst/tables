@@ -44,6 +44,7 @@ module Katalyst
             spellcheck: false,
             data:       {
               action:                     %w[
+                replaceToken->tables--query-input#replaceToken
                 tables--query-input#update
                 keydown.enter->tables--query#closeModal:prevent
                 keydown.esc->tables--query#clear:prevent

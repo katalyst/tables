@@ -17,6 +17,10 @@ module Katalyst
         def default_html_attributes
           {
             class: ["suggestion", type.to_s],
+            data:  {
+              action:                    "click->tables--query#selectSuggestion",
+              tables__query_value_param: value_param,
+            },
           }
         end
 
@@ -28,6 +32,12 @@ module Katalyst
           else
             %("#{value}")
           end
+        end
+
+        def value_param
+          return "#{@suggestion.value}:" if @suggestion.type == :attribute
+
+          @suggestion.value
         end
       end
     end

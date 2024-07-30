@@ -48,8 +48,8 @@ RSpec.describe Katalyst::Tables::QueryComponent do
     end
     expect(render_inline(component).css(".query-modal > .content > *")).to match_html(<<~HTML)
       <h4>Search options</h4>
-      <ul>
-        <li class="suggestion attribute"><span class="value">active</span></li>
+      <ul id="suggestions">
+        <li class="suggestion attribute" data-action="click->tables--query#selectSuggestion" data-tables--query-value-param="active:"><span class="value">active</span></li>
       </ul>
     HTML
   end
@@ -83,10 +83,10 @@ RSpec.describe Katalyst::Tables::QueryComponent do
     end
     expect(render_inline(component).css(".query-modal > .content > *")).to match_html(<<~HTML)
       <h4>Search options</h4>
-      <ul>
-        <li class="suggestion database_value"><span class="value">Resource 1</span></li>
-        <li class="suggestion database_value"><span class="value">Resource 2</span></li>
-        <li class="suggestion database_value"><span class="value">Resource 3</span></li>
+      <ul id="suggestions">
+        <li class="suggestion database_value" data-action="click->tables--query#selectSuggestion" data-tables--query-value-param="Resource 1"><span class="value">Resource 1</span></li>
+        <li class="suggestion database_value" data-action="click->tables--query#selectSuggestion" data-tables--query-value-param="Resource 2"><span class="value">Resource 2</span></li>
+        <li class="suggestion database_value" data-action="click->tables--query#selectSuggestion" data-tables--query-value-param="Resource 3"><span class="value">Resource 3</span></li>
       </ul>
     HTML
   end
