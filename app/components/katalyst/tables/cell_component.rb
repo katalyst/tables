@@ -44,7 +44,7 @@ module Katalyst
                     rendered_value
                   end
 
-        content = @content_wrapper.with_content(content).render_in(view_context) if @content_wrapper
+        content = @content_wrapper.with_content(content.to_s).render_in(view_context) if @content_wrapper
 
         concat(content_tag(cell_tag, content, **html_attributes))
       end
