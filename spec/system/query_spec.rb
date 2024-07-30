@@ -27,7 +27,7 @@ RSpec.describe "index/query" do
     find("[role=searchbox]").click
     page.driver.browser.keyboard.type(:escape)
 
-    expect(page).to have_current_path(resources_path)
+    expect(page).to have_current_path(resources_path(p: 0))
     expect(page).to have_css("td", text: "Resource 3")
   end
 

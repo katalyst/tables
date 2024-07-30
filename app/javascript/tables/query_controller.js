@@ -73,7 +73,7 @@ export default class QueryController extends Controller {
     }
 
     // add/remove current cursor position
-    if (hasFocus && position) {
+    if (hasFocus) {
       this.position.value = position;
       this.position.disabled = false;
     } else {
@@ -99,6 +99,27 @@ export default class QueryController extends Controller {
         e.preventDefault();
         break;
     }
+  }
+
+  selectFirstSuggestion(e) {
+    e.preventDefault();
+
+    // Click the first item to ensure correct stimulus params are sent
+    this.modalTarget.querySelector("#suggestions li:first-of-type").click();
+  }
+
+  selectSuggestion(e) {
+    let value = e.params.value;
+    if (/\s/.exec(value)) {
+      value = `"${value}"`;
+    }
+
+    // NOTE - we would like to use this.position but can't due to it being blur
+    this.query.dispatchEvent(
+      new CustomEvent("replaceToken", {
+        detail: { token: `${value} `, position: this.query.selectionStart },
+      }),
+    );
   }
 
   get query() {
