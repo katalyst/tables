@@ -67,7 +67,7 @@ module Katalyst
       #
       # @param collection [Katalyst::Tables::Collection::Core] the collection to render
       # @param url [String] the url to submit the form to (e.g. <resources>_path)
-      def table_query_with(collection:, url: url_for(action: :index), component: nil, &)
+      def table_query_with(collection:, url: url_for, component: nil, &)
         component ||= default_table_query_component_class
         render(component.new(collection:, url:), &)
       end
