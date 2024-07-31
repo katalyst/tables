@@ -7,14 +7,14 @@
     grid-template-areas: "input button";
     grid-template-columns: 1fr auto;
 
-    [role="searchbox"] {
+    [role="combobox"] {
       grid-area: input;
       background: transparent;
       caret-color: black;
       resize: none;
     }
 
-    &[data-connected] [role="searchbox"] {
+    &[data-connected] [role="combobox"] {
       color: transparent;
     }
 
@@ -47,6 +47,9 @@
 }
 
 .query-modal {
+  --suggestion-hover: rgba(0, 0, 0, 0.1);
+  --suggestion-selected: #888;
+
   position: absolute;
   top: 100%;
   left: 0;
@@ -76,14 +79,45 @@
 
   .content {
     grid-area: content;
+    padding-top: 0.5rem;
+  }
+
+  h4 {
     padding-inline: 1rem;
-    padding-block: 0.5rem;
   }
 
   ul {
     margin-block: 0;
     padding-inline-start: 0;
     list-style: none;
+
+    li {
+      position: relative;
+      display: flex;
+      align-items: baseline;
+      padding-inline: 1rem;
+      padding-block: 0.125rem;
+
+      &[aria-selected="true"],
+      &:hover {
+        outline: none;
+        background: var(--suggestion-hover);
+      }
+
+      &[aria-selected="true"]::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: var(--suggestion-selected);
+      }
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
   }
 
   .error {

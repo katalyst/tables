@@ -19,8 +19,8 @@ module Katalyst
         end
 
         def before_render
-          collection.suggestions.each do |suggestion|
-            with_suggestion(suggestion:)
+          collection.suggestions.each_with_index do |suggestion, index|
+            with_suggestion(suggestion:, index:)
           end
         end
 
@@ -28,7 +28,12 @@ module Katalyst
 
         def default_html_attributes
           {
+            id:    "suggestion-dialog",
             class: "query-modal",
+            role:  "dialog",
+            aria:  {
+              label: t(".suggestions_title"),
+            },
             data:  {
               tables__query_target: "modal",
               action:               ["turbo:before-morph-attribute->tables--query#beforeMorphAttribute"],

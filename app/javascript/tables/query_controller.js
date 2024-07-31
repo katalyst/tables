@@ -25,6 +25,7 @@ export default class QueryController extends Controller {
 
   closeModal() {
     delete this.modalTarget.dataset.open;
+    this.query.setAttribute("aria-expanded", false);
 
     if (document.activeElement === this.query) document.activeElement.blur();
 
@@ -33,6 +34,7 @@ export default class QueryController extends Controller {
 
   openModal() {
     this.modalTarget.dataset.open = true;
+    this.query.setAttribute("aria-expanded", true);
 
     document.addEventListener("selectionchange", this.selection);
   }
@@ -61,24 +63,25 @@ export default class QueryController extends Controller {
       delete this.pending;
     }
 
-    // prevent an unnecessary `?q=` parameter from appearing in the URL
+    // add/remove current cursor position
+    if (hasFocus && this.query.value !== "") {
+      this.position.value = position;
+      this.position.disabled = false;
+    } else {
+      this.position.value = "";
+      this.position.disabled = true;
+    }
+
+    // prevent an unnecessary `?q=&p=0` parameter from appearing in the URL
     if (this.query.value === "") {
       this.query.disabled = true;
 
       // restore input and focus after form submission
       setTimeout(() => {
         this.query.disabled = false;
+        this.position.disabled = false;
         if (hasFocus) this.query.focus();
       }, 0);
-    }
-
-    // add/remove current cursor position
-    if (hasFocus) {
-      this.position.value = position;
-      this.position.disabled = false;
-    } else {
-      this.position.value = "";
-      this.position.disabled = true;
     }
   }
 
@@ -101,29 +104,85 @@ export default class QueryController extends Controller {
     }
   }
 
+  moveToPreviousSuggestion() {
+    const prev = this.previousSuggestion || this.lastSuggestion;
+
+    if (prev) this.makeSuggestionActive(prev);
+  }
+
+  moveToNextSuggestion() {
+    const next = this.nextSuggestion || this.firstSuggestion;
+
+    if (next) this.makeSuggestionActive(next);
+  }
+
   selectFirstSuggestion(e) {
+    // This is caused by pressing the tab key. We don't want to move focus.
+    // Ideally we don't want to always prevent the user from tabbing. We will address this later
     e.preventDefault();
 
-    // Click the first item to ensure correct stimulus params are sent
-    this.modalTarget.querySelector("#suggestions li:first-of-type").click();
+    this.firstSuggestion?.dispatchEvent(new CustomEvent("query:select"));
+  }
+
+  selectActiveSuggestion() {
+    if (!this.activeSuggestion) {
+      this.closeModal();
+      return;
+    }
+
+    this.activeSuggestion.dispatchEvent(new CustomEvent("query:select"));
   }
 
   selectSuggestion(e) {
-    let value = e.params.value;
-    if (/\s/.exec(value)) {
-      value = `"${value}"`;
-    }
-
-    // NOTE - we would like to use this.position but can't due to it being blur
     this.query.dispatchEvent(
       new CustomEvent("replaceToken", {
-        detail: { token: `${value} `, position: this.query.selectionStart },
+        detail: { token: e.params.value, position: this.query.selectionStart },
       }),
+    );
+
+    this.clearActiveSuggestion();
+  }
+
+  makeSuggestionActive(node) {
+    if (this.activeSuggestion) {
+      this.activeSuggestion.setAttribute("aria-selected", "false");
+    }
+
+    this.query.setAttribute("aria-activedescendant", node.id);
+    node.setAttribute("aria-selected", "true");
+  }
+
+  clearActiveSuggestion() {
+    if (this.activeSuggestion) {
+      this.activeSuggestion.setAttribute("aria-selected", "false");
+      this.query.removeAttribute("aria-activedescendant");
+    }
+  }
+
+  get activeSuggestion() {
+    return this.modalTarget.querySelector(
+      `#${this.query.getAttribute("aria-activedescendant")}`,
     );
   }
 
+  get previousSuggestion() {
+    return this.activeSuggestion?.previousElementSibling;
+  }
+
+  get nextSuggestion() {
+    return this.activeSuggestion?.nextElementSibling;
+  }
+
+  get firstSuggestion() {
+    return this.modalTarget.querySelector("#suggestions li:first-of-type");
+  }
+
+  get lastSuggestion() {
+    return this.modalTarget.querySelector("#suggestions li:last-of-type");
+  }
+
   get query() {
-    return this.element.querySelector("[role=searchbox]");
+    return this.element.querySelector("[role=combobox]");
   }
 
   get position() {
