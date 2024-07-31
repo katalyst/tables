@@ -26,7 +26,13 @@ export default class QueryInputController extends Controller {
   }
 
   replaceToken(e) {
-    let tokenToAdd = e.detail.token;
+    let tokenToAdd = e.detail.token.toString();
+
+    // wrap in quotes if it contains a spaces or special characters
+    if (/\s/.exec(tokenToAdd)) {
+      tokenToAdd = `"${tokenToAdd}"`;
+    }
+
     const indexPosition = e.detail.position;
     let caretPosition = indexPosition + tokenToAdd.length;
     let sliceStart = indexPosition;

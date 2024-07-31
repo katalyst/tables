@@ -8,17 +8,27 @@ module Katalyst
 
         delegate :type, :value, to: :@suggestion
 
-        def initialize(suggestion:, **)
+        def initialize(suggestion:, index:, **)
           super(**)
 
           @suggestion = suggestion
+          @index      = index
+        end
+
+        def dom_id
+          "suggestion_#{@index}"
         end
 
         def default_html_attributes
           {
+            id:    dom_id,
             class: ["suggestion", type.to_s],
+            role:  "option",
             data:  {
-              action:                    "click->tables--query#selectSuggestion",
+              action:                    %w[
+                click->tables--query#selectSuggestion
+                query:select->tables--query#selectSuggestion
+              ],
               tables__query_value_param: value_param,
             },
           }

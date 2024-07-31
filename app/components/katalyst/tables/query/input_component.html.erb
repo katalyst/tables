@@ -2,7 +2,12 @@
   <%= form.label name, "Search", hidden: "" %>
   <%= form.text_area(
         name,
-        role:         "searchbox",
+        role:         "combobox",
+        aria:         {
+          controls: "suggestion-dialog",
+          expanded: false,
+          haspopup: "dialog",
+        },
         placeholder:,
         autocomplete: "off",
         rows:         1,

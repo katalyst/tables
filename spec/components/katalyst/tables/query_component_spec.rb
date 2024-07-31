@@ -47,9 +47,9 @@ RSpec.describe Katalyst::Tables::QueryComponent do
       attribute :active, :boolean
     end
     expect(render_inline(component).css(".query-modal > .content > *")).to match_html(<<~HTML)
-      <h4>Search options</h4>
-      <ul id="suggestions">
-        <li class="suggestion attribute" data-action="click->tables--query#selectSuggestion" data-tables--query-value-param="active:"><span class="value">active</span></li>
+      <h4 id="suggestions-title">Search options</h4>
+      <ul id="suggestions" role="listbox" aria-labelledby="suggestions-title">
+        <li id="suggestion_0" role="option" class="suggestion attribute" data-action="click->tables--query#selectSuggestion query:select->tables--query#selectSuggestion" data-tables--query-value-param="active:"><span class="value">active</span></li>
       </ul>
     HTML
   end
@@ -61,7 +61,7 @@ RSpec.describe Katalyst::Tables::QueryComponent do
       attribute :active, :boolean
     end
     expect(render_inline(component).css(".query-modal > header > *")).to match_html(<<~HTML)
-      <div class="error unknown_key">The field 'index' isn’t searchable here. Please check your input.</div>
+      <div class="error unknown_key">The search option 'index' isn’t valid. Please check your input.</div>
     HTML
   end
 
@@ -72,7 +72,7 @@ RSpec.describe Katalyst::Tables::QueryComponent do
       attribute :active, :boolean
     end
     expect(render_inline(component).css(".query-modal > header > *")).to match_html(<<~HTML)
-      <div class="error no_untagged_search">'unknown' isn't searchable here. Please choose a field to search.</div>
+      <div class="error no_untagged_search">'unknown' isn't searchable. Please choose a valid search option.</div>
     HTML
   end
 
@@ -82,11 +82,11 @@ RSpec.describe Katalyst::Tables::QueryComponent do
       attribute :name, :string
     end
     expect(render_inline(component).css(".query-modal > .content > *")).to match_html(<<~HTML)
-      <h4>Search options</h4>
-      <ul id="suggestions">
-        <li class="suggestion database_value" data-action="click->tables--query#selectSuggestion" data-tables--query-value-param="Resource 1"><span class="value">Resource 1</span></li>
-        <li class="suggestion database_value" data-action="click->tables--query#selectSuggestion" data-tables--query-value-param="Resource 2"><span class="value">Resource 2</span></li>
-        <li class="suggestion database_value" data-action="click->tables--query#selectSuggestion" data-tables--query-value-param="Resource 3"><span class="value">Resource 3</span></li>
+      <h4 id="suggestions-title">Search options</h4>
+      <ul id="suggestions" role="listbox" aria-labelledby="suggestions-title">
+        <li id="suggestion_0" class="suggestion database_value" role="option" data-action="click->tables--query#selectSuggestion query:select->tables--query#selectSuggestion" data-tables--query-value-param="Resource 1"><span class="value">Resource 1</span></li>
+        <li id="suggestion_1" class="suggestion database_value" role="option" data-action="click->tables--query#selectSuggestion query:select->tables--query#selectSuggestion" data-tables--query-value-param="Resource 2"><span class="value">Resource 2</span></li>
+        <li id="suggestion_2" class="suggestion database_value" role="option" data-action="click->tables--query#selectSuggestion query:select->tables--query#selectSuggestion" data-tables--query-value-param="Resource 3"><span class="value">Resource 3</span></li>
       </ul>
     HTML
   end

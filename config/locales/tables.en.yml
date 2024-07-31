@@ -12,5 +12,5 @@ en:
   errors:
     attributes:
       query:
-        unknown_key: "The field '%{input}' isn’t searchable here. Please check your input."
-        no_untagged_search: "'%{input}' isn't searchable here. Please choose a field to search."
+        unknown_key: "The search option '%{input}' isn’t valid. Please check your input."
+        no_untagged_search: "'%{input}' isn't searchable. Please choose a valid search option."

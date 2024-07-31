@@ -8,8 +8,8 @@
   <% end %>
   <div class="content">
     <% if suggestions? %>
-      <h4><%= t(".suggestions_title") %></h4>
-      <ul id="suggestions">
+      <h4 id="suggestions-title"><%= t(".suggestions_title") %></h4>
+      <ul id="suggestions" role="listbox" aria-labelledby="suggestions-title">
         <% suggestions.each do |suggestion| %>
           <%= render suggestion %>
         <% end %>

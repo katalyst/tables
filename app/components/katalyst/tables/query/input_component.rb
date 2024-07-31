@@ -46,8 +46,11 @@ module Katalyst
               action:                     %w[
                 replaceToken->tables--query-input#replaceToken
                 tables--query-input#update
-                keydown.enter->tables--query#closeModal:prevent
+                keydown.enter->tables--query#selectActiveSuggestion:prevent
                 keydown.esc->tables--query#clear:prevent
+                keydown.up->tables--query#moveToPreviousSuggestion:prevent
+                keydown.down->tables--query#moveToNextSuggestion:prevent
+                keydown.alt+up->tables--query#clearActiveSuggestion:prevent
               ],
               tables__query_input_target: "input",
             },
