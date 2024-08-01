@@ -14,7 +14,7 @@ RSpec.describe "index/query" do
     click_on("Apply")
 
     expect(page).to have_current_path(resources_path(q: "1"))
-    expect(find("[role=combobox]").value).to eq("1")
+    expect(find("[name=q]").value).to eq("1")
     expect(page).to have_css("td", text: "Resource 1")
     expect(page).to have_no_css("td", text: "Resource 3")
   end
@@ -24,7 +24,7 @@ RSpec.describe "index/query" do
 
     expect(page).to have_no_css("td", text: "Resource 3")
 
-    find("[role=combobox]").click
+    find("[name=q]").click
     page.driver.browser.keyboard.type(:escape)
 
     expect(page).to have_current_path(resources_path)
@@ -47,7 +47,7 @@ RSpec.describe "index/query" do
 
       expect(page).to have_current_path(%r{page=2})
       expect(page).to have_current_path(%r{q=Resource})
-      expect(find("[role=combobox]").value).to eq("Resource")
+      expect(find("[name=q]").value).to eq("Resource")
     end
   end
 
@@ -58,7 +58,7 @@ RSpec.describe "index/query" do
       click_on "Resource partial" # name column header
 
       expect(page).to have_current_path("/resources?q=Resource&sort=name+desc")
-      expect(find("[role=combobox]").value).to eq("Resource")
+      expect(find("[name=q]").value).to eq("Resource")
     end
   end
 
@@ -78,7 +78,7 @@ RSpec.describe "index/query" do
       page.go_back
 
       expect(page).to have_current_path(resources_path(q: "Resource"))
-      expect(find("[role=combobox]").value).to eq("Resource")
+      expect(find("[name=q]").value).to eq("Resource")
     end
   end
 end
