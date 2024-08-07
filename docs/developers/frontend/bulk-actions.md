@@ -18,8 +18,8 @@ The extension is included by default and can be enabled for a specific table by 
 ```erb
 <%= table_with(collection:, generate_ids: true) do |row| %>
   <% row.select %>
-  <% row.text :name, label: "Resource partial" %>
-  <% row.boolean :active, class: "active" %>
+  <% row.text :name %>
+  <% row.boolean :active %>
 <% end %>
 ```
 
@@ -31,9 +31,12 @@ you want to perform by setting `formaction` and `formmethod` on the action butto
 
 ```erb
 <%= table_selection_with(collection:) do %>
-  <%= tag.button "Download", formaction: resources_path(format: :csv), formmethod: :get %>
-  <%= tag.button "Activate", formaction: activate_resources_path, formmethod: :put %>
+  <%= tag.button "Download", formaction: blogs_path(format: :csv), formmethod: :get %>
+  <%= tag.button "Activate", formaction: activate_blogs_path, formmethod: :put %>
 <% end %>
+
+<%= table_with(collection:) do %>
+...
 ```
 
 To complete the example outlined above, you could implement the following:
@@ -41,17 +44,17 @@ To complete the example outlined above, you could implement the following:
 ### Routes
 ```ruby
 # routes.rb
-resources :resources do
+resources :blogs do
   put :activate, path: "active", on: :collection
 end
 ```
 
 ### Controller
 ```ruby
-# resources_controller.rb
-class ResourcesController < ApplicationController
+# blogs_controller.rb
+class BlogsController < ApplicationController
   def index
-    collection = Collection.with_params(params).apply(Resource.all)
+    collection = Collection.with_params(params).apply(Blog.all)
     
     respond_to do |format|
       format.html { render locals: { collection: } }
@@ -60,11 +63,9 @@ class ResourcesController < ApplicationController
   end
 
   def activate
-    collection = Collection.with_params(params).apply(Resource.all)
-
-    collection.items.update_all(active: true) if collection.id.any?
-
-    redirect_back fallback_location: resources_path, status: :see_other
+    Blog.where(id: params[:id]).each { |blog| blog.update(active: true) }
+    
+    redirect_back fallback_location: blogs_path, status: :see_other
   end
   
   private

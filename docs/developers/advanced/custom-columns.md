@@ -3,7 +3,7 @@ layout: default
 title: Custom columns
 parent: Advanced
 grand_parent: Developers
-nav_order: 1
+nav_order: 2
 ---
 
 # Custom columns

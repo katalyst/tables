@@ -3,7 +3,7 @@ layout: default
 title: Extensions
 parent: Advanced
 grand_parent: Developers
-nav_order: 2
+nav_order: 3
 ---
 
 # TableComponent Mixins

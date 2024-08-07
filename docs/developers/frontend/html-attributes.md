@@ -26,7 +26,7 @@ Rows do not get called directly, so instead, you can assign to `html_attributes`
 tag generation.
 
 ```erb
-<% row.update_html_attributes(id: person.id) if row.body? %>
+<% row.html_attributes = { id: person.id } if row.body? %>
 ```
 
 Note: because the row builder gets called to generate the header row, you may need to guard calls that access the

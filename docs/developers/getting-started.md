@@ -13,28 +13,15 @@ Add this line to your application's Gemfile:
 gem "katalyst-tables" 
 ```
 
-And then execute:
+And then:
 
-    $ bundle install
-
-Add the Gem's JavaScript and CSS to your build pipeline. This assumes that you're using `rails-dartsass` and 
-`importmaps` to manage your assets.
-
-```javascript
-// app/javascript/controllers/application.js
-import { application } from "controllers/application";
-import tables from "@katalyst/tables";
-application.load(tables);
-```
-
-```scss
-// app/assets/stylesheets/application.scss
-@use "@katalyst/tables";
+```shell
+bundle install
 ```
 
 ## Rendering a table
 
-Add `include Katalyst::Tables::Frontend` to your `ApplicationHelper` or similar.
+Add `helper Katalyst::Tables::Frontend` to your `ApplicationHelper` or similar.
 
 This provides the `table_with` helper, which is similar to `form_with` and allows you to generate HTML table output 
 from an ActiveRecord relation:
@@ -43,9 +30,10 @@ from an ActiveRecord relation:
 <%# app/views/people/index.html.erb %>
 <%= table_with collection: @people do |row, person| %>
   <% row.text :name do |cell| %>
-    <%= link_to cell.value, person %>
+    <%= link_to cell, person %>
   <% end %>
   <% row.text :email %>
+  <% row.date :created_at %>
 <% end %>
 ```
 
@@ -72,29 +60,6 @@ The table will call your block once per row and accumulate the cells you generat
 </table>
 ```
 
-### Rendering with a partial
-
-The `table_with` helper is designed to let you define your columns inline and generate a table inline in your 
-template. This is the approach we recommend for most situations. However, if the table is complex or you need to 
-reuse it, you can consider moving the definition of the row into a partial.
-
-By not providing a block to the `table_with` call, the gem will look for a partial called `_person.html+row.erb` to 
-render each row:
-
-```erb
-<%# locals: { row:, person: nil } %>
-<% row.text :name do |cell| %>
-  <%= link_to cell.value, [:edit, person] %>
-<% end %>
-<% row.text :email %>
-```
-
-You can customize the partial and/or the name of the resource in a similar style to view partials:
-
-```erb
-<%= table_with(collection: @employees, as: :person, partial: "person") %>
-```
-
 ## Collections
 
 Tables can work directly with ActiveRecord relations, but in general we recommend using the `Collections` API instead.
@@ -107,14 +72,13 @@ pattern](https://thoughtbot.com/blog/activemodel-form-objects). For example:
 # app/controllers/people_controller.rb
 class PeopleController < ApplicationController
   def index
-    collection = Collection.with_params(params).apply(People)
+    collection = Collection.with_params(params).apply(Person)
     
     render locals: { collection: }
   end
   
   class Collection < Katalyst::Tables::Collection::Base
-    config.sorting = "name asc" # requires that People has a `name` column
-    config.pagination = true
+    config.sorting = "name asc"
   end
 end
 ```
@@ -125,11 +89,98 @@ sorting and generate the appropriate table header links.
 ```erb
 <%# locals: { collection: } %>
 <%# app/views/people/index.html.erb %>
-<%= table_with(collection:) do |row, person| %>
-  <% row.string :name do |cell| %>
-    <%= link_to cell.value, person %>
+<%= table_with collection: do |row, person| %>
+  <% row.text :name do |cell| %>
+    <%= link_to cell, person %>
   <% end %>
+  <% row.text :email %>
+  <% row.date :created_at %>
 <% end %>
+```
+
+Now that you've specified sorting in your collection, you should be able to click links in your table
+headers to toggle sorting on that column.
+
+See [sorting](frontend/sorting) for more details.
+
+## Optional dependencies
+
+ERB rendering and ActiveRecord query functionality works out of the box, but tables also provides additional features
+such as pagination, row selection and bulk actions, and a query builder that require additional dependencies.
+
+### Pagination
+
+Add the `pagy` gem to your `Gemfile` and run bundle.
+
+```ruby
+# Gemfile
+gem "pagy"
+```
+
+Alter your collection definition:
+
+```ruby
+class Collection < Katalyst::Tables::Collection::Base
+  config.paginate = { limit: 5 } # use true for pagy defaults, or use a hash to pass options to pagy
+  config.sorting = "name asc"
+end
+```
+
+Alter your frontend view to include a pagination component:
+
+```erb
+<%= table_with collection: do |row, person| %>
+  <% row.text :name do |cell| %>
+    <%= link_to cell, person %>
+  <% end %>
+  <% row.text :email %>
+  <% row.date :created_at %>
+<% end %>
+
+<%= table_pagination_with(collection:) %>
+```
+
+You'll see that your frontend now includes a pagination navigation component under the table, and that
+when you change sorting, the pagination is reset to 1.
+
+See [pagination](frontend/pagination) for more details.
+
+## Styling
+
+Katalyst uses [`dartsass-rails`](https://github.com/rails/dartsass-rails) for styling and we distribute basic SCSS
+styles with this gem. These styles are intended as a starting point, and not a complete solution. We assume you're using
+a CSS reset.
+
+If you're using `dartsass-rails`, follow their instructions to configure `dartsass-rails`, then add
+tables to your stylesheet, e.g.
+
+```scss
+// app/assets/stylesheets/application.scss
+@use "katalyst/tables";
+```
+
+## Javascript
+
+Katalyst Tables includes stimulus components for implementing some advanced features such as
+[bulk actions](frontend/bulk-actions), [drag and drop reordering](frontend/re-order.md), and
+[query modal filtering](frontend/filtering).
+
+Katalyst uses [`importmap-rails`](https://github.com/rails/importmap-rails),
+[`turbo-rails`](https://github.com/hotwired/turbo-rails),
+and [`stimulus-rails`](https://github.com/hotwired/stimulus-rails) for managing Javascript dependencies.
+We also enable [Turbo Morphing](https://turbo.hotwired.dev/handbook/page_refreshes) for pages that use
+[query modal filtering](frontend/filtering).
+
+After configuring Turbo and Stimulus using their provided documentation, you will need to load
+`@katalyst/tables` into your Stimulus application. For example:
+
+```javascript
+// app/javascript/controllers/index.js
+import { application } from "controllers/application";
+
+// Add katalyst-tables stimulus controllers
+import tables from "@katalyst/tables";
+application.load(tables);
 ```
 
 ## Entry points

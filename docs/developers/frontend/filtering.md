@@ -47,7 +47,7 @@ class Collection < Katalyst::Tables::Collection::Base
   attribute :search
   
   def filter
-    self.items = items.where(Person.arel_table[:name].matches("%#{sanitize_sql_like(search)}%")) if search.present?
+    self.items = items.where(Person.arel_table[:name].matches("%#{Person.sanitize_sql_like(search)}%")) if search.present?
   end
 end
 ```
