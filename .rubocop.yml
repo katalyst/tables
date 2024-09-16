@@ -9,10 +9,6 @@ AllCops:
   TargetRubyVersion: 3.3
   Exclude:
     # Dummy app
-    - spec/dummy/*
-    - spec/dummy/bin/*
-    - spec/dummy/config/**/*
-    - spec/dummy/db/**/*
-    - spec/dummy/deploy/*
+    - spec/dummy/tmp/**/*
     - spec/dummy/node_modules/**/*
     - spec/dummy/vendor/bundle/**/*

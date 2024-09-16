@@ -15,14 +15,26 @@ Bundler.require(*Rails.groups)
 
 module Dummy
   class Application < Rails::Application
-    config.load_defaults 7.1
+    # Initialize configuration defaults for originally generated Rails version.
+    config.load_defaults Rails::VERSION::STRING.to_f
 
-    config.autoload_lib(ignore: %w(assets tasks))
+    # Please, add to the `ignore` list any other `lib` subdirectories that do
+    # not contain `.rb` files, or that should not be reloaded or eager loaded.
+    # Common ones are `templates`, `generators`, or `middleware`, for example.
+    config.autoload_lib(ignore: %w[assets tasks])
 
+    # Configuration for the application, engines, and railties goes here.
+    #
+    # These settings can be overridden in specific environments using the files
+    # in config/environments, which are processed later.
+    #
     config.time_zone = "Adelaide"
 
-    # Tests should not eager load
+    # Dummy testing without eager load enabled
     config.eager_load = false
+
+    # Don't generate system test files.
+    config.generators.system_tests = nil
 
     # https://github.com/ViewComponent/view_component/issues/1565
     ViewComponent::Base.config.view_component_path = "app/components"
