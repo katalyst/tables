@@ -29,7 +29,7 @@ module Katalyst
           using Type::Helpers::Extensions
 
           def attribute(name, type = nil, default: (no_default = true), **)
-            type = type.is_a?(Symbol) ? resolve_type_name(type, **) : type || Type::Value.new
+            type = type.is_a?(Symbol) ? resolve_type_name(type, **) : type || Type::Value.new(**)
 
             default = type.default_value if no_default
 
