@@ -53,7 +53,7 @@ module Katalyst
           data: {
             controller: LIST_CONTROLLER,
             action: %W[mousedown->#{LIST_CONTROLLER}#mousedown
-                       turbo:before-morph-attribute->#{LIST_CONTROLLER}#beforeMorphAttribute],
+                       turbo:before-morph-element->#{LIST_CONTROLLER}#beforeMorphElement:self],
             "#{LIST_CONTROLLER}-#{FORM_CONTROLLER}-outlet" => "##{Orderable.default_form_id(collection)}",
             "#{LIST_CONTROLLER}-#{ITEM_CONTROLLER}-outlet" => "td.ordinal",
           },

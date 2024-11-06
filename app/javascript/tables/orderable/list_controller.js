@@ -146,17 +146,11 @@ export default class OrderableListController extends Controller {
     }
   }
 
-  beforeMorphAttribute(e) {
-    switch (e.detail.attributeName) {
-      case "dragging": // set to track the item being dragged
-        e.preventDefault();
-        break;
-      case "style": // used to animate rows moving up and down
-        if (e.target.tagName === "TBODY" || e.target.tagName === "TR") {
-          e.preventDefault();
-        }
-        break;
-    }
+  beforeMorphElement(e) {
+    // Cancel morph if dragging to prevent swapping rows from under the user
+    // An alternative would be to require ids on rows so morph can accurately
+    // map before/after and avoid updating the row being dragged
+    if (this.isDragging) e.preventDefault();
   }
 
   //endregion
