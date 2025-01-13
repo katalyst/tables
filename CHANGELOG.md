@@ -1,3 +1,22 @@
+## [3.7.0]
+
+Adds support for generating filter expressions for self-referencing models.
+
+## [3.6.0]
+
+Keyboard navigation for query suggestions.
+
+## [3.5.0]
+
+Adds a new query input for creating text-based filtering expressions.
+See [query](docs/developers/collections/query.md) for collection extensions and
+[filtering](docs/developers/frontend/filtering.md) for frontend support.
+
+## [3.4.0]
+
+Support for selection columns and bulk actions.
+See [docs](docs/developers/frontend/bulk-actions.md).
+
 ## [3.3.0]
 - Custom types for collections which support extensions for filtering with ranges and arrays.
 

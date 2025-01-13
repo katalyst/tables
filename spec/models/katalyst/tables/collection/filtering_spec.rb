@@ -64,30 +64,33 @@ RSpec.describe Katalyst::Tables::Collection::Filtering do
 
     it "supports complex key matching on enums" do
       scope = collection.with_params(q: "parent.role:teacher").apply(Nested::Child.all)
-      expect(scope.items.to_sql).to eq(
-        Nested::Child.joins(:parent)
-                     .merge(Parent.where(role: :teacher))
-                     .to_sql,
-      )
+      expect(scope.items.to_sql).to eq(<<~SQL.squish)
+        SELECT "nested_children".*
+        FROM "nested_children"
+        INNER JOIN "parents" "parent" ON "parent"."id" = "nested_children"."parent_id"
+        WHERE "parent"."role" = 1
+      SQL
     end
 
     it "supports complex key matching on id arrays" do
       scope = collection.with_params(q: "parent.id:[15, 10]").apply(Nested::Child.all)
-      expect(scope.items.to_sql).to eq(
-        Nested::Child.joins(:parent)
-                     .merge(Parent.where(id: [15, 10]))
-                     .to_sql,
-      )
+      expect(scope.items.to_sql).to eq(<<~SQL.squish)
+        SELECT "nested_children".*
+        FROM "nested_children"
+        INNER JOIN "parents" "parent" ON "parent"."id" = "nested_children"."parent_id"
+        WHERE "parent"."id" IN (15, 10)
+      SQL
     end
   end
 
   it "supports complex key matching on ids" do
     scope = collection.with_params(q: "parent.id:15").apply(Nested::Child.all)
-    expect(scope.items.to_sql).to eq(
-      Nested::Child.joins(:parent)
-                   .where(Arel.sql("\"parents\".\"id\" = ?", 15))
-                   .to_sql,
-    )
+    expect(scope.items.to_sql).to eq(<<~SQL.squish)
+      SELECT "nested_children".*
+      FROM "nested_children"
+      INNER JOIN "parents" "parent" ON "parent"."id" = "nested_children"."parent_id"
+      WHERE "parent"."id" = 15
+    SQL
   end
 
   it "doesn't interfere with id filters (selection)" do

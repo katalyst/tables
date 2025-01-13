@@ -6,12 +6,10 @@ module Katalyst
       class ConstantValue < Base
         delegate :to_param, to: :@attribute_type
 
-        def initialize(name:, type:, model:, column:, value:)
+        def initialize(name:, type:, value:)
           super(value)
 
           @attribute_type = type
-          @model = model
-          @column = column
           @name = name
         end
 

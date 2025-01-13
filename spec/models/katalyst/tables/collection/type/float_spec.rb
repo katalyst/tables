@@ -89,7 +89,12 @@ RSpec.describe Katalyst::Tables::Collection::Type::Float do
       end
 
       expect(filter(collection, Nested::Child.all, key: "parent.id").to_sql)
-        .to eq(Nested::Child.joins(:parent).merge(Parent.where(id: 1.0)).to_sql)
+        .to eq(<<~SQL.squish)
+          SELECT "nested_children".*
+          FROM "nested_children"
+          INNER JOIN "parents" "parent" ON "parent"."id" = "nested_children"."parent_id"
+          WHERE "parent"."id" = 1
+        SQL
     end
   end
 

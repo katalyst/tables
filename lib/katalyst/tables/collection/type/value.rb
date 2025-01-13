@@ -33,10 +33,18 @@ module Katalyst
           def filter(scope, attribute, value: filter_value(attribute))
             return scope unless filter?(attribute, value)
 
-            scope, model, column = model_and_column_for(scope, attribute)
-            condition = filter_condition(model, column, value)
+            if self.scope.present?
+              scope.public_send(self.scope, value)
+            elsif attribute.name.include?(".")
+              table_name, = attribute.name.split(".")
+              association = scope.model.reflections[table_name]
 
-            scope.merge(condition)
+              raise(ArgumentError, "Unknown association '#{table_name}' for #{scope.model}") unless association
+
+              apply_filter(scope.joins(table_name.to_sym), association.klass, attribute, value)
+            else
+              apply_filter(scope, scope.model, attribute, value)
+            end
           end
 
           def to_param(value)
@@ -44,54 +52,51 @@ module Katalyst
           end
 
           def suggestions(scope, attribute, limit: 10, order: :asc)
-            scope, model, column = model_and_column_for(scope, attribute)
+            model = scope.model
+            column = attribute.name
+
+            if attribute.name.include?(".")
+              table_name, column = attribute.name.split(".")
+              model = scope.model.reflections[table_name].klass
+
+              raise(ArgumentError, "Unknown association '#{table_name}' for #{scope.model}") unless model
+
+              scope = scope.joins(table_name.to_sym)
+            end
 
             unless model.attribute_types.has_key?(column)
               raise(ArgumentError, "Unknown column '#{column}' for #{model}. " \
                                    "Consider defining '#{attribute.name.parameterize.underscore}_suggestions'")
             end
 
-            arel_column = model.arel_table[column]
-
             filter(scope, attribute)
-              .group(arel_column)
+              .group(attribute.name)
               .distinct
               .limit(limit)
-              .reorder(arel_column => order)
-              .pluck(arel_column)
-              .map { |v| database_suggestion(attribute:, model:, column:, value: deserialize(v)) }
+              .reorder(attribute.name => order)
+              .pluck(attribute.name)
+              .map { |v| database_suggestion(attribute:, value: deserialize(v)) }
           end
 
           private
 
-          def constant_suggestion(attribute:, model:, column:, value:)
-            Tables::Suggestions::ConstantValue.new(name: attribute.name, type: attribute.type, model:, column:, value:)
+          def constant_suggestion(attribute:, value:)
+            Tables::Suggestions::ConstantValue.new(name: attribute.name, type: attribute.type, value:)
           end
 
-          def database_suggestion(attribute:, model:, column:, value:)
-            Tables::Suggestions::DatabaseValue.new(name: attribute.name, type: attribute.type, model:, column:, value:)
+          def database_suggestion(attribute:, value:)
+            Tables::Suggestions::DatabaseValue.new(name: attribute.name, type: attribute.type, value:)
           end
 
           def filter_value(attribute)
             attribute.value
           end
 
-          def filter_condition(model, column, value)
+          def apply_filter(scope, _model, attribute, value)
             if value.nil?
-              model.none
-            elsif scope
-              model.public_send(scope, value)
+              scope.none
             else
-              model.where(column => serialize(value))
-            end
-          end
-
-          def model_and_column_for(scope, attribute)
-            if attribute.name.include?(".")
-              table, column = attribute.name.split(".")
-              [scope.joins(table.to_sym), scope.model.reflections[table].klass, column]
-            else
-              [scope, scope.model, attribute.name]
+              scope.where(attribute.name => serialize(value))
             end
           end
         end

@@ -57,7 +57,12 @@ RSpec.describe Katalyst::Tables::Collection::Type::Enum do
       end
 
       expect(filter(collection, Nested::Child.all, key: "parent.role").to_sql)
-        .to eq(Nested::Child.joins(:parent).merge(Parent.where(role: :teacher)).to_sql)
+        .to eq(<<~SQL.squish)
+          SELECT "nested_children".*
+          FROM "nested_children"
+          INNER JOIN "parents" "parent" ON "parent"."id" = "nested_children"."parent_id"
+          WHERE "parent"."role" = 1
+        SQL
     end
   end
 

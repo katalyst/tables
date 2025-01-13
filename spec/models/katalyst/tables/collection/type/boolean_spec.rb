@@ -87,12 +87,17 @@ RSpec.describe Katalyst::Tables::Collection::Type::Boolean do
       end
 
       expect(filter(collection, Nested::Child.all, key: "parent.active").to_sql)
-        .to eq(Nested::Child.joins(:parent).merge(Parent.where(active: true)).to_sql)
+        .to eq(<<~SQL.squish)
+          SELECT "nested_children".*
+          FROM "nested_children"
+          INNER JOIN "parents" "parent" ON "parent"."id" = "nested_children"."parent_id"
+          WHERE "parent"."active" = 1
+        SQL
     end
 
     it "supports complex keys with scope" do
       collection = new_collection("parent.updated": true) do
-        attribute :"parent.updated", :boolean, scope: :updated
+        attribute :"parent.updated", :boolean, scope: :parent_updated
       end
 
       expect(filter(collection, Nested::Child.all, key: "parent.updated").to_sql)

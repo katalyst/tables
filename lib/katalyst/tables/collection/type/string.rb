@@ -5,8 +5,6 @@ module Katalyst
     module Collection
       module Type
         class String < Value
-          include ActiveRecord::Sanitization::ClassMethods
-
           attr_reader :exact
           alias_method :exact?, :exact
 
@@ -21,11 +19,32 @@ module Katalyst
 
           private
 
-          def filter_condition(model, column, value)
-            if exact? || scope
+          class Match
+            include ActiveRecord::Sanitization::ClassMethods
+
+            attr_reader :value
+
+            def initialize(value)
+              @value = value
+            end
+
+            def to_sql
+              "%#{sanitize_sql_like(value)}%"
+            end
+          end
+
+          class MatchHandler
+            def call(attribute, value)
+              attribute.matches(value.to_sql)
+            end
+          end
+
+          def apply_filter(scope, model, attribute, value)
+            if exact?
               super
             else
-              model.where(model.arel_table[column].matches("%#{sanitize_sql_like(value)}%"))
+              model.predicate_builder.register_handler(Match, MatchHandler.new)
+              scope.where(attribute.name => Match.new(value))
             end
           end
         end

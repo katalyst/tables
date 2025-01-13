@@ -69,27 +69,26 @@ RSpec.describe Katalyst::Tables::Collection::Type::String do
         attribute :"parent.name", :string
       end
 
-      expect(filter(collection, Nested::Child.all).to_sql).to eq(
-        Nested::Child.joins(:parent)
-                     .where(Arel.sql(
-                              "\"parents\".\"name\" LIKE ?", "%test%"
-                            ))
-                     .to_sql,
-      )
+      expect(filter(collection, Nested::Child.all).to_sql).to eq(<<~SQL.squish)
+        SELECT "nested_children".*
+        FROM "nested_children"
+        INNER JOIN "parents" "parent" ON "parent"."id" = "nested_children"."parent_id"
+        WHERE "parent"."name" LIKE '%test%'
+      SQL
     end
 
     it "supports joining on table aliases" do
-      collection = new_collection("friend.name": "test") do
-        attribute :"friend.name", :string
+      collection = new_collection("friends.name": "test") do
+        attribute :"friends.name", :string
       end
 
-      expect(filter(collection, Person.all).to_sql).to eq(
-        Person.joins(:friends)
-                           .where(Arel.sql(
-                                    "\"friends\".\"name\" LIKE ?", "%test%"
-                                  ))
-                           .to_sql,
-      )
+      expect(filter(collection, Person.all).to_sql).to eq(<<~SQL.squish)
+        SELECT "people".*
+        FROM "people"
+        INNER JOIN "people_friends" ON "people_friends"."person_id" = "people"."id"
+        INNER JOIN "people" "friends" ON "friends"."id" = "people_friends"."friend_id"
+        WHERE "friends"."name" LIKE '%test%'
+      SQL
     end
   end
 
@@ -163,7 +162,7 @@ RSpec.describe Katalyst::Tables::Collection::Type::String do
       let(:params) { { q: "friends.name:", p: 13 } }
 
       it "returns values from friends" do
-        amy = create(:person, name: "Amy")
+        amy  = create(:person, name: "Amy")
         beth = create(:person, name: "Beth")
         amy.friends << beth
 

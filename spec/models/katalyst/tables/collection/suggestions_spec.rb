@@ -168,9 +168,9 @@ RSpec.describe Katalyst::Tables::Collection::Suggestions do
     context "when retrieving examples for complex keys" do
       subject(:collection) { new_collection(q: "parent.name:", p: 12, scope: Nested::Child) }
 
-      it "includes model" do
+      it "finds associated values" do
         create_list(:child, 1)
-        expect(suggestions).to contain_exactly(have_attributes(type: :database_value, model: Parent, column: "name"))
+        expect(suggestions).to contain_exactly(have_attributes(type: :database_value, value: "Parent 1"))
       end
     end
 
