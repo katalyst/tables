@@ -11,9 +11,8 @@ RSpec.describe Katalyst::Tables::Collection::Type::String do
     end.with_params(params)
   end
 
-  def filter(collection, scope = Resource.all, key: "name")
-    attribute = collection.instance_variable_get(:@attributes)[key]
-    attribute.type.filter(scope, attribute)
+  def filter(collection, scope = Resource.all)
+    collection.apply(scope).items
   end
 
   describe "#filter" do
@@ -70,12 +69,26 @@ RSpec.describe Katalyst::Tables::Collection::Type::String do
         attribute :"parent.name", :string
       end
 
-      expect(filter(collection, Nested::Child.all, key: "parent.name").to_sql).to eq(
+      expect(filter(collection, Nested::Child.all).to_sql).to eq(
         Nested::Child.joins(:parent)
                      .where(Arel.sql(
                               "\"parents\".\"name\" LIKE ?", "%test%"
                             ))
                      .to_sql,
+      )
+    end
+
+    it "supports joining on table aliases" do
+      collection = new_collection("friend.name": "test") do
+        attribute :"friend.name", :string
+      end
+
+      expect(filter(collection, Person.all).to_sql).to eq(
+        Person.joins(:friends)
+                           .where(Arel.sql(
+                                    "\"friends\".\"name\" LIKE ?", "%test%"
+                                  ))
+                           .to_sql,
       )
     end
   end
@@ -142,6 +155,19 @@ RSpec.describe Katalyst::Tables::Collection::Type::String do
         create(:parent)
         create(:child)
         expect(collection.suggestions.map(&:value)).to contain_exactly("Parent 2")
+      end
+    end
+
+    context "with a has_and_belongs_to_many association" do
+      let(:collection) { new_collection { attribute :"friends.name", :string }.with_params(params).apply(Person) }
+      let(:params) { { q: "friends.name:", p: 13 } }
+
+      it "returns values from friends" do
+        amy = create(:person, name: "Amy")
+        beth = create(:person, name: "Beth")
+        amy.friends << beth
+
+        expect(collection.suggestions.map(&:value)).to contain_exactly("Beth")
       end
     end
   end

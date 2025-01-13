@@ -12,7 +12,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_16_052154) do
+ActiveRecord::Schema[8.0].define(version: 2025_01_13_021335) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -81,6 +81,13 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_16_052154) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "active", default: false, null: false
+  end
+
+  create_table "people_friends", id: false, force: :cascade do |t|
+    t.integer "person_id"
+    t.integer "friend_id"
+    t.index ["friend_id"], name: "index_people_friends_on_friend_id"
+    t.index ["person_id"], name: "index_people_friends_on_person_id"
   end
 
   create_table "resources", force: :cascade do |t|
