@@ -12,7 +12,6 @@
   --width-large: 16rem;
 
   border: none;
-  table-layout: fixed;
   border-collapse: collapse;
   text-align: left;
   width: 100%;
@@ -63,17 +62,18 @@
 
   th {
     font-weight: bold;
+    min-width: var(--cell-width);
 
     :where(&.width-s) {
-      width: var(--width-small);
+      --cell-width: var(--width-small);
     }
 
     :where(&.width-m) {
-      width: var(--width-medium);
+      --cell-width: var(--width-medium);
     }
 
     :where(&.width-l) {
-      width: var(--width-large);
+      --cell-width: var(--width-large);
     }
   }
 
@@ -111,13 +111,13 @@
   /* Booleans */
 
   :where(th.type-boolean, td.type-boolean) {
-    width: var(--width-small);
+    --cell-width: var(--width-small);
   }
 
   /* Currency */
 
   :where(th.type-currency, td.type-currency) {
-    width: var(--width-small);
+    --cell-width: var(--width-small);
   }
 
   :where(thead th.type-currency, td.type-currency) {
@@ -127,17 +127,17 @@
   /* Dates */
 
   :where(th.type-date, td.type-date) {
-    width: var(--width-small);
+    --cell-width: var(--width-small);
   }
 
   /* Enums */
 
   :where(th.type-datetime, td.type-datetime) {
-    width: var(--width-medium);
+    --cell-width: var(--width-medium);
   }
 
   :where(th.type-enum, td.type-enum) {
-    width: var(--width-small);
+    --cell-width: var(--width-small);
   }
 
   :where(td.type-enum) {
@@ -198,7 +198,7 @@
   /* Numbers */
 
   :where(th.type-number, td.type-number) {
-    width: var(--width-small);
+    --cell-width: var(--width-small);
   }
 
   :where(thead th.type-number, td.type-number) {
@@ -208,7 +208,7 @@
   /* Select */
 
   :where(th.selection, td.selection) {
-    width: 2rem;
+    --cell-width: 2rem;
 
     label {
       display: block;
