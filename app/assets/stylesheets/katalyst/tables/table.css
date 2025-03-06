@@ -1,5 +1,4 @@
 .katalyst--table {
-  --row-height: 3rem;
   --cell-spacing: 0.5rem;
   --table-header-color: transparent;
   --row-border-color: #f0ecf3;
@@ -20,15 +19,10 @@
     background: var(--table-header-color);
   }
 
-  tr {
-    height: var(--row-height);
-    line-height: var(--row-height);
-  }
-
   th,
   td {
     border: none;
-    box-shadow: inset 0px -1px 0px var(--row-border-color);
+    box-shadow: inset 0 -1px 0 var(--row-border-color);
     overflow: hidden;
     text-overflow: ellipsis;
     vertical-align: top;
