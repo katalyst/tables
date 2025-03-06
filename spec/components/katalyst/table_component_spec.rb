@@ -10,7 +10,7 @@ RSpec.describe Katalyst::TableComponent do
 
   it "renders tables" do
     expect(table).to match_html(<<~HTML)
-      <table>
+      <table class="katalyst--table">
         <thead><tr><th>Name</th></tr></thead>
         <tbody>
           <tr><td>Person 1</td></tr>
@@ -22,7 +22,7 @@ RSpec.describe Katalyst::TableComponent do
   it "supports minimal tables without header or caption" do
     table = render_inline(described_class.new(collection: [], caption: false, header: false))
     expect(table).to match_html(<<~HTML)
-      <table>
+      <table class="katalyst--table">
         <tbody></tbody>
       </table>
     HTML
@@ -31,7 +31,7 @@ RSpec.describe Katalyst::TableComponent do
   it "accepts html_attributes" do
     table = render_inline(described_class.new(collection: [], caption: false, header: false, **Test::HTML_ATTRIBUTES))
     expect(table).to match_html(<<~HTML)
-      <table id="ID" class="CLASS" style="style" aria-label="LABEL" data-foo="bar">
+      <table id="ID" class="katalyst--table CLASS" style="style" aria-label="LABEL" data-foo="bar">
         <tbody></tbody>
       </table>
     HTML
@@ -40,7 +40,7 @@ RSpec.describe Katalyst::TableComponent do
   it "renders a header row" do
     table = render_inline(described_class.new(collection: [], caption: false, header: true)) { nil }
     expect(table).to match_html(<<~HTML)
-      <table>
+      <table class="katalyst--table">
         <thead><tr></tr></thead>
         <tbody></tbody>
       </table>
@@ -50,7 +50,7 @@ RSpec.describe Katalyst::TableComponent do
   it "renders caption for empty collections" do
     table = render_inline(described_class.new(collection: build(:collection, count: 0))) { |row| row.text(:name) }
     expect(table).to match_html(<<~HTML)
-      <table>
+      <table class="katalyst--table">
         <caption align="bottom">
           No people found.
         </caption>
@@ -69,7 +69,7 @@ RSpec.describe Katalyst::TableComponent do
 
     it "translates column headers" do
       expect(table).to match_html(<<~HTML)
-        <table>
+        <table class="katalyst--table">
           <thead>
             <tr>
               <th>TRANSLATED</th>
@@ -93,7 +93,7 @@ RSpec.describe Katalyst::TableComponent do
 
     it "adds html options to header row tag" do
       expect(table).to match_html(<<~HTML)
-        <table>
+        <table class="katalyst--table">
           <thead>
             <tr id="ID" aria-label="LABEL" class="CLASS" style="style" data-foo="bar">
               <th>Name</th>
@@ -116,7 +116,7 @@ RSpec.describe Katalyst::TableComponent do
 
     it "adds html options to header cell tag" do
       expect(table).to match_html(<<~HTML)
-        <table>
+        <table class="katalyst--table">
           <thead>
             <tr>
               <th id="ID" aria-label="LABEL" class="CLASS" style="style" data-foo="bar">Name</th>
@@ -140,7 +140,7 @@ RSpec.describe Katalyst::TableComponent do
 
     it "adds html options to body row tag" do
       expect(table).to match_html(<<~HTML)
-        <table>
+        <table class="katalyst--table">
           <thead>
             <tr>
               <th>Name</th>
@@ -165,7 +165,7 @@ RSpec.describe Katalyst::TableComponent do
 
     it "adds html options to body cell tag" do
       expect(table).to match_html(<<~HTML)
-        <table>
+        <table class="katalyst--table">
           <thead>
             <tr>
               <th>Name</th>
@@ -186,7 +186,7 @@ RSpec.describe Katalyst::TableComponent do
     let(:collection) { build(:collection, type: :report, count: 1) }
 
     it "calls the partial to render rows" do
-      expect(table.at_css("th:not(.selection)")).to match_html(<<~HTML)
+      expect(table.at_css("th:not([data-cell-type=selection])")).to match_html(<<~HTML)
         <th>Resource partial</th>
       HTML
     end
@@ -195,7 +195,7 @@ RSpec.describe Katalyst::TableComponent do
       let(:collection) { build(:collection, type: :resource, count: 0) }
 
       it "finds the partial from the collection" do
-        expect(table.at_css("th:not(.selection)")).to match_html(<<~HTML)
+        expect(table.at_css("th:not([data-cell-type=selection])")).to match_html(<<~HTML)
           <th>Resource partial</th>
         HTML
       end
@@ -207,7 +207,7 @@ RSpec.describe Katalyst::TableComponent do
       let(:items) { build_list(:resource, 1) }
 
       it "finds the partial from the first row" do
-        expect(table.at_css("th:not(.selection)")).to match_html(<<~HTML)
+        expect(table.at_css("th:not([data-cell-type=selection])")).to match_html(<<~HTML)
           <th>Resource partial</th>
         HTML
       end
@@ -218,7 +218,7 @@ RSpec.describe Katalyst::TableComponent do
 
       it "renders empty headers as no partial is available" do
         expect(table).to match_html(<<~HTML)
-          <table>
+          <table class="katalyst--table">
             <caption align="bottom">
               No records found.
             </caption>
@@ -239,7 +239,7 @@ RSpec.describe Katalyst::TableComponent do
 
     it "calls the custom partial with correct local" do
       expect(table).to match_html(<<~HTML)
-        <table>
+        <table class="katalyst--table">
           <thead>
             <tr>
               <th>Custom partial</th>
@@ -266,7 +266,7 @@ RSpec.describe Katalyst::TableComponent do
 
     it "adds custom classes to all tags" do
       expect(table).to match_html(<<~HTML)
-        <table class="custom-table">
+        <table class="katalyst--table custom-table">
           <thead>
             <tr class="custom-header-row">
               <th class="custom-header-cell">Name</th>
@@ -323,7 +323,7 @@ RSpec.describe Katalyst::TableComponent do
 
     it "renders boolean typed columns" do
       expect(table).to match_html(<<~HTML)
-        <table>
+        <table class="katalyst--table">
           <thead><tr><th class="type-boolean">Active</th></tr></thead>
           <tbody>
             <tr><td class="type-boolean">Yes</td></tr>
@@ -344,7 +344,7 @@ RSpec.describe Katalyst::TableComponent do
 
     it "renders boolean typed columns" do
       expect(table).to match_html(<<~HTML)
-        <table>
+        <table class="katalyst--table">
           <thead><tr><th class="type-boolean">Active</th></tr></thead>
           <tbody>
             <tr><td class="type-boolean"><span>Yes</span></td></tr>

@@ -1,3 +1,11 @@
+## [3.8.0]
+
+* Adds support for consuming styles as CSS instead of SASS.
+* Adds default classes instead of assuming that all tables will be affected.
+  * `katalyst--table`
+  * `katalyst--summary-table`
+  * `katalyst--tables--query`
+
 ## [3.7.0]
 
 Adds support for generating filter expressions for self-referencing models.

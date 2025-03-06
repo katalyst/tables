@@ -10,7 +10,7 @@ RSpec.describe Katalyst::Tables::Frontend do
   it "renders tables" do
     table_with(collection:) { |row| row.text :name }
     expect(rendered).to match_html(<<~HTML)
-      <table>
+      <table class="katalyst--table">
         <thead><tr><th>Name</th></tr></thead>
         <tbody><tr><td>Person 1</td></tr></tbody>
       </table>
@@ -21,7 +21,7 @@ RSpec.describe Katalyst::Tables::Frontend do
     table_with(collection:, **Test::HTML_ATTRIBUTES) { |row| row.text :name }
 
     expect(rendered).to match_html(<<~HTML)
-      <table id="ID" class="CLASS" style="style" data-foo="bar" aria-label="LABEL">
+      <table id="ID" class="katalyst--table CLASS" style="style" data-foo="bar" aria-label="LABEL">
         <thead><tr><th>Name</th></tr></thead>
         <tbody><tr><td>Person 1</td></tr></tbody>
       </table>
@@ -34,7 +34,7 @@ RSpec.describe Katalyst::Tables::Frontend do
     end
 
     expect(rendered).to match_html(<<~HTML)
-      <table class="custom-table">
+      <table class="katalyst--table custom-table">
         <thead>
           <tr class="custom-header-row">
             <th class="custom-header-cell">Name</th>
@@ -55,7 +55,7 @@ RSpec.describe Katalyst::Tables::Frontend do
     table_with(collection:) { |row| row.text :name }
 
     expect(rendered).to match_html(<<~HTML)
-      <table class="custom-table">
+      <table class="katalyst--table custom-table">
         <thead>
           <tr class="custom-header-row">
             <th class="custom-header-cell">Name</th>

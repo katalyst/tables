@@ -11,7 +11,7 @@ RSpec.describe Katalyst::SummaryTableComponent do
 
   it "renders a summary tables" do
     expect(table).to match_html(<<~HTML)
-      <table class="summary-table">
+      <table class="katalyst--summary-table">
         <tbody>
           <tr>
             <th>Name</th>
@@ -31,7 +31,7 @@ RSpec.describe Katalyst::SummaryTableComponent do
 
     it "adds html options to header cell tag" do
       expect(table).to match_html(<<~HTML)
-        <table class="summary-table">
+        <table class="katalyst--summary-table">
           <tbody>
             <tr>
               <th id="ID" aria-label="LABEL" class="CLASS" data-foo="bar" style="style">Name</th>
@@ -52,7 +52,7 @@ RSpec.describe Katalyst::SummaryTableComponent do
 
     it "adds html options to body cell tag" do
       expect(table).to match_html(<<~HTML)
-        <table class="summary-table">
+        <table class="katalyst--summary-table">
           <tbody>
             <tr>
               <th>Name</th>

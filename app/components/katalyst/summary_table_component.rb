@@ -21,8 +21,6 @@ module Katalyst
       super(collection: [model], **)
 
       @summary_rows = []
-
-      update_html_attributes(class: "summary-table")
     end
 
     def with_cell(cell, &)
@@ -39,6 +37,10 @@ module Katalyst
         end
         @index += 1
       end
+    end
+
+    def default_html_attributes
+      { class: "katalyst--summary-table" }
     end
   end
 end

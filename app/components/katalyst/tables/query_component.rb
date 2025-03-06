@@ -80,7 +80,8 @@ module Katalyst
 
       def default_html_attributes
         {
-          data: {
+          class: "katalyst--tables--query",
+          data:  {
             controller:   "tables--query",
             turbo_action: :replace,
             action:       %w[
