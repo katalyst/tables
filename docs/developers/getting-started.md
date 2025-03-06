@@ -147,12 +147,14 @@ See [pagination](frontend/pagination) for more details.
 
 ## Styling
 
-Katalyst uses [`dartsass-rails`](https://github.com/rails/dartsass-rails) for styling and we distribute basic SCSS
-styles with this gem. These styles are intended as a starting point, and not a complete solution. We assume you're using
-a CSS reset.
+This gem comes with basic styles for intended as a starting point, and not a
+complete solution. You can import the basic styles as css:
 
-If you're using `dartsass-rails`, follow their instructions to configure `dartsass-rails`, then add
-tables to your stylesheet, e.g.
+```css
+@import "/katalyst/tables.css";
+```
+
+Or, if you're using `dartsass-rails`, add tables to your stylesheet, e.g.
 
 ```scss
 // app/assets/stylesheets/application.scss

@@ -1,0 +1,211 @@
+.katalyst--table {
+  --cell-spacing: 0.5rem;
+  --table-header-color: transparent;
+  --row-border-color: #f0ecf3;
+  --tag-color: #f0ecf3;
+  --on-tag-color: black;
+
+  /** default widths */
+  --width-small: 6rem;
+  --width-medium: 12rem;
+  --width-large: 16rem;
+
+  border: none;
+  border-collapse: collapse;
+  text-align: left;
+  width: 100%;
+
+  thead {
+    background: var(--table-header-color);
+  }
+
+  th,
+  td {
+    border: none;
+    box-shadow: inset 0 -1px 0 var(--row-border-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: top;
+    white-space: nowrap;
+    background-color: white;
+    padding-right: var(--cell-spacing);
+
+    &:last-child {
+      padding-right: 0;
+    }
+
+    > a {
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      text-decoration: none;
+    }
+
+    > img,
+    > a > img {
+      max-height: 3rem;
+      padding: 0;
+    }
+
+    > .trix-content {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  th {
+    font-weight: bold;
+    min-width: var(--cell-width);
+
+    :where(&.width-s) {
+      --cell-width: var(--width-small);
+    }
+
+    :where(&.width-m) {
+      --cell-width: var(--width-medium);
+    }
+
+    :where(&.width-l) {
+      --cell-width: var(--width-large);
+    }
+  }
+
+  thead a.ascending:after,
+  [data-sort="asc"] a::after {
+    display: inline-block;
+    content: " ";
+    position: relative;
+    margin-left: 1rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 13'%3E%3Cpath d='M.541 0l11.125 12.573a.5.5 0 00.749 0L23.541 0h-23z' fill='%23000' fill-rule='evenodd'/%3E%3C/svg%3E");
+    background-size: 14px 14px;
+    height: 14px;
+    width: 14px;
+    top: 0;
+    transform: rotate(180deg);
+  }
+
+  thead a.descending:after,
+  [data-sort="desc"] a::after {
+    display: inline-block;
+    content: " ";
+    position: relative;
+    margin-left: 1rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 13'%3E%3Cpath d='M.541 0l11.125 12.573a.5.5 0 00.749 0L23.541 0h-23z' fill='%23000' fill-rule='evenodd'/%3E%3C/svg%3E");
+    background-size: 14px 14px;
+    height: 14px;
+    width: 14px;
+    top: 4px;
+  }
+
+  caption {
+    margin: 2rem 0;
+  }
+
+  /* Booleans */
+
+  :where(th.type-boolean, td.type-boolean) {
+    --cell-width: var(--width-small);
+  }
+
+  /* Currency */
+
+  :where(th.type-currency, td.type-currency) {
+    --cell-width: var(--width-small);
+  }
+
+  :where(thead th.type-currency, td.type-currency) {
+    text-align: right;
+  }
+
+  /* Dates */
+
+  :where(th.type-date, td.type-date) {
+    --cell-width: var(--width-small);
+  }
+
+  /* Enums */
+
+  :where(th.type-datetime, td.type-datetime) {
+    --cell-width: var(--width-medium);
+  }
+
+  :where(th.type-enum, td.type-enum) {
+    --cell-width: var(--width-small);
+  }
+
+  :where(td.type-enum) {
+    /* ensure ellipsis is the correct color */
+    color: var(--on-tag-color);
+
+    small {
+      background: var(--tag-color);
+      border-radius: 0.25rem;
+      padding: 0.25rem;
+      font-size: small;
+    }
+  }
+
+  td.type-enum {
+    text-overflow: unset;
+  }
+
+  /* Ordinals */
+
+  tr:has(td.ordinal) {
+    transition:
+      top 125ms ease-in-out,
+      transform 125ms ease-in-out;
+  }
+
+  tr:has(td.ordinal)[dragging] {
+    transition: transform 125ms ease-in-out;
+    filter: drop-shadow(0 0 0.5rem var(--row-border-color));
+    transform: scale(1.01);
+
+    td {
+      box-shadow: none;
+    }
+  }
+
+  th.ordinal {
+    width: 2rem;
+    padding-left: 0;
+
+    a {
+      width: 2rem;
+      height: 3rem;
+    }
+
+    a::after {
+      margin-left: 0.4rem;
+    }
+  }
+
+  td.ordinal {
+    width: 2rem;
+    padding-left: 0;
+    cursor: grab;
+    text-align: center;
+  }
+
+  /* Numbers */
+
+  :where(th.type-number, td.type-number) {
+    --cell-width: var(--width-small);
+  }
+
+  :where(thead th.type-number, td.type-number) {
+    text-align: right;
+  }
+
+  /* Select */
+
+  :where(th.selection, td.selection) {
+    --cell-width: 2rem;
+
+    label {
+      display: block;
+    }
+  }
+}
