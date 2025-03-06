@@ -1,34 +1,16 @@
-@use "ordinal" as *;
-@use "select" as *;
-@use "typed-columns";
+.katalyst--table {
+  --row-height: 3rem;
+  --cell-spacing: 0.5rem;
+  --table-header-color: transparent;
+  --row-border-color: #f0ecf3;
+  --tag-color: #f0ecf3;
+  --on-tag-color: black;
 
-$grey: #f0ecf3 !default;
+  /** default widths */
+  --width-small: 6rem;
+  --width-medium: 12rem;
+  --width-large: 16rem;
 
-$table-header-color: transparent !default;
-$row-border-color: $grey !default;
-$row-height: 48px !default;
-$cell-spacing: 0.5rem !default;
-$tag-color: $grey !default;
-$on-tag-color: black !default;
-
-$width-small: 6rem !default;
-$width-medium: 12rem !default;
-$width-large: 16rem !default;
-
-table {
-  --row-height: #{$row-height};
-  --cell-spacing: #{$cell-spacing};
-  --table-header-color: #{$table-header-color};
-  --row-border-color: #{$row-border-color};
-  --tag-color: #{$tag-color};
-  --on-tag-color: #{$on-tag-color};
-
-  --width-small: #{$width-small};
-  --width-medium: #{$width-medium};
-  --width-large: #{$width-large};
-}
-
-table {
   border: none;
   table-layout: fixed;
   border-collapse: collapse;
@@ -124,5 +106,112 @@ table {
 
   caption {
     margin: 2rem 0;
+  }
+
+  /* Booleans */
+
+  :where(th.type-boolean, td.type-boolean) {
+    width: var(--width-small);
+  }
+
+  /* Currency */
+
+  :where(th.type-currency, td.type-currency) {
+    width: var(--width-small);
+  }
+
+  :where(thead th.type-currency, td.type-currency) {
+    text-align: right;
+  }
+
+  /* Dates */
+
+  :where(th.type-date, td.type-date) {
+    width: var(--width-small);
+  }
+
+  /* Enums */
+
+  :where(th.type-datetime, td.type-datetime) {
+    width: var(--width-medium);
+  }
+
+  :where(th.type-enum, td.type-enum) {
+    width: var(--width-small);
+  }
+
+  :where(td.type-enum) {
+    /* ensure ellipsis is the correct color */
+    color: var(--on-tag-color);
+
+    small {
+      background: var(--tag-color);
+      border-radius: 0.25rem;
+      padding: 0.25rem;
+      font-size: small;
+    }
+  }
+
+  td.type-enum {
+    text-overflow: unset;
+  }
+
+  /* Ordinals */
+
+  tr:has(td.ordinal) {
+    transition:
+      top 125ms ease-in-out,
+      transform 125ms ease-in-out;
+  }
+
+  tr:has(td.ordinal)[dragging] {
+    transition: transform 125ms ease-in-out;
+    filter: drop-shadow(0 0 0.5rem var(--row-border-color));
+    transform: scale(1.01);
+
+    td {
+      box-shadow: none;
+    }
+  }
+
+  th.ordinal {
+    width: 2rem;
+    padding-left: 0;
+
+    a {
+      width: 2rem;
+      height: 3rem;
+    }
+
+    a::after {
+      margin-left: 0.4rem;
+    }
+  }
+
+  td.ordinal {
+    width: 2rem;
+    padding-left: 0;
+    cursor: grab;
+    text-align: center;
+  }
+
+  /* Numbers */
+
+  :where(th.type-number, td.type-number) {
+    width: var(--width-small);
+  }
+
+  :where(thead th.type-number, td.type-number) {
+    text-align: right;
+  }
+
+  /* Select */
+
+  :where(th.selection, td.selection) {
+    width: 2rem;
+
+    label {
+      display: block;
+    }
   }
 }

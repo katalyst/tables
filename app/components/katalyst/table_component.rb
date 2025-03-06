@@ -317,6 +317,10 @@ module Katalyst
 
     private
 
+    def default_html_attributes
+      { class: "katalyst--table" }
+    end
+
     # Extension point for subclasses and extensions to customize header row rendering.
     def add_header_row_callback(&block)
       @header_row_callbacks << block
