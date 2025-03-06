@@ -7,6 +7,8 @@ module Katalyst
         class Date < Value
           include Helpers::Range
 
+          ISO_DATE = /\A(?<year>\d{4})-(?<month>\d\d)-(?<day>\d\d)\z/
+
           define_range_patterns /\d{4}-\d\d-\d\d/
 
           def type
@@ -33,8 +35,6 @@ module Katalyst
           end
 
           private
-
-          ISO_DATE = /\A(?<year>\d{4})-(?<month>\d\d)-(?<day>\d\d)\z/
 
           def cast_value(value)
             return value unless value.is_a?(::String)
