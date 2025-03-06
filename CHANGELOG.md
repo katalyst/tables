@@ -5,6 +5,7 @@
   * `katalyst--table`
   * `katalyst--summary-table`
   * `katalyst--tables--query`
+* Change the default styles to use table–layout: auto instead of fixed
 
 ## [3.7.0]
 
