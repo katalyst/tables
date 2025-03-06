@@ -1,4 +1,4 @@
-table.summary-table {
+.katalyst--summary-table {
   width: unset;
   border-top: 1px solid var(--row-border-color);
 

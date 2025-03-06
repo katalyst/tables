@@ -1,0 +1,142 @@
+.katalyst--tables--query {
+  position: relative;
+
+  .query-input {
+    position: relative;
+    display: grid;
+    grid-template-areas: "input button";
+    grid-template-columns: 1fr auto;
+
+    [role="combobox"] {
+      grid-area: input;
+      background: transparent;
+      caret-color: black;
+      resize: none;
+    }
+
+    &[data-connected] [role="combobox"] {
+      color: transparent;
+    }
+
+    button {
+      grid-area: button;
+      flex: 0;
+    }
+
+    .highlight {
+      grid-area: input;
+      visibility: hidden;
+      border: 1px solid transparent;
+      color: black;
+      z-index: -1;
+      font-size: 1rem;
+      padding: 2px;
+
+      overflow-wrap: break-word;
+      white-space: pre-wrap;
+
+      .value {
+        color: #666666;
+      }
+    }
+
+    &[data-connected] .highlight {
+      visibility: visible;
+    }
+  }
+
+  .query-modal {
+    --suggestion-hover: rgba(0, 0, 0, 0.1);
+    --suggestion-selected: #888;
+
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    border: 1px solid rgba(0, 0, 0, 0.16);
+    box-shadow:
+      0 3px 6px rgba(0, 0, 0, 0.16),
+      0 3px 6px rgba(0, 0, 0, 0.23);
+    background: white;
+    border-radius: 4px;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.125s;
+    pointer-events: none;
+    display: grid;
+    grid-template-areas: "header" "content" "footer";
+    grid-template-rows: auto 1fr auto;
+
+    &[data-open] {
+      opacity: 1;
+      pointer-events: unset;
+    }
+
+    header {
+      grid-area: header;
+    }
+
+    .content {
+      grid-area: content;
+      padding-top: 0.5rem;
+    }
+
+    h4 {
+      padding-inline: 1rem;
+    }
+
+    ul {
+      margin-block: 0;
+      padding-inline-start: 0;
+      list-style: none;
+
+      li {
+        position: relative;
+        display: flex;
+        align-items: baseline;
+        padding-inline: 1rem;
+        padding-block: 0.125rem;
+
+        &[aria-selected="true"],
+        &:hover {
+          outline: none;
+          background: var(--suggestion-hover);
+        }
+
+        &[aria-selected="true"]::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: 4px;
+          background: var(--suggestion-selected);
+        }
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+
+    .error {
+      background: #fff2f2;
+      border-bottom: 1px solid #fdd3d3;
+      padding: 0.5rem 1rem;
+
+      code {
+        font-weight: bold;
+      }
+    }
+
+    footer {
+      grid-area: footer;
+      display: flex;
+      justify-content: flex-start;
+      padding-inline: 1rem;
+      padding-block: 0.5rem;
+      border-top: 1px solid #d3d3d3;
+      font-size: small;
+    }
+  }
+}
