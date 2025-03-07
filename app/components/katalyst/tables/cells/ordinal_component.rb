@@ -18,11 +18,11 @@ module Katalyst
 
         def default_html_attributes
           if @row.header?
-            { class: "ordinal" }
+            { data: { cell_type: "ordinal" } }
           else
             {
-              class: "ordinal",
-              data:  {
+              data: {
+                cell_type:                                    "ordinal",
                 controller:                                   Orderable::ITEM_CONTROLLER,
                 "#{Orderable::ITEM_CONTROLLER}-params-value": params.to_json,
               },

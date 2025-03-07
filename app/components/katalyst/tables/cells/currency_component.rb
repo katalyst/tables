@@ -40,7 +40,7 @@ module Katalyst
         private
 
         def default_html_attributes
-          { class: "type-currency" }
+          { data: { cell_type: "currency" } }
         end
       end
     end

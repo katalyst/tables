@@ -11,7 +11,7 @@ module Katalyst
 
         def default_html_attributes
           {
-            class: "type-rich-text",
+            data:  { cell_type: "rich-text" },
             title: (value.to_plain_text unless row.header?),
           }
         end
