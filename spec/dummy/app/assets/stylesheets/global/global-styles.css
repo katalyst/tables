@@ -207,10 +207,6 @@ th {
   line-height: var(--leading-fine);
 }
 
-thead th {
-  padding-block: var(--space-s);
-}
-
 tbody tr {
   box-shadow: inset 0 -1px 0 var(--color-tint);
 }
@@ -219,6 +215,15 @@ td,
 th {
   vertical-align: top;
   padding: var(--space-xs) var(--space-s);
+
+  &:has(> a[href]:only-child) {
+    padding: 0;
+
+    a[href] {
+      display: block;
+      padding: var(--space-xs) var(--space-s);
+    }
+  }
 }
 
 caption {
