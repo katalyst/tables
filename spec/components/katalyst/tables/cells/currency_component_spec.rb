@@ -25,13 +25,13 @@ RSpec.describe Katalyst::Tables::Cells::CurrencyComponent do
 
   it "renders column header" do
     expect(label).to match_html(<<~HTML)
-      <th class="type-currency">Count</th>
+      <th data-cell-type="currency">Count</th>
     HTML
   end
 
   it "renders column data" do
     expect(data).to match_html(<<~HTML)
-      <td class="type-currency">$0.01</td>
+      <td data-cell-type="currency">$0.01</td>
     HTML
   end
 
@@ -40,13 +40,13 @@ RSpec.describe Katalyst::Tables::Cells::CurrencyComponent do
 
     it "renders header with html_options" do
       expect(label).to match_html(<<~HTML)
-        <th id="ID" class="type-currency CLASS" style="style" data-foo="bar" aria-label="LABEL">Count</th>
+        <th id="ID" data-cell-type="currency" class="CLASS" style="style" data-foo="bar" aria-label="LABEL">Count</th>
       HTML
     end
 
     it "renders data with html_options" do
       expect(data).to match_html(<<~HTML)
-        <td id="ID" class="type-currency CLASS" style="style" data-foo="bar" aria-label="LABEL">$0.01</td>
+        <td id="ID" data-cell-type="currency" class="CLASS" style="style" data-foo="bar" aria-label="LABEL">$0.01</td>
       HTML
     end
   end
@@ -56,13 +56,13 @@ RSpec.describe Katalyst::Tables::Cells::CurrencyComponent do
 
     it "renders header with label" do
       expect(label).to match_html(<<~HTML)
-        <th class="type-currency">LABEL</th>
+        <th data-cell-type="currency">LABEL</th>
       HTML
     end
 
     it "renders data without label" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-currency">$0.01</td>
+        <td data-cell-type="currency">$0.01</td>
       HTML
     end
   end
@@ -72,7 +72,7 @@ RSpec.describe Katalyst::Tables::Cells::CurrencyComponent do
 
     it "renders header with an empty label" do
       expect(label).to match_html(<<~HTML)
-        <th class="type-currency"></th>
+        <th data-cell-type="currency"></th>
       HTML
     end
   end
@@ -82,7 +82,7 @@ RSpec.describe Katalyst::Tables::Cells::CurrencyComponent do
 
     it "renders data as empty" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-currency"></td>
+        <td data-cell-type="currency"></td>
       HTML
     end
   end
@@ -96,7 +96,7 @@ RSpec.describe Katalyst::Tables::Cells::CurrencyComponent do
 
     it "renders data using currency_to_human's convert" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-currency">$0.00</td>
+        <td data-cell-type="currency">$0.00</td>
       HTML
     end
   end
@@ -118,7 +118,7 @@ RSpec.describe Katalyst::Tables::Cells::CurrencyComponent do
 
     it "renders data as empty" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-currency">$1.00</td>
+        <td data-cell-type="currency">$1.00</td>
       HTML
     end
   end
@@ -146,7 +146,7 @@ RSpec.describe Katalyst::Tables::Cells::CurrencyComponent do
 
     it "renders data as empty" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-currency">$1.00</td>
+        <td data-cell-type="currency">$1.00</td>
       HTML
     end
   end
@@ -156,13 +156,13 @@ RSpec.describe Katalyst::Tables::Cells::CurrencyComponent do
 
     it "renders the default header" do
       expect(label).to match_html(<<~HTML)
-        <th class="type-currency">Count</th>
+        <th data-cell-type="currency">Count</th>
       HTML
     end
 
     it "renders the custom data" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-currency"><span>$0.01</span></td>
+        <td data-cell-type="currency"><span>$0.01</span></td>
       HTML
     end
   end
@@ -178,7 +178,7 @@ RSpec.describe Katalyst::Tables::Cells::CurrencyComponent do
 
     it "allows block to access value" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-currency"><span>0.01 $</span></td>
+        <td data-cell-type="currency"><span>0.01 $</span></td>
       HTML
     end
   end

@@ -28,7 +28,7 @@ module Katalyst
 
         def default_html_attributes
           {
-            class: "type-datetime",
+            data:  { cell_type: "datetime" },
             title: (absolute_time if row.body? && @relative && today?),
           }
         end

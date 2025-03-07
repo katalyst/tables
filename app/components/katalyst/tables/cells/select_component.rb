@@ -24,16 +24,16 @@ module Katalyst
         def default_html_attributes
           if @row.header?
             {
-              class: "selection",
-              data:  {
+              data: {
+                cell_type: "selection",
                 "#{Selectable::TABLE_CONTROLLER}-target" => "header",
                 action: "change->#{Selectable::TABLE_CONTROLLER}#toggleHeader",
               },
             }
           else
             {
-              class: "selection",
-              data:  {
+              data: {
+                cell_type: "selection",
                 controller: Selectable::ITEM_CONTROLLER,
                 action: "change->#{Selectable::ITEM_CONTROLLER}#change",
                 "#{Selectable::ITEM_CONTROLLER}-params-value" => @params.to_json,

@@ -30,8 +30,8 @@ RSpec.describe "Selection" do
     end
 
     expect(page).to have_css(".tables--selection--form", text: "1 resource selected")
-    expect(page.find("thead .selection input")).to be_checked
-    expect(page.find("tbody .selection input")).to be_checked
+    expect(page.find("thead [data-cell-type=selection] input")).to be_checked
+    expect(page.find("tbody [data-cell-type=selection] input")).to be_checked
 
     click_on "Resource partial" # re-order table
 
@@ -40,8 +40,8 @@ RSpec.describe "Selection" do
 
     # check that selection is retained
     expect(page).to have_css(".tables--selection--form", text: "1 resource selected")
-    expect(page.find("thead .selection input")).to be_checked
-    expect(page.find("tbody .selection input")).to be_checked
+    expect(page.find("thead [data-cell-type=selection] input")).to be_checked
+    expect(page.find("tbody [data-cell-type=selection] input")).to be_checked
   end
 
   it "offers a download link when a selection has been made" do
@@ -129,20 +129,20 @@ RSpec.describe "Selection" do
     end
 
     expect(page).to have_css(".tables--selection--form", text: "2 resources selected")
-    expect(page.find("thead .selection input")).to be_checked
-    expect(page.all("tbody .selection input").map(&:checked?)).to contain_exactly(true, true)
+    expect(page.find("thead [data-cell-type=selection] input")).to be_checked
+    expect(page.all("tbody [data-cell-type=selection] input").map(&:checked?)).to contain_exactly(true, true)
 
     click_on("<")
 
     expect(page).to have_no_css(".tables--selection--form", text: "2 resources selected")
-    expect(page.find("thead .selection input")).not_to be_checked
-    expect(page.all("tbody .selection input").map(&:checked?)).to contain_exactly(false, false, false, false, false)
+    expect(page.find("thead [data-cell-type=selection] input")).not_to be_checked
+    expect(page.all("tbody [data-cell-type=selection] input").map(&:checked?)).to contain_exactly(false, false, false, false, false)
 
     click_on(">")
 
     expect(page).to have_css(".tables--selection--form", text: "2 resources selected")
-    expect(page.find("thead .selection input")).to be_checked
-    expect(page.all("tbody .selection input").map(&:checked?)).to contain_exactly(true, true)
+    expect(page.find("thead [data-cell-type=selection] input")).to be_checked
+    expect(page.all("tbody [data-cell-type=selection] input").map(&:checked?)).to contain_exactly(true, true)
   end
 
   it "remembers selected rows through bulk actions", pending: "requires turbo permanence" do
@@ -156,19 +156,19 @@ RSpec.describe "Selection" do
 
     expect(page).to have_css(".tables--selection--form", text: "1 person selected")
     expect(page.find("thead input")["indeterminate"]).to be true
-    expect(page.all("tbody .selection input").map(&:checked?)).to contain_exactly(true, false)
+    expect(page.all("tbody [data-cell-type=selection] input").map(&:checked?)).to contain_exactly(true, false)
 
     click_on("Archive")
 
     expect(page).to have_no_css(".tables--selection--form", text: "1 person selected")
-    expect(page.find("thead .selection input")).not_to be_checked
-    expect(page.all("tbody .selection input").map(&:checked?)).to contain_exactly(false)
+    expect(page.find("thead [data-cell-type=selection] input")).not_to be_checked
+    expect(page.all("tbody [data-cell-type=selection] input").map(&:checked?)).to contain_exactly(false)
 
     click_on("Archived")
 
     expect(page).to have_css(".tables--selection--form", text: "1 person selected")
-    expect(page.find("thead .selection input")).to be_checked
-    expect(page.all("tbody .selection input").map(&:checked?)).to contain_exactly(true)
+    expect(page.find("thead [data-cell-type=selection] input")).to be_checked
+    expect(page.all("tbody [data-cell-type=selection] input").map(&:checked?)).to contain_exactly(true)
   end
 
   it "selects all" do
@@ -187,7 +187,7 @@ RSpec.describe "Selection" do
       first("input[type=checkbox]").click
     end
 
-    expect(page.all("tbody .selection input").map(&:checked?)).to contain_exactly(true, true)
+    expect(page.all("tbody [data-cell-type=selection] input").map(&:checked?)).to contain_exactly(true, true)
   end
 
   it "deselects all" do
@@ -206,6 +206,6 @@ RSpec.describe "Selection" do
       first("input[type=checkbox]").click
     end
 
-    expect(page.all("tbody .selection input").map(&:checked?)).to contain_exactly(false, false)
+    expect(page.all("tbody [data-cell-type=selection] input").map(&:checked?)).to contain_exactly(false, false)
   end
 end

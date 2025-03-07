@@ -43,7 +43,7 @@ RSpec.describe Katalyst::Tables::Sortable do
     expect(render_header do |row|
       row.date(:created_at)
     end).to match_html(<<~HTML)
-      <th class="type-date"><a data-turbo-action="replace" href="/people?sort=created_at+asc">Created at</a></th>
+      <th data-cell-type="date"><a data-turbo-action="replace" href="/people?sort=created_at+asc">Created at</a></th>
     HTML
   end
 

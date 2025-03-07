@@ -13,14 +13,14 @@ RSpec.describe Katalyst::Tables::Orderable do
     component = Katalyst::TableComponent.new(collection:)
     html = render_inline(component) { |row, _| row.ordinal }
     expect(html).to match_html(<<~HTML)
-      <table>
-        <thead><tr><th class="ordinal"></th></tr></thead>
+      <table class="katalyst--table">
+        <thead><tr><th data-cell-type="ordinal"></th></tr></thead>
         <tbody data-controller="tables--orderable--list"
                 data-action="mousedown->tables--orderable--list#mousedown turbo:before-morph-element->tables--orderable--list#beforeMorphElement:self"
                 data-tables--orderable--list-tables--orderable--form-outlet="##{form_id}"
-                data-tables--orderable--list-tables--orderable--item-outlet="td.ordinal">
+                data-tables--orderable--list-tables--orderable--item-outlet="td[data-cell-type=ordinal]">
           <tr>
-            <td class="ordinal"
+            <td data-cell-type="ordinal"
                 data-controller="tables--orderable--item"
                 data-tables--orderable--item-params-value='{"id_name":"id","id_value":1,"index_name":"ordinal","index_value":1}'>
               ⠿

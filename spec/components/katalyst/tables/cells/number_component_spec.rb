@@ -11,13 +11,13 @@ RSpec.describe Katalyst::Tables::Cells::NumberComponent do
 
   it "renders column header" do
     expect(label).to match_html(<<~HTML)
-      <th class="type-number">Count</th>
+      <th data-cell-type="number">Count</th>
     HTML
   end
 
   it "renders column data" do
     expect(data).to match_html(<<~HTML)
-      <td class="type-number">1</td>
+      <td data-cell-type="number">1</td>
     HTML
   end
 
@@ -26,13 +26,13 @@ RSpec.describe Katalyst::Tables::Cells::NumberComponent do
 
     it "renders header with html_options" do
       expect(label).to match_html(<<~HTML)
-        <th id="ID" class="type-number CLASS" style="style" data-foo="bar" aria-label="LABEL">Count</th>
+        <th id="ID" data-cell-type="number" class="CLASS" style="style" data-foo="bar" aria-label="LABEL">Count</th>
       HTML
     end
 
     it "renders data with html_options" do
       expect(data).to match_html(<<~HTML)
-        <td id="ID" class="type-number CLASS" style="style" data-foo="bar" aria-label="LABEL">1</td>
+        <td id="ID" data-cell-type="number" class="CLASS" style="style" data-foo="bar" aria-label="LABEL">1</td>
       HTML
     end
   end
@@ -42,13 +42,13 @@ RSpec.describe Katalyst::Tables::Cells::NumberComponent do
 
     it "renders header with label" do
       expect(label).to match_html(<<~HTML)
-        <th class="type-number">LABEL</th>
+        <th data-cell-type="number">LABEL</th>
       HTML
     end
 
     it "renders data without label" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-number">1</td>
+        <td data-cell-type="number">1</td>
       HTML
     end
   end
@@ -58,7 +58,7 @@ RSpec.describe Katalyst::Tables::Cells::NumberComponent do
 
     it "renders header with an empty label" do
       expect(label).to match_html(<<~HTML)
-        <th class="type-number"></th>
+        <th data-cell-type="number"></th>
       HTML
     end
   end
@@ -68,7 +68,7 @@ RSpec.describe Katalyst::Tables::Cells::NumberComponent do
 
     it "renders data as empty" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-number"></td>
+        <td data-cell-type="number"></td>
       HTML
     end
   end
@@ -78,7 +78,7 @@ RSpec.describe Katalyst::Tables::Cells::NumberComponent do
 
     it "renders data with commas" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-number">1,000,000,000</td>
+        <td data-cell-type="number">1,000,000,000</td>
       HTML
     end
   end
@@ -93,7 +93,7 @@ RSpec.describe Katalyst::Tables::Cells::NumberComponent do
 
     it "renders data with unit" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-number">1.02 km</td>
+        <td data-cell-type="number">1.02 km</td>
       HTML
     end
   end
@@ -103,7 +103,7 @@ RSpec.describe Katalyst::Tables::Cells::NumberComponent do
 
     it "renders data using number_to_human's convert" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-number">0</td>
+        <td data-cell-type="number">0</td>
       HTML
     end
   end
@@ -113,13 +113,13 @@ RSpec.describe Katalyst::Tables::Cells::NumberComponent do
 
     it "renders the default header" do
       expect(label).to match_html(<<~HTML)
-        <th class="type-number">Count</th>
+        <th data-cell-type="number">Count</th>
       HTML
     end
 
     it "renders the custom data" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-number"><span>1</span></td>
+        <td data-cell-type="number"><span>1</span></td>
       HTML
     end
   end
@@ -135,7 +135,7 @@ RSpec.describe Katalyst::Tables::Cells::NumberComponent do
 
     it "allows block to access value" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-number"><span>1.000%</span></td>
+        <td data-cell-type="number"><span>1.000%</span></td>
       HTML
     end
   end

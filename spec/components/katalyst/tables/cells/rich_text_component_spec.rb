@@ -11,13 +11,13 @@ RSpec.describe Katalyst::Tables::Cells::RichTextComponent do
 
   it "renders column header" do
     expect(label).to match_html(<<~HTML)
-      <th class="type-rich-text">Answer</th>
+      <th data-cell-type="rich-text">Answer</th>
     HTML
   end
 
   it "renders column data" do
     expect(data).to match_html(<<~HTML)
-      <td class="type-rich-text" title="#{collection.first.answer.to_plain_text}">#{collection.first.answer}</td>
+      <td data-cell-type="rich-text" title="#{collection.first.answer.to_plain_text}">#{collection.first.answer}</td>
     HTML
   end
 
@@ -26,13 +26,13 @@ RSpec.describe Katalyst::Tables::Cells::RichTextComponent do
 
     it "renders header with html_options" do
       expect(label).to match_html(<<~HTML)
-        <th id="ID" class="type-rich-text CLASS" style="style" data-foo="bar" aria-label="LABEL">Answer</th>
+        <th id="ID" data-cell-type="rich-text" class="CLASS" style="style" data-foo="bar" aria-label="LABEL">Answer</th>
       HTML
     end
 
     it "renders data with html_options" do
       expect(data).to match_html(<<~HTML)
-        <td id="ID" class="type-rich-text CLASS" style="style" data-foo="bar" aria-label="LABEL" title="#{collection.first.answer.to_plain_text}">#{collection.first.answer}</td>
+        <td id="ID" data-cell-type="rich-text" class="CLASS" style="style" data-foo="bar" aria-label="LABEL" title="#{collection.first.answer.to_plain_text}">#{collection.first.answer}</td>
       HTML
     end
   end
@@ -42,13 +42,13 @@ RSpec.describe Katalyst::Tables::Cells::RichTextComponent do
 
     it "renders header with label" do
       expect(label).to match_html(<<~HTML)
-        <th class="type-rich-text">LABEL</th>
+        <th data-cell-type="rich-text">LABEL</th>
       HTML
     end
 
     it "renders data without label" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-rich-text" title="#{collection.first.answer.to_plain_text}">#{collection.first.answer}</td>
+        <td data-cell-type="rich-text" title="#{collection.first.answer.to_plain_text}">#{collection.first.answer}</td>
       HTML
     end
   end
@@ -58,7 +58,7 @@ RSpec.describe Katalyst::Tables::Cells::RichTextComponent do
 
     it "renders header with an empty label" do
       expect(label).to match_html(<<~HTML)
-        <th class="type-rich-text"></th>
+        <th data-cell-type="rich-text"></th>
       HTML
     end
   end
@@ -68,7 +68,7 @@ RSpec.describe Katalyst::Tables::Cells::RichTextComponent do
 
     it "renders data as empty" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-rich-text" title=""></td>
+        <td data-cell-type="rich-text" title=""></td>
       HTML
     end
   end
@@ -78,13 +78,13 @@ RSpec.describe Katalyst::Tables::Cells::RichTextComponent do
 
     it "renders the default header" do
       expect(label).to match_html(<<~HTML)
-        <th class="type-rich-text">Answer</th>
+        <th data-cell-type="rich-text">Answer</th>
       HTML
     end
 
     it "renders the custom data" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-rich-text" title="#{collection.first.answer.to_plain_text}"><span>#{collection.first.answer}</span></td>
+        <td data-cell-type="rich-text" title="#{collection.first.answer.to_plain_text}"><span>#{collection.first.answer}</span></td>
       HTML
     end
   end

@@ -44,7 +44,7 @@ module Katalyst
         private
 
         def default_html_attributes
-          { class: "type-number" }
+          { data: { cell_type: "number" } }
         end
       end
     end

@@ -11,13 +11,13 @@ RSpec.describe Katalyst::Tables::Cells::BooleanComponent do
 
   it "renders column header" do
     expect(label).to match_html(<<~HTML)
-      <th class="type-boolean">Active</th>
+      <th data-cell-type="boolean">Active</th>
     HTML
   end
 
   it "renders column data" do
     expect(data).to match_html(<<~HTML)
-      <td class="type-boolean">Yes</td>
+      <td data-cell-type="boolean">Yes</td>
     HTML
   end
 
@@ -26,13 +26,13 @@ RSpec.describe Katalyst::Tables::Cells::BooleanComponent do
 
     it "renders header with html_options" do
       expect(label).to match_html(<<~HTML)
-        <th id="ID" class="type-boolean CLASS" style="style" data-foo="bar" aria-label="LABEL">Active</th>
+        <th id="ID" data-cell-type="boolean" class="CLASS" style="style" data-foo="bar" aria-label="LABEL">Active</th>
       HTML
     end
 
     it "renders data with html_options" do
       expect(data).to match_html(<<~HTML)
-        <td id="ID" class="type-boolean CLASS" style="style" data-foo="bar" aria-label="LABEL">Yes</td>
+        <td id="ID" data-cell-type="boolean" class="CLASS" style="style" data-foo="bar" aria-label="LABEL">Yes</td>
       HTML
     end
   end
@@ -42,13 +42,13 @@ RSpec.describe Katalyst::Tables::Cells::BooleanComponent do
 
     it "renders header with label" do
       expect(label).to match_html(<<~HTML)
-        <th class="type-boolean">LABEL</th>
+        <th data-cell-type="boolean">LABEL</th>
       HTML
     end
 
     it "renders data without label" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-boolean">Yes</td>
+        <td data-cell-type="boolean">Yes</td>
       HTML
     end
   end
@@ -58,7 +58,7 @@ RSpec.describe Katalyst::Tables::Cells::BooleanComponent do
 
     it "renders header with an empty label" do
       expect(label).to match_html(<<~HTML)
-        <th class="type-boolean"></th>
+        <th data-cell-type="boolean"></th>
       HTML
     end
   end
@@ -68,7 +68,7 @@ RSpec.describe Katalyst::Tables::Cells::BooleanComponent do
 
     it "renders data as falsey" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-boolean">No</td>
+        <td data-cell-type="boolean">No</td>
       HTML
     end
   end
@@ -78,13 +78,13 @@ RSpec.describe Katalyst::Tables::Cells::BooleanComponent do
 
     it "renders the default header" do
       expect(label).to match_html(<<~HTML)
-        <th class="type-boolean">Active</th>
+        <th data-cell-type="boolean">Active</th>
       HTML
     end
 
     it "renders the custom data" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-boolean"><span>Yes</span></td>
+        <td data-cell-type="boolean"><span>Yes</span></td>
       HTML
     end
   end
@@ -94,7 +94,7 @@ RSpec.describe Katalyst::Tables::Cells::BooleanComponent do
 
     it "allows block to access value" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-boolean"><span>true</span></td>
+        <td data-cell-type="boolean"><span>true</span></td>
       HTML
     end
   end

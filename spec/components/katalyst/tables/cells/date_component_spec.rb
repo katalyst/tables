@@ -11,13 +11,13 @@ RSpec.describe Katalyst::Tables::Cells::DateComponent do
 
   it "renders column header" do
     expect(label).to match_html(<<~HTML)
-      <th class="type-date">Created at</th>
+      <th data-cell-type="date">Created at</th>
     HTML
   end
 
   it "renders column data" do
     expect(data).to match_html(<<~HTML)
-      <td class="type-date" title="#{I18n.l(collection.first.created_at.to_date, format: :default)}">Today</td>
+      <td data-cell-type="date" title="#{I18n.l(collection.first.created_at.to_date, format: :default)}">Today</td>
     HTML
   end
 
@@ -26,13 +26,13 @@ RSpec.describe Katalyst::Tables::Cells::DateComponent do
 
     it "renders header with html_options" do
       expect(label).to match_html(<<~HTML)
-        <th id="ID" class="type-date CLASS" style="style" data-foo="bar" aria-label="LABEL">Created at</th>
+        <th id="ID" data-cell-type="date" class="CLASS" style="style" data-foo="bar" aria-label="LABEL">Created at</th>
       HTML
     end
 
     it "renders data with html_options" do
       expect(data).to match_html(<<~HTML)
-        <td id="ID" class="type-date CLASS" style="style" data-foo="bar" aria-label="LABEL" title="#{I18n.l(collection.first.created_at.to_date, format: :default)}">Today</td>
+        <td id="ID" data-cell-type="date" class="CLASS" style="style" data-foo="bar" aria-label="LABEL" title="#{I18n.l(collection.first.created_at.to_date, format: :default)}">Today</td>
       HTML
     end
   end
@@ -42,13 +42,13 @@ RSpec.describe Katalyst::Tables::Cells::DateComponent do
 
     it "renders header with label" do
       expect(label).to match_html(<<~HTML)
-        <th class="type-date">LABEL</th>
+        <th data-cell-type="date">LABEL</th>
       HTML
     end
 
     it "renders data without label" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-date" title="#{I18n.l(collection.first.created_at.to_date, format: :default)}">Today</td>
+        <td data-cell-type="date" title="#{I18n.l(collection.first.created_at.to_date, format: :default)}">Today</td>
       HTML
     end
   end
@@ -58,7 +58,7 @@ RSpec.describe Katalyst::Tables::Cells::DateComponent do
 
     it "renders header with an empty label" do
       expect(label).to match_html(<<~HTML)
-        <th class="type-date"></th>
+        <th data-cell-type="date"></th>
       HTML
     end
   end
@@ -68,7 +68,7 @@ RSpec.describe Katalyst::Tables::Cells::DateComponent do
 
     it "renders data as empty" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-date"></td>
+        <td data-cell-type="date"></td>
       HTML
     end
   end
@@ -78,13 +78,13 @@ RSpec.describe Katalyst::Tables::Cells::DateComponent do
 
     it "renders the default header" do
       expect(label).to match_html(<<~HTML)
-        <th class="type-date">Created at</th>
+        <th data-cell-type="date">Created at</th>
       HTML
     end
 
     it "renders the custom data" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-date" title="#{I18n.l(collection.first.created_at.to_date, format: :default)}"><span>Today</span></td>
+        <td data-cell-type="date" title="#{I18n.l(collection.first.created_at.to_date, format: :default)}"><span>Today</span></td>
       HTML
     end
   end
@@ -100,7 +100,7 @@ RSpec.describe Katalyst::Tables::Cells::DateComponent do
 
     it "allows block to access value" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-date" title="#{I18n.l(collection.first.created_at.to_date, format: :default)}"><span>#{I18n.l(collection.first.created_at.to_date, format: :short)}</span></td>
+        <td data-cell-type="date" title="#{I18n.l(collection.first.created_at.to_date, format: :default)}"><span>#{I18n.l(collection.first.created_at.to_date, format: :short)}</span></td>
       HTML
     end
   end
@@ -110,7 +110,7 @@ RSpec.describe Katalyst::Tables::Cells::DateComponent do
 
     it "renders column data" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-date">#{I18n.l(collection.first.created_at.to_date, format: :default)}</td>
+        <td data-cell-type="date">#{I18n.l(collection.first.created_at.to_date, format: :default)}</td>
       HTML
     end
   end
@@ -120,7 +120,7 @@ RSpec.describe Katalyst::Tables::Cells::DateComponent do
 
     it "renders column data" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-date" title="#{I18n.l(collection.first.created_at.to_date, format: :default)}">3 days from now</td>
+        <td data-cell-type="date" title="#{I18n.l(collection.first.created_at.to_date, format: :default)}">3 days from now</td>
       HTML
     end
   end

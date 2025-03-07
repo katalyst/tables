@@ -12,7 +12,7 @@ module Katalyst
         private
 
         def default_html_attributes
-          { class: "type-boolean" }
+          { data: { cell_type: "boolean" } }
         end
       end
     end

@@ -97,7 +97,7 @@ e.g. `active_record.attributes.banner/status.published`.
 ```erb
 <% row.enum :status %>
 <%# label => <th>Status</th> %>
-<%# data => <td class="type-enum"><span data-enum="status" data-value="published">Published</span></td> %>
+<%# data => <td data-cell-type="enum"><span data-enum="status" data-value="published">Published</span></td> %>
 ```
 
 ### `number`

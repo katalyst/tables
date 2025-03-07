@@ -11,13 +11,13 @@ RSpec.describe Katalyst::Tables::Cells::DateTimeComponent do
 
   it "renders column header" do
     expect(label).to match_html(<<~HTML)
-      <th class="type-datetime">Created at</th>
+      <th data-cell-type="datetime">Created at</th>
     HTML
   end
 
   it "renders column data" do
     expect(data).to match_html(<<~HTML)
-      <td class="type-datetime" title="#{I18n.l(collection.first.created_at.to_datetime, format: :default)}">Less than a minute ago</td>
+      <td data-cell-type="datetime" title="#{I18n.l(collection.first.created_at.to_datetime, format: :default)}">Less than a minute ago</td>
     HTML
   end
 
@@ -26,13 +26,13 @@ RSpec.describe Katalyst::Tables::Cells::DateTimeComponent do
 
     it "renders header with html_options" do
       expect(label).to match_html(<<~HTML)
-        <th id="ID" class="type-datetime CLASS" style="style" data-foo="bar" aria-label="LABEL">Created at</th>
+        <th id="ID" data-cell-type="datetime" class="CLASS" style="style" data-foo="bar" aria-label="LABEL">Created at</th>
       HTML
     end
 
     it "renders data with html_options" do
       expect(data).to match_html(<<~HTML)
-        <td id="ID" class="type-datetime CLASS" style="style" data-foo="bar" aria-label="LABEL" title="#{I18n.l(collection.first.created_at.to_datetime, format: :default)}">Less than a minute ago</td>
+        <td id="ID" data-cell-type="datetime" class="CLASS" style="style" data-foo="bar" aria-label="LABEL" title="#{I18n.l(collection.first.created_at.to_datetime, format: :default)}">Less than a minute ago</td>
       HTML
     end
   end
@@ -42,13 +42,13 @@ RSpec.describe Katalyst::Tables::Cells::DateTimeComponent do
 
     it "renders header with label" do
       expect(label).to match_html(<<~HTML)
-        <th class="type-datetime">LABEL</th>
+        <th data-cell-type="datetime">LABEL</th>
       HTML
     end
 
     it "renders data without label" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-datetime" title="#{I18n.l(collection.first.created_at.to_datetime, format: :default)}">Less than a minute ago</td>
+        <td data-cell-type="datetime" title="#{I18n.l(collection.first.created_at.to_datetime, format: :default)}">Less than a minute ago</td>
       HTML
     end
   end
@@ -58,7 +58,7 @@ RSpec.describe Katalyst::Tables::Cells::DateTimeComponent do
 
     it "renders header with an empty label" do
       expect(label).to match_html(<<~HTML)
-        <th class="type-datetime"></th>
+        <th data-cell-type="datetime"></th>
       HTML
     end
   end
@@ -68,7 +68,7 @@ RSpec.describe Katalyst::Tables::Cells::DateTimeComponent do
 
     it "renders data as empty" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-datetime"></td>
+        <td data-cell-type="datetime"></td>
       HTML
     end
   end
@@ -78,13 +78,13 @@ RSpec.describe Katalyst::Tables::Cells::DateTimeComponent do
 
     it "renders the default header" do
       expect(label).to match_html(<<~HTML)
-        <th class="type-datetime">Created at</th>
+        <th data-cell-type="datetime">Created at</th>
       HTML
     end
 
     it "renders the custom data" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-datetime" title="#{I18n.l(collection.first.created_at.to_datetime, format: :default)}"><span>Less than a minute ago</span></td>
+        <td data-cell-type="datetime" title="#{I18n.l(collection.first.created_at.to_datetime, format: :default)}"><span>Less than a minute ago</span></td>
       HTML
     end
   end
@@ -100,7 +100,7 @@ RSpec.describe Katalyst::Tables::Cells::DateTimeComponent do
 
     it "allows block to access value" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-datetime" title="#{I18n.l(collection.first.created_at.to_datetime, format: :default)}"><span>#{I18n.l(collection.first.created_at.to_datetime, format: :short)}</span></td>
+        <td data-cell-type="datetime" title="#{I18n.l(collection.first.created_at.to_datetime, format: :default)}"><span>#{I18n.l(collection.first.created_at.to_datetime, format: :short)}</span></td>
       HTML
     end
   end
@@ -110,7 +110,7 @@ RSpec.describe Katalyst::Tables::Cells::DateTimeComponent do
 
     it "renders column data" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-datetime">#{I18n.l(collection.first.created_at.to_datetime, format: :default)}</td>
+        <td data-cell-type="datetime">#{I18n.l(collection.first.created_at.to_datetime, format: :default)}</td>
       HTML
     end
   end
@@ -120,7 +120,7 @@ RSpec.describe Katalyst::Tables::Cells::DateTimeComponent do
 
     it "renders column data" do
       expect(data).to match_html(<<~HTML)
-        <td class="type-datetime" title="#{I18n.l(collection.first.created_at.to_datetime, format: :default)}">About 1 hour from now</td>
+        <td data-cell-type="datetime" title="#{I18n.l(collection.first.created_at.to_datetime, format: :default)}">About 1 hour from now</td>
       HTML
     end
   end

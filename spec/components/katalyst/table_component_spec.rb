@@ -324,9 +324,9 @@ RSpec.describe Katalyst::TableComponent do
     it "renders boolean typed columns" do
       expect(table).to match_html(<<~HTML)
         <table class="katalyst--table">
-          <thead><tr><th class="type-boolean">Active</th></tr></thead>
+          <thead><tr><th data-cell-type="boolean">Active</th></tr></thead>
           <tbody>
-            <tr><td class="type-boolean">Yes</td></tr>
+            <tr><td data-cell-type="boolean">Yes</td></tr>
           </tbody>
         </table>
       HTML
@@ -345,9 +345,9 @@ RSpec.describe Katalyst::TableComponent do
     it "renders boolean typed columns" do
       expect(table).to match_html(<<~HTML)
         <table class="katalyst--table">
-          <thead><tr><th class="type-boolean">Active</th></tr></thead>
+          <thead><tr><th data-cell-type="boolean">Active</th></tr></thead>
           <tbody>
-            <tr><td class="type-boolean"><span>Yes</span></td></tr>
+            <tr><td data-cell-type="boolean"><span>Yes</span></td></tr>
           </tbody>
         </table>
       HTML

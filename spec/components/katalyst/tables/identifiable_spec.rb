@@ -12,7 +12,7 @@ RSpec.describe Katalyst::Tables::Identifiable do
     component = Katalyst::TableComponent.new(collection:, generate_ids: true)
     html = render_inline(component) { |row| row.text(:name) }
     expect(html).to match_html(<<~HTML)
-      <table id="people">
+      <table id="people" class="katalyst--table">
         <thead><tr><th>Name</th></tr></thead>
         <tbody>
           <tr id="person_1"><td>Person 1</td></tr>
@@ -25,7 +25,7 @@ RSpec.describe Katalyst::Tables::Identifiable do
     component = Katalyst::TableComponent.new(collection:, caption: false, header: false, generate_ids: true)
     html = render_inline(component) { |row| row.text(:name) }
     expect(html).to match_html(<<~HTML)
-      <table id="people">
+      <table id="people" class="katalyst--table">
         <tbody>
           <tr id="person_1"><td>Person 1</td></tr>
         </tbody>
@@ -40,7 +40,7 @@ RSpec.describe Katalyst::Tables::Identifiable do
       row.text(:name)
     end
     expect(html).to match_html(<<~HTML)
-      <table id="ID" class="CLASS" style="style" aria-label="LABEL" data-foo="bar">
+      <table id="ID" class="katalyst--table CLASS" style="style" aria-label="LABEL" data-foo="bar">
         <thead><tr><th>Name</th></tr></thead>
         <tbody>
           <tr id="test_1"><td>Person 1</td></tr>
