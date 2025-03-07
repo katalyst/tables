@@ -3,13 +3,15 @@
 <%= link_to "Archived", archived_people_path %>
 
 <%# Note: deliberately testing without Query to ensure backwards compatibility %>
-<%= form_with model: collection, method: :get, data: {
-      turbo_action: "replace",
-    } do |form| %>
+<%= form_with(model: collection, method: :get, data: {
+                turbo_action: "replace",
+              }) do |form| %>
   <%= form.label :search %>
-  <%= form.text_field :search, type: :search %>
-  <%= form.hidden_field :sort unless collection.default_sort? %>
-  <%= form.submit "Filter", name: nil %>
+  <div class="search-bar">
+    <%= form.text_field :search, type: :search %>
+    <%= form.hidden_field :sort unless collection.default_sort? %>
+    <%= form.submit "Filter", name: nil %>
+  </div>
 <% end %>
 
 <%= table_selection_with(collection:) do %>

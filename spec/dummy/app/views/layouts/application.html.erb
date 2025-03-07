@@ -9,14 +9,13 @@
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <link rel="stylesheet" href="https://unpkg.com/modern-css-reset/dist/reset.min.css">
     <%= javascript_importmap_tags %>
 
     <%= yield :head %>
   </head>
 
   <body>
-    <main>
+    <main class="flow wrapper">
       <%= yield %>
     </main>
   </body>

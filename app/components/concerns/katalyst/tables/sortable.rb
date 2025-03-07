@@ -58,7 +58,7 @@ module Katalyst
         end
 
         def default_html_attributes
-          { data: { turbo_action: "replace" } }
+          { class: "sortable", data: { turbo_action: "replace" } }
         end
       end
     end

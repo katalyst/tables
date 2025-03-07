@@ -6,6 +6,7 @@
     display: grid;
     grid-template-areas: "input button";
     grid-template-columns: 1fr auto;
+    column-gap: var(--space-2xs, 0.5rem);
 
     [role="combobox"] {
       grid-area: input;
@@ -46,9 +47,6 @@
   }
 
   .query-modal {
-    --suggestion-hover: rgba(0, 0, 0, 0.1);
-    --suggestion-selected: #888;
-
     position: absolute;
     top: 100%;
     left: 0;
@@ -66,6 +64,7 @@
     display: grid;
     grid-template-areas: "header" "content" "footer";
     grid-template-rows: auto 1fr auto;
+    margin: 0;
 
     &[data-open] {
       opacity: 1;
@@ -85,37 +84,38 @@
       padding-inline: 1rem;
     }
 
-    ul {
+    .suggestions {
       margin-block: 0;
       padding-inline-start: 0;
       list-style: none;
+    }
 
-      li {
-        position: relative;
-        display: flex;
-        align-items: baseline;
-        padding-inline: 1rem;
-        padding-block: 0.125rem;
+    .suggestion {
+      position: relative;
+      display: flex;
+      align-items: baseline;
+      padding-inline: 1rem;
+      padding-block: 0.125rem;
+      line-height: var(--leading-loose, 1.7);
 
-        &[aria-selected="true"],
-        &:hover {
-          outline: none;
-          background: var(--suggestion-hover);
-        }
+      &[aria-selected="true"],
+      &:hover {
+        outline: none;
+        background-color: var(--suggestion-hover, rgba(0, 0, 0, 0.1));
+      }
 
-        &[aria-selected="true"]::after {
-          content: "";
-          position: absolute;
-          left: 0;
-          top: 0;
-          bottom: 0;
-          width: 4px;
-          background: var(--suggestion-selected);
-        }
+      &[aria-selected="true"]::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background-color: var(--suggestion-selected, #888);
+      }
 
-        &:hover {
-          cursor: pointer;
-        }
+      &:hover {
+        cursor: pointer;
       }
     }
 

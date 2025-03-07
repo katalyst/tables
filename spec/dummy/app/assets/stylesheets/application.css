@@ -2,10 +2,22 @@
 @import url("global/fonts.css");
 @import url("global/variables.css");
 @import url("global/global-styles.css");
+@import url("compositions/index.css");
+@import url("blocks/index.css");
 
 @import url("/katalyst/tables.css");
 
-html,
-body {
-  font-family: "Helvetica Neue", Helvetica, Arial, Sans-Serif;
+/* query input needs to be tuned to match the text input styles */
+.katalyst--tables--query {
+  .query-input {
+    &[data-connected] [role="combobox"] {
+      /* uncomment to show input text for aligning with highlight */
+      /* color: rebeccapurple; */
+    }
+
+    .highlight {
+      border-width: 2px;
+      padding: 0.5em 0.8em;
+    }
+  }
 }

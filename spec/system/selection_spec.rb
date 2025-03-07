@@ -136,7 +136,8 @@ RSpec.describe "Selection" do
 
     expect(page).to have_no_css(".tables--selection--form", text: "2 resources selected")
     expect(page.find("thead [data-cell-type=selection] input")).not_to be_checked
-    expect(page.all("tbody [data-cell-type=selection] input").map(&:checked?)).to contain_exactly(false, false, false, false, false)
+    expect(page.all("tbody [data-cell-type=selection] input").map(&:checked?))
+      .to contain_exactly(false, false, false, false, false)
 
     click_on(">")
 
