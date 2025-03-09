@@ -230,7 +230,7 @@ module Katalyst
     # @example Render a generic text column for any value that supports `to_s`
     #   <% row.enum :status %>
     #   <%# label => <th>Status</th> %>
-    #   <%# data => <td class="type-enum"><span data-enum="status" data-value="published">Published</span></td> %>
+    #   <%# data => <td data-cell-type="enum"><span data-enum="status" data-value="published">Published</span></td> %>
     def enum(column, label: nil, heading: false, **, &)
       with_cell(Tables::Cells::EnumComponent.new(
                   collection:, row:, column:, record:, label:, heading:, **,
@@ -316,6 +316,10 @@ module Katalyst
     end
 
     private
+
+    def default_html_attributes
+      { class: "katalyst--table" }
+    end
 
     # Extension point for subclasses and extensions to customize header row rendering.
     def add_header_row_callback(&block)

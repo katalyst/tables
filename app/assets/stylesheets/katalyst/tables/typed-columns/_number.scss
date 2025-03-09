@@ -1,8 +1,0 @@
-// where psuedo selector has a specificity of 0 so it can be easily overwritten with simple selectors
-:where(th.type-number, td.type-number) {
-  width: var(--width-small);
-}
-
-:where(thead th.type-number, td.type-number) {
-  text-align: right;
-}

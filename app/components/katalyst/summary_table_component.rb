@@ -22,7 +22,7 @@ module Katalyst
 
       @summary_rows = []
 
-      update_html_attributes(class: "summary-table")
+      update_html_attributes(class: "katalyst--summary-table")
     end
 
     def with_cell(cell, &)

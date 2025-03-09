@@ -15,7 +15,7 @@ module Katalyst
         private
 
         def default_html_attributes
-          { class: "type-enum" }
+          { data: { cell_type: "enum" } }
         end
       end
     end

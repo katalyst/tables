@@ -1,0 +1,11 @@
+@import url("global/reset.css");
+@import url("global/fonts.css");
+@import url("global/variables.css");
+@import url("global/global-styles.css");
+
+@import url("/katalyst/tables.css");
+
+html,
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, Sans-Serif;
+}

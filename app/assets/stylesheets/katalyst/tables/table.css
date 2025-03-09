@@ -1,0 +1,157 @@
+.katalyst--table {
+  th,
+  td {
+    text-align: var(--cell-text-align, left);
+  }
+
+  /* override text align in row headers to ensure the line up with other headers */
+  tbody th {
+    text-align: left;
+  }
+
+  caption {
+    margin: var(--space-l, 2rem) 0;
+  }
+
+  /* Booleans */
+
+  :where([data-cell-type="boolean"]) {
+    --cell-width: var(--cell-width-small, 4ch);
+  }
+
+  /* Currency */
+
+  :where([data-cell-type="currency"]) {
+    --cell-width: var(--cell-width-small, 4ch);
+    --cell-text-align: right;
+  }
+
+  /* Dates */
+
+  :where([data-cell-type="date"]) {
+    --cell-width: var(--cell-width-small, 4ch);
+  }
+
+  :where([data-cell-type="datetime"]) {
+    --cell-width: var(--cell-width-medium, 8ch);
+  }
+
+  /* Enums */
+
+  :where([data-cell-type="enum"]) {
+    --cell-width: var(--cell-width-small, 4ch);
+
+    [data-enum] {
+      background: var(--tag-background-color, var(--color-tint, #f0ecf3));
+      color: var(--tag-color, var(--color-dark, black));
+      border-radius: var(--radius-s, 0.2rem);
+      padding: var(--space-3xs, 0.25rem);
+      font-size: var(--size-step--1, small);
+    }
+  }
+
+  /* Ordinals */
+
+  tr:has(td[data-cell-type="ordinal"]) {
+    transition:
+      top 125ms ease-in-out,
+      transform 125ms ease-in-out;
+  }
+
+  tr:has(td[data-cell-type="ordinal"])[dragging] {
+    transition: transform 125ms ease-in-out;
+    filter: drop-shadow(0 0 0.5rem var(--color-tint, #f0ecf3));
+    transform: scale(1.01);
+
+    td {
+      box-shadow: none;
+    }
+  }
+
+  th[data-cell-type="ordinal"] {
+    width: 2rem;
+    padding-left: 0;
+
+    a {
+      width: 2rem;
+      height: 3rem;
+    }
+
+    a::after {
+      margin-left: 0.4rem;
+    }
+  }
+
+  td[data-cell-type="ordinal"] {
+    width: 2rem;
+    padding-left: 0;
+    cursor: grab;
+    text-align: center;
+  }
+
+  /* Numbers */
+
+  :where([data-cell-type="number"]) {
+    --cell-width: var(--cell-width-small, 4ch);
+    --cell-text-align: right;
+  }
+
+  /* Select */
+
+  :where([data-cell-type="selection"]) {
+    --cell-width: 2rem;
+
+    label {
+      display: block;
+    }
+  }
+
+  /* Sorting */
+
+  [data-sort] a::after {
+    content: "";
+    display: inline-block;
+    aspect-ratio: 1;
+    height: 1.5ex;
+    line-height: 1;
+    background-color: currentColor;
+    background-size: contain;
+    transform: translateY(0.2ex);
+    margin-inline-start: var(--space-3xs, 0.25rem);
+  }
+
+  [data-sort="asc"] a::after {
+    -webkit-mask: url("icons/sort-asc.svg") no-repeat center;
+    mask: url("icons/sort-asc.svg") no-repeat center;
+  }
+
+  [data-sort="desc"] a::after {
+    -webkit-mask: url("icons/sort-desc.svg") no-repeat center;
+    mask: url("icons/sort-desc.svg") no-repeat center;
+  }
+
+  /* Width and wrapping */
+
+  [data-width="small"] {
+    --cell-width: var(--cell-width-small, 4ch);
+  }
+
+  [data-width="medium"] {
+    --cell-width: var(--cell-width-medium, 8ch);
+  }
+
+  [data-width="large"] {
+    --cell-width: var(--cell-width-large, 12ch);
+  }
+
+  [data-nowrap] {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* weakly set the width, allowing overrides */
+  :where([data-nowrap]) {
+    max-width: var(--cell-width, unset);
+  }
+}
