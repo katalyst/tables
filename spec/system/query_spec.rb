@@ -22,6 +22,7 @@ RSpec.describe "index/query" do
   it "clears filters" do
     visit resources_path(q: "1")
 
+    expect(page).to have_css("td", text: "Resource 1")
     expect(page).to have_no_css("td", text: "Resource 3")
 
     find("[name=q]").click

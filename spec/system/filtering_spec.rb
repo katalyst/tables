@@ -22,6 +22,7 @@ RSpec.describe "index/filtering" do
   it "clears filters" do
     visit people_path(search: "1")
 
+    expect(page).to have_css("td", text: "Person 1")
     expect(page).to have_no_css("td", text: "Person 3")
 
     find("input[type=search]").click

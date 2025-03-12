@@ -49,6 +49,7 @@ RSpec.describe "Selection" do
 
     visit resources_path
 
+    expect(page).to have_css("tbody input[type=checkbox]")
     expect(page).to have_no_button(text: "Download")
 
     within("tbody") do
@@ -63,6 +64,7 @@ RSpec.describe "Selection" do
 
     visit resources_path
 
+    expect(page).to have_css("tbody input[type=checkbox]")
     expect(page).to have_no_button(text: "Download")
 
     within("tbody") do
