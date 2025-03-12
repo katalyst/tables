@@ -294,7 +294,8 @@ GEM
     rubocop-factory_bot (2.27.0)
       lint_roller (~> 1.1)
       rubocop (~> 1.72, >= 1.72.1)
-    rubocop-katalyst (2.1.2)
+    rubocop-katalyst (2.2.0)
+      lint_roller
       rubocop
       rubocop-capybara
       rubocop-factory_bot
