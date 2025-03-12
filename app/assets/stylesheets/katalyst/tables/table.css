@@ -1,4 +1,6 @@
 .katalyst--table {
+  container-type: inline-size;
+
   th,
   td {
     text-align: var(--cell-text-align, left);
@@ -13,34 +15,15 @@
     margin: var(--space-l, 2rem) 0;
   }
 
-  /* Booleans */
-
-  :where([data-cell-type="boolean"]) {
-    --cell-width: var(--cell-width-small, 4ch);
-  }
-
   /* Currency */
 
   :where([data-cell-type="currency"]) {
-    --cell-width: var(--cell-width-small, 4ch);
     --cell-text-align: right;
-  }
-
-  /* Dates */
-
-  :where([data-cell-type="date"]) {
-    --cell-width: var(--cell-width-small, 4ch);
-  }
-
-  :where([data-cell-type="datetime"]) {
-    --cell-width: var(--cell-width-medium, 8ch);
   }
 
   /* Enums */
 
   :where([data-cell-type="enum"]) {
-    --cell-width: var(--cell-width-small, 4ch);
-
     [data-enum] {
       background: var(--tag-background-color, var(--color-tint, #f0ecf3));
       color: var(--tag-color, var(--color-dark, black));
@@ -92,7 +75,6 @@
   /* Numbers */
 
   :where([data-cell-type="number"]) {
-    --cell-width: var(--cell-width-small, 4ch);
     --cell-text-align: right;
   }
 
@@ -145,16 +127,13 @@
 
   /* Width and wrapping */
 
-  [data-width="small"] {
-    --cell-width: var(--cell-width-small, 4ch);
-  }
-
-  [data-width="medium"] {
-    --cell-width: var(--cell-width-medium, 8ch);
-  }
-
-  [data-width="large"] {
-    --cell-width: var(--cell-width-large, 12ch);
+  /* weakly set the width, allowing overrides */
+  :where([data-width]) {
+    overflow: hidden;
+    width: calc(var(--cell-width) - 2 * var(--space-2xs));
+    max-width: calc(var(--cell-width) - 2 * var(--space-2xs));
+    /* numerical values are supported in chrome but not safari or firefox */
+    --cell-width: calc(attr(data-width cqi));
   }
 
   [data-nowrap] {
@@ -163,8 +142,23 @@
     white-space: nowrap;
   }
 
-  /* weakly set the width, allowing overrides */
-  :where([data-nowrap]) {
-    max-width: var(--cell-width, unset);
+  [data-scroll] {
+    overflow: scroll;
+  }
+
+  [data-width="tiny"] {
+    --cell-width: 8.33cqi; /* 1/12 of the table's container space */
+  }
+
+  [data-width="small"] {
+    --cell-width: 16.7cqi; /* 1/6 of the table's container space */
+  }
+
+  [data-width="medium"] {
+    --cell-width: 25cqi; /* 1/4 of the table's container space */
+  }
+
+  [data-width="large"] {
+    --cell-width: 33.3cqi; /* 1/3 of the table's container space */
   }
 }

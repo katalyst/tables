@@ -7,6 +7,11 @@
   * `katalyst--tables--query`
 * Change the default styles to use table–layout: auto instead of fixed
 
+Breaking:
+* Changes cell type in dom from `.type-{...}` to `[data-cell-type=...]`
+* No longer assuming `table-layout: fixed` so default width limiting has been
+  removed. Add `data-width` and `data-nowrap` to clip cell contents if required.
+
 ## [3.7.0]
 
 Adds support for generating filter expressions for self-referencing models.
