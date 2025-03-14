@@ -27,7 +27,7 @@ RSpec.describe Katalyst::Tables::Sortable do
     expect(render_header do |row|
       row.text(:name)
     end).to match_html(<<~HTML)
-      <th data-sort="asc"><a data-turbo-action="replace" href="/people?sort=name+desc">Name</a></th>
+      <th data-sort="asc"><a class="sortable" data-turbo-action="replace" href="/people?sort=name+desc">Name</a></th>
     HTML
   end
 
@@ -43,7 +43,7 @@ RSpec.describe Katalyst::Tables::Sortable do
     expect(render_header do |row|
       row.date(:created_at)
     end).to match_html(<<~HTML)
-      <th data-cell-type="date"><a data-turbo-action="replace" href="/people?sort=created_at+asc">Created at</a></th>
+      <th data-cell-type="date"><a class="sortable" data-turbo-action="replace" href="/people?sort=created_at+asc">Created at</a></th>
     HTML
   end
 
@@ -51,7 +51,7 @@ RSpec.describe Katalyst::Tables::Sortable do
     expect(render_header do |row|
       row.text(:name, data: { other: "" })
     end).to match_html(<<~HTML)
-      <th data-sort="asc" data-other><a data-turbo-action="replace" href="/people?sort=name+desc">Name</a></th>
+      <th data-sort="asc" data-other><a class="sortable" data-turbo-action="replace" href="/people?sort=name+desc">Name</a></th>
     HTML
   end
 
@@ -59,7 +59,7 @@ RSpec.describe Katalyst::Tables::Sortable do
     expect(render_header(url: "/people?sort=name+desc") do |row|
       row.text(:name)
     end).to match_html(<<~HTML)
-      <th data-sort="desc"><a data-turbo-action="replace" href="/people">Name</a></th>
+      <th data-sort="desc"><a class="sortable" data-turbo-action="replace" href="/people">Name</a></th>
     HTML
   end
 end
