@@ -1,9 +1,12 @@
-<%= form_with(method: :patch, **html_attributes) do |form| %>
+<%= form_with(method: :get, **html_attributes) do |form| %>
   <p class="tables--selection--summary">
     <span data-<%= form_target("count") %>>0</span>
     <span data-<%= form_target("singular") %> hidden><%= singular_name %></span>
     <span data-<%= form_target("plural") %>><%= plural_name %></span>
-    selected
+    selected.
+    <%= tag.button(class: "button", data: { text_button: "", action: "#{form_controller}#reset" }) do %>
+      Clear selection
+    <% end %>
   </p>
   <%= content %>
 <% end %>

@@ -33,8 +33,10 @@ module Katalyst
             id:,
             class: "tables--selection--form",
             data:  {
-              controller:   form_controller,
-              turbo_action: "replace",
+              controller:      form_controller,
+              turbo_action:    "replace",
+              turbo_permanent: "",
+              action:          ["turbo:submit-end->#{form_controller}#turboSubmitEnd"],
             },
             html:  { action: false, hidden: "" },
           }

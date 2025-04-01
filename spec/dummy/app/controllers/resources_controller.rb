@@ -8,7 +8,7 @@ class ResourcesController < ApplicationController
 
     respond_to do |format|
       format.html { render locals: { collection: } }
-      format.csv { render body: generate_csv_from_collection(collection:) }
+      format.csv { render body: csv }
     end
   end
 
@@ -22,10 +22,12 @@ class ResourcesController < ApplicationController
 
   private
 
-  def generate_csv_from_collection(collection:)
+  def csv
+    items = Resource.where(id: params[:id])
+
     CSV.generate do |csv|
       csv << %w[id name]
-      collection.items.pluck(:id, :name).each { |item| csv << item }
+      items.pluck(:id, :name).each { |item| csv << item }
     end
   end
 

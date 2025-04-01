@@ -19,16 +19,7 @@ export default class SelectionItemController extends Controller {
   };
 
   tablesSelectionFormOutletConnected(form) {
-    form.visible(this.id, true);
     this.checkedValue = form.isSelected(this.id);
-  }
-
-  disconnect() {
-    // Remove from form's list of visible selections.
-    // This should be an outlet disconnect, but those events are not reliable in turbo 8.0
-    if (this.hasTablesSelectionFormOutlet) {
-      this.tablesSelectionFormOutlet.visible(this.id, false);
-    }
   }
 
   change(e) {
@@ -42,18 +33,10 @@ export default class SelectionItemController extends Controller {
   }
 
   /**
-   * Update checked to match match selection form. This occurs when the item is re-used by turbo-morph.
+   * Update checked to match selection form. This occurs when the item is re-used by turbo-morph.
    */
   paramsValueChanged(params, previous) {
     if (!this.hasTablesSelectionFormOutlet) return;
-
-    // if id is changing (e.g. morph) then let the form know that the previous id is now not visible
-    if (previous.id !== params.id) {
-      this.tablesSelectionFormOutlet.visible(previous.id, false);
-    }
-
-    // tell form that our id is now visible in the table
-    this.tablesSelectionFormOutlet.visible(params.id, true);
 
     // id has changed, so update checked from form
     this.checkedValue = this.tablesSelectionFormOutlet.isSelected(params.id);

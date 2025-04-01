@@ -20,7 +20,7 @@ RSpec.describe "Selection" do
     expect(page.find("thead input")).to be_checked
   end
 
-  it "retains selections on re-render", pending: "requires turbo permanence" do
+  it "retains selections on re-render" do
     create(:resource)
 
     visit resources_path
@@ -119,7 +119,7 @@ RSpec.describe "Selection" do
     expect(resource.reload).to be_active
   end
 
-  it "remembers selected rows when paginating", pending: "requires turbo permanence" do
+  it "remembers selected rows when paginating" do
     create_list(:resource, 7)
 
     visit resources_path(page: 2)
@@ -134,7 +134,7 @@ RSpec.describe "Selection" do
 
     click_on("<")
 
-    expect(page).to have_no_css(".tables--selection--form", text: "2 resources selected")
+    expect(page).to have_css(".tables--selection--form", text: "2 resources selected")
     expect(page.find("thead [data-cell-type=selection] input")).not_to be_checked
     expect(page.all("tbody [data-cell-type=selection] input").map(&:checked?))
       .to contain_exactly(false, false, false, false, false)
@@ -146,7 +146,48 @@ RSpec.describe "Selection" do
     expect(page.all("tbody [data-cell-type=selection] input").map(&:checked?)).to contain_exactly(true, true)
   end
 
-  it "remembers selected rows through bulk actions", pending: "requires turbo permanence" do
+  it "remembers selected rows through bulk get actions" do
+    resources = create_list(:resource, 7)
+
+    visit resources_path
+
+    within("tbody") do
+      first("input[type=checkbox]").click
+    end
+
+    click_on(">")
+
+    within("tbody") do
+      first("input[type=checkbox]").click
+    end
+
+    expect(page).to have_css(".tables--selection--form", text: "2 resources selected")
+    expect(page.find("thead input")["indeterminate"]).to be true
+    expect(page.all("tbody [data-cell-type=selection] input").map(&:checked?)).to contain_exactly(true, false)
+
+    click_on "Download"
+
+    Timeout.timeout(2) do
+      sleep 0.01 until File.exist?(csv_file)
+    end
+
+    csv = CSV.read(csv_file, headers: true)
+
+    expect(csv.map(&:to_h)).to contain_exactly({
+                                                 "id"   => resources[0].id.to_s,
+                                                 "name" => resources[0].name,
+                                               },
+                                               {
+                                                 "id"   => resources[5].id.to_s,
+                                                 "name" => resources[5].name,
+                                               })
+
+    expect(page).to have_css(".tables--selection--form", text: "2 resources selected")
+    expect(page.find("thead input")["indeterminate"]).to be true
+    expect(page.all("tbody [data-cell-type=selection] input").map(&:checked?)).to contain_exactly(true, false)
+  end
+
+  it "clears selected rows after bulk post actions" do
     create_list(:person, 2)
 
     visit people_path
@@ -167,9 +208,9 @@ RSpec.describe "Selection" do
 
     click_on("Archived")
 
-    expect(page).to have_css(".tables--selection--form", text: "1 person selected")
-    expect(page.find("thead [data-cell-type=selection] input")).to be_checked
-    expect(page.all("tbody [data-cell-type=selection] input").map(&:checked?)).to contain_exactly(true)
+    expect(page).to have_no_css(".tables--selection--form", text: "1 person selected")
+    expect(page.find("thead [data-cell-type=selection] input")).not_to be_checked
+    expect(page.all("tbody [data-cell-type=selection] input").map(&:checked?)).to contain_exactly(false)
   end
 
   it "selects all" do

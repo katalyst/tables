@@ -5,10 +5,25 @@ export default class SelectionFormController extends Controller {
     count: Number,
     primaryKey: { type: String, default: "id" },
   };
+  static outlets = ["item"];
   static targets = ["count", "singular", "plural"];
 
   connect() {
     this.countValue = this.inputs.length;
+  }
+
+  reset(e) {
+    e?.preventDefault();
+
+    this.inputs.forEach((input) => input.remove());
+
+    this.countValue = this.inputs.length;
+  }
+
+  turboSubmitEnd({ detail }) {
+    if (!/get/i.test(detail.formSubmission.method)) {
+      this.reset();
+    }
   }
 
   /**
@@ -27,23 +42,7 @@ export default class SelectionFormController extends Controller {
       );
     }
 
-    this.countValue = this.visibleInputs.length;
-
-    return !input;
-  }
-
-  /**
-   * @param id to toggle visibility
-   * @return {boolean} true if visible, false if not visible
-   */
-  visible(id, visible) {
-    const input = this.input(id);
-
-    if (input) {
-      input.disabled = !visible;
-    }
-
-    this.countValue = this.visibleInputs.length;
+    this.countValue = this.inputs.length;
 
     return !input;
   }
@@ -59,10 +58,6 @@ export default class SelectionFormController extends Controller {
     return this.element.querySelectorAll(
       `input[name="${this.primaryKeyValue}[]"]`,
     );
-  }
-
-  get visibleInputs() {
-    return Array.from(this.inputs).filter((i) => !i.disabled);
   }
 
   input(id) {
