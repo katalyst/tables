@@ -11,4 +11,14 @@
     vertical-align: baseline;
     text-align: left;
   }
+
+  :where([data-cell-type="enum"]) {
+    [data-enum] {
+      background: var(--tag-background-color, var(--color-tint, #f0ecf3));
+      color: var(--tag-color, var(--color-dark, black));
+      border-radius: var(--radius-s, 0.2rem);
+      padding: var(--space-3xs, 0.25rem);
+      font-size: var(--size-step--1, small);
+    }
+  }
 }
