@@ -32,8 +32,14 @@ Katalyst::Tables::Collection::Base.new(sorting: "column direction")
 When sort is enabled, table columns will be automatically sortable in the frontend for any column that corresponds to an
 attribute on the model.
 
-You can also add sorting to non-attribute columns by defining a scope in your model:
+You can also add sorting to non-attribute columns by defining a scope prefixed with `order_by_` in your model:
 
 ```ruby
 scope :order_by_status, ->(direction) { ... }
+```
+
+These custom scopes can also be applied as the default sort by omitting the prefix:
+
+```ruby
+config.sorting = "status asc"
 ```
