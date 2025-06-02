@@ -21,6 +21,7 @@ gem "rubocop-katalyst", require: false
 gem "sqlite3"
 gem "stimulus-rails"
 gem "turbo-rails"
+gem "view_component", ">= 4.0.0.alpha.1"
 
 group :development, :test do
   gem "faker"

@@ -8,6 +8,24 @@ RSpec.describe Katalyst::Tables::CellComponent do
       described_class.new(collection:, row:, column: :name, record: nil, label: nil, heading: false)
     end
 
+    let(:table) do
+      Class.new(ViewComponent::Base) do
+        def self.name
+          "TestTable"
+        end
+
+        def initialize(component)
+          super()
+
+          @component = component
+        end
+
+        def call
+          tag.table(tag.thead(tag.tr(render(@component))))
+        end
+      end.new(component)
+    end
+
     let(:collection) { Katalyst::Tables::Collection::Base.new.apply(Person.all) }
     let(:row) { Katalyst::Tables::HeaderRowComponent.new }
 
@@ -17,12 +35,12 @@ RSpec.describe Katalyst::Tables::CellComponent do
 
     describe "#call" do
       it "renders label" do
-        expect(render_inline(component)).to match_html("<th>Name</th>")
+        expect(render_inline(table).css("th")).to match_html("<th>Name</th>")
       end
 
       it "renders html attributes" do
         component.html_attributes = { class: "center" }
-        expect(render_inline(component)).to match_html('<th class="center">Name</th>')
+        expect(render_inline(table).css("th")).to match_html('<th class="center">Name</th>')
       end
 
       it "supports content wrapping" do # rubocop:disable RSpec/ExampleLength
@@ -36,7 +54,7 @@ RSpec.describe Katalyst::Tables::CellComponent do
           end
         end
         component.with_content_wrapper(wrapper.new)
-        expect(render_inline(component)).to match_html("<th><span>Name</span></th>")
+        expect(render_inline(table).css("th")).to match_html("<th><span>Name</span></th>")
       end
     end
   end
@@ -44,6 +62,24 @@ RSpec.describe Katalyst::Tables::CellComponent do
   context "with a data row" do
     subject(:component) do
       described_class.new(collection:, row:, column: :name, record: collection.items.first, label: nil, heading: false)
+    end
+
+    let(:table) do
+      Class.new(ViewComponent::Base) do
+        def self.name
+          "TestTable"
+        end
+
+        def initialize(component)
+          super()
+
+          @component = component
+        end
+
+        def call
+          tag.table(tag.tbody(tag.tr(render(@component))))
+        end
+      end.new(component)
     end
 
     let(:collection) { Katalyst::Tables::Collection::Array.new.apply(create_list(:person, 1, name: "Bobby>")) }
@@ -71,18 +107,18 @@ RSpec.describe Katalyst::Tables::CellComponent do
       it { is_expected.to be_heading }
 
       it "renders with th tag" do
-        expect(render_inline(component)).to match_html("<th>Bobby&gt;</th>")
+        expect(render_inline(table).css("th")).to match_html("<th>Bobby&gt;</th>")
       end
     end
 
     describe "#call" do
       it "renders value" do
-        expect(render_inline(component)).to match_html("<td>Bobby&gt;</td>")
+        expect(render_inline(table).css("td")).to match_html("<td>Bobby&gt;</td>")
       end
 
       it "renders html attributes" do
         component.html_attributes = { class: "center" }
-        expect(render_inline(component)).to match_html('<td class="center">Bobby&gt;</td>')
+        expect(render_inline(table).css("td")).to match_html('<td class="center">Bobby&gt;</td>')
       end
 
       it "supports content wrapping" do # rubocop:disable RSpec/ExampleLength
@@ -96,7 +132,7 @@ RSpec.describe Katalyst::Tables::CellComponent do
           end
         end
         component.with_content_wrapper(wrapper.new)
-        expect(render_inline(component)).to match_html("<td><span>Bobby&gt;</span></td>")
+        expect(render_inline(table).css("td")).to match_html("<td><span>Bobby&gt;</span></td>")
       end
     end
   end
