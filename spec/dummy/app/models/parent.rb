@@ -3,7 +3,7 @@
 class Parent < ApplicationRecord
   enum :role, { principle: 0, teacher: 1, student: 2 }
 
-  has_many :children, class_name: "Nested::Child"
+  has_many :children, class_name: "Nested::Child", dependent: :destroy
 
   validates :name, presence: true
 

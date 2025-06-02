@@ -26,6 +26,6 @@ class FaqsController < ApplicationController
   end
 
   def order_params
-    params.require(:order).permit(faqs: [:ordinal])
+    params.expect(order: { faqs: [[:ordinal]] })
   end
 end
