@@ -309,9 +309,9 @@ module Katalyst
     #
     # @example Render a description column containing HTML markup
     #   <% row.rich_text :description %> # => <td><em>Emphasis</em></td>
-    def rich_text(column, label: nil, heading: false, options: {}, **, &)
+    def rich_text(column, label: nil, heading: false, **, &)
       with_cell(Tables::Cells::RichTextComponent.new(
-                  collection:, row:, column:, record:, label:, heading:, options:, **,
+                  collection:, row:, column:, record:, label:, heading:, **,
                 ), &)
     end
 
