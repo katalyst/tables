@@ -13,7 +13,7 @@ module Katalyst
         # @param id [String] the id of the form element (defaults to <resources>_order_form)
         # @param scope [String] the base scope to use for form inputs (defaults to order[<resources>])
         def initialize(collection:, url:, id: nil, scope: nil)
-          super
+          super()
 
           @id    = id || Orderable.default_form_id(collection)
           @url   = url
