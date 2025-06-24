@@ -31,7 +31,7 @@ module Katalyst
             values = model.defined_enums[column].keys
 
             if attribute.value_before_type_cast.present?
-              values = values.select { |key| key.include?(attribute.value_before_type_cast) }
+              values = values.select { |key| key.to_s.include?(attribute.value_before_type_cast) }
             end
 
             values.map { |value| constant_suggestion(attribute:, value:) }
