@@ -1,3 +1,7 @@
+## [3.9.0]
+
+* Support (and require) ViewComponent 4.0.0
+
 ## [3.8.0]
 
 * Adds support for consuming styles as CSS instead of SASS.

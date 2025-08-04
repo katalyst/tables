@@ -9,6 +9,7 @@ RSpec.describe Katalyst::Tables::QueryComponent do
   def create_collection(params = {}, &block)
     @collection = Class.new(Katalyst::Tables::Collection::Base) do
       include Katalyst::Tables::Collection::Query
+
       config.sorting = :name
       instance_exec(&block) if block
     end.with_params(params).apply(Resource)

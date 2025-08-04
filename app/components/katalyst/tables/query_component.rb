@@ -67,7 +67,7 @@ module Katalyst
       end
 
       def with_modal(collection: self.collection, **, &)
-        set_slot(:modal, nil, collection:, **, &)
+        __vc_set_slot(:modal, nil, collection:, **, &)
       end
 
       def sort_input(form:)

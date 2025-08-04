@@ -33,7 +33,7 @@ module Katalyst
           when Integer
             (super.to_d / BigDecimal(100))
           else
-            (v.to_d rescue nil) # rubocop:disable Style/RescueModifier
+            v.to_d rescue nil # rubocop:disable Style/RescueModifier
           end
         end
 

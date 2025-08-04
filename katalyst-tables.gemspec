@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name = "katalyst-tables"
-  spec.version = "3.8.3"
+  spec.version = "3.9.0"
   spec.authors = ["Katalyst Interactive"]
   spec.email = ["devs@katalyst.com.au"]
 
@@ -24,5 +24,5 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "katalyst-html-attributes"
-  spec.add_dependency "view_component"
+  spec.add_dependency "view_component", ">= 4.0.0"
 end
