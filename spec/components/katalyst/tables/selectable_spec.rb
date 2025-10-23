@@ -54,7 +54,7 @@ RSpec.describe Katalyst::Tables::Selectable do
             hidden="hidden"
             accept-charset="UTF-8"
             method="post">
-        <input type="hidden" name="_method" value="patch" autocomplete="off">
+        <input type="hidden" name="_method" value="patch">
         <p class="tables--selection--summary">
           <span data-tables--selection--form-target="count">0</span>
           <span data-tables--selection--form-target="singular" hidden>person</span>

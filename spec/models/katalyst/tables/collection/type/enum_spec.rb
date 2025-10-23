@@ -60,7 +60,7 @@ RSpec.describe Katalyst::Tables::Collection::Type::Enum do
         .to eq(<<~SQL.squish)
           SELECT "nested_children".*
           FROM "nested_children"
-          INNER JOIN "parents" "parent" ON "parent"."id" = "nested_children"."parent_id"
+          INNER JOIN "parents" AS "parent" ON "parent"."id" = "nested_children"."parent_id"
           WHERE "parent"."role" = 1
         SQL
     end

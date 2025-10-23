@@ -72,7 +72,7 @@ RSpec.describe Katalyst::Tables::Collection::Type::String do
       expect(filter(collection, Nested::Child.all).to_sql).to eq(<<~SQL.squish)
         SELECT "nested_children".*
         FROM "nested_children"
-        INNER JOIN "parents" "parent" ON "parent"."id" = "nested_children"."parent_id"
+        INNER JOIN "parents" AS "parent" ON "parent"."id" = "nested_children"."parent_id"
         WHERE "parent"."name" LIKE '%test%'
       SQL
     end
@@ -86,7 +86,7 @@ RSpec.describe Katalyst::Tables::Collection::Type::String do
         SELECT "people".*
         FROM "people"
         INNER JOIN "people_friends" ON "people_friends"."person_id" = "people"."id"
-        INNER JOIN "people" "friends" ON "friends"."id" = "people_friends"."friend_id"
+        INNER JOIN "people" AS "friends" ON "friends"."id" = "people_friends"."friend_id"
         WHERE "friends"."name" LIKE '%test%'
       SQL
     end

@@ -6,4 +6,4 @@ set -vx
 bundle install
 yarn install
 
-exec spec/dummy/bin/setup
+exec spec/dummy/bin/setup $@

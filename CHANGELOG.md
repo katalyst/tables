@@ -1,3 +1,7 @@
+## [3.10.0]
+
+* Support for Rails 8.1
+
 ## [3.9.0]
 
 * Support (and require) ViewComponent 4.0.0

@@ -5,22 +5,13 @@ require "active_support/configurable"
 module Katalyst
   module Tables
     class Config
-      include ActiveSupport::Configurable
+      attr_accessor :collection_types,
+                    :component_extensions,
+                    :date_format,
+                    :datetime_format
 
-      config_accessor(:component_extensions) do
-        %w[
-          Katalyst::Tables::Identifiable
-          Katalyst::Tables::Orderable
-          Katalyst::Tables::Selectable
-          Katalyst::Tables::Sortable
-        ]
-      end
-
-      config_accessor(:date_format) { :default }
-      config_accessor(:datetime_format) { :default }
-
-      config_accessor(:collection_types) do
-        {
+      def initialize
+        self.collection_types = {
           boolean: "Katalyst::Tables::Collection::Type::Boolean",
           date:    "Katalyst::Tables::Collection::Type::Date",
           enum:    "Katalyst::Tables::Collection::Type::Enum",
@@ -30,6 +21,16 @@ module Katalyst
           query:   "Katalyst::Tables::Collection::Type::Query",
           search:  "Katalyst::Tables::Collection::Type::Search",
         }
+
+        self.component_extensions = %w[
+          Katalyst::Tables::Identifiable
+          Katalyst::Tables::Orderable
+          Katalyst::Tables::Selectable
+          Katalyst::Tables::Sortable
+        ]
+
+        self.date_format = :default
+        self.datetime_format = :default
       end
     end
   end
