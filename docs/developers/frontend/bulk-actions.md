@@ -65,7 +65,7 @@ class BlogsController < ApplicationController
   def activate
     Blog.where(id: params[:id]).each { |blog| blog.update(active: true) }
     
-    redirect_back fallback_location: blogs_path, status: :see_other
+    redirect_back_or_to(blogs_path, status: :see_other)
   end
   
   private

@@ -69,7 +69,7 @@ def order
     Model.find(id).update(attrs)
   end
   
-  redirect_back(fallback_location: models_path, status: :see_other)
+  redirect_back_or_to(models_path, status: :see_other)
 end
 
 private

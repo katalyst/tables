@@ -16,7 +16,7 @@ class FaqsController < ApplicationController
       Faq.find(id).update(attrs)
     end
 
-    redirect_back(fallback_location: faqs_path, status: :see_other)
+    redirect_back_or_to(faqs_path, status: :see_other)
   end
 
   private
