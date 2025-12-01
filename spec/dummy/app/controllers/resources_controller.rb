@@ -17,7 +17,7 @@ class ResourcesController < ApplicationController
 
     collection.items.update_all(active: true) if collection.id.any? # rubocop:disable Rails/SkipsModelValidations
 
-    redirect_back fallback_location: resources_path, status: :see_other
+    redirect_back_or_to(resources_path, status: :see_other)
   end
 
   private

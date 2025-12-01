@@ -18,7 +18,7 @@ class PeopleController < ApplicationController
       person.update!(active: false)
     end
 
-    redirect_back fallback_location: people_path, status: :see_other
+    redirect_back_or_to(people_path, status: :see_other)
   end
 
   def restore
@@ -26,7 +26,7 @@ class PeopleController < ApplicationController
       person.update!(active: true)
     end
 
-    redirect_back fallback_location: people_path, status: :see_other
+    redirect_back_or_to(people_path, status: :see_other)
   end
 
   def show
