@@ -8,13 +8,13 @@ nav_order: 5
 
 # Pagination
 
-Tables provides [`Pagy`](https://github.com/ddnexus/pagy) integration for pagination.
+Tables provides [`Pagy`](https://github.com/ddnexus/pagy) integration for pagination using the latest Pagy releases.
 
 Add `gem pagy` to your gem file to install pagy and it be picked up by collections and frontend table rendering.
 
-You don't need to add the pagy `Backend` or `Frontend` integrations as these are used by tables automatically, but
-tables does not provide default styling for pagy nav components so you will want to write your own or include one of
-the styling options that Pagy provides.
+Pagy 43+ removed the `Backend` and `Frontend` modules; tables will include `Pagy::Method` for you automatically. Tables
+does not provide default styling for pagy navigation so you will want to write your own or include one of the styling
+options that Pagy provides.
 
 ## Backend
 
@@ -32,11 +32,12 @@ See [collections pagination](../collections/pagination) for configuration detail
 
 ## Frontend
 
-In the frontend, you can use `table_pagination_with` which wraps `pagy_nav` with sensible defaults:
+In the frontend, you can use `table_pagination_with` which wraps the Pagy `series_nav` helper with sensible defaults:
 
 ```erb
 <%= table_pagination_with(collection:) %>
 ```
 
 You can also use other pagy navigation generators or change the options by extending
-`Katalyst::Tables::PagyNavComponent` and setting `default_table_pagination_component`.
+`Katalyst::Tables::PagyNavComponent` and setting `default_table_pagination_component`. The rendered nav uses the
+`pagy series-nav` classes by default.

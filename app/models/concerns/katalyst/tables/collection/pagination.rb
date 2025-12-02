@@ -38,7 +38,7 @@ module Katalyst
           opts = @paginate.is_a?(Hash) ? @paginate : {}
           opts = opts.dup
 
-          if PagyNavComponent.pagy_legacy?
+          if PagyNavComponent.pagy_pre_8?
             opts[:anchor_string] ||= "data-turbo-action=\"replace\""
           end
 
@@ -48,7 +48,11 @@ module Katalyst
         class Paginate # :nodoc:
           # Pagy is not a required gem unless you're using pagination
           # Expect to see NoMethodError failures if pagy is not available
-          "Pagy::Backend".safe_constantize&.tap { |pagy| include(pagy) }
+          if (pagy_method = "Pagy::Method".safe_constantize)
+            include(pagy_method)
+          else
+            "Pagy::Backend".safe_constantize&.tap { |pagy| include(pagy) }
+          end
 
           def initialize(app)
             @app = app
@@ -64,7 +68,12 @@ module Katalyst
 
           # pagy shim
           def params
-            @collection.attributes.with_indifferent_access
+            @collection.to_params
+          end
+
+          # Pagy 43 expects a request object; provide the minimal hash interface it supports.
+          def request
+            { base_url: nil, path: nil, params:, cookie: nil }
           end
         end
       end

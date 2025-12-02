@@ -6,7 +6,6 @@ RSpec.describe "people/index" do
   before do
     people
     view.extend(Katalyst::Tables::Frontend)
-    view.extend(Pagy::Frontend)
   end
 
   let(:collection) { PeopleController::Collection.with_params(params).apply(Person.all) }
