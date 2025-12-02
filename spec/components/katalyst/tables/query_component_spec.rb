@@ -39,7 +39,7 @@ RSpec.describe Katalyst::Tables::QueryComponent do
   it "renders sort when non-default" do
     create_collection(sort: "name desc")
     expect(render_inline(component).at_css("input[name=sort]")).to match_html(<<~HTML)
-      <input autocomplete="off" type="hidden" value="name desc" name="sort" id="sort">
+      <input type="hidden" value="name desc" name="sort" id="sort">
     HTML
   end
 

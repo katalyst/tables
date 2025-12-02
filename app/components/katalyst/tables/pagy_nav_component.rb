@@ -8,7 +8,15 @@ module Katalyst
       "Pagy::Frontend".safe_constantize&.tap { |pagy| include(pagy) }
 
       def self.pagy_legacy?
-        Pagy::VERSION.scan(/\d+/).first.to_i <= 8
+        pagy_major < 43
+      end
+
+      def self.pagy_pre_8?
+        pagy_major < 8
+      end
+
+      def self.pagy_major
+        @pagy_major ||= Pagy::VERSION.scan(/\d+/).first.to_i
       end
 
       delegate :pagy_legacy?, to: :class
@@ -25,7 +33,7 @@ module Katalyst
       end
 
       def call
-        pagy_nav(@pagy, **pagy_options).html_safe # rubocop:disable Rails/OutputSafety
+        render_nav.html_safe # rubocop:disable Rails/OutputSafety
       end
 
       def pagy_options
@@ -37,6 +45,12 @@ module Katalyst
       end
 
       private
+
+      def render_nav
+        return pagy_nav(@pagy, **pagy_options) if pagy_legacy?
+
+        @pagy.series_nav(**pagy_options)
+      end
 
       def default_pagy_options
         pagy_legacy? ? {} : { anchor_string: 'data-turbo-action="replace"' }

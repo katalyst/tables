@@ -1,3 +1,7 @@
+## [3.11.0]
+
+* Support for Pagy 43
+
 ## [3.10.0]
 
 * Support for Rails 8.1
