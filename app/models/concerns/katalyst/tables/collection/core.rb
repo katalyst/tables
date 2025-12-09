@@ -3,18 +3,25 @@
 module Katalyst
   module Tables
     module Collection
+      class Config
+        attr_accessor :paginate, :sorting
+      end
+
       module Core # :nodoc:
         extend ActiveSupport::Concern
 
         include ActiveModel::Model
         include ActiveModel::Attributes
         include ActiveModel::Dirty
-        include ActiveSupport::Configurable
 
         include HasParams
         include Reducers
 
         class_methods do
+          def config
+            @config ||= Config.new
+          end
+
           def permitted_params
             _default_attributes.to_h.each_with_object([]) do |(k, v), h|
               h << case v

@@ -55,7 +55,7 @@ module Katalyst
           attr_reader :default_sort
         end
 
-        def initialize(sorting: config.sorting, **)
+        def initialize(sorting: self.class.config.sorting, **)
           @default_sort = sorting.to_param if sorting.present?
 
           super(sort: @default_sort, **) # set default sort based on config

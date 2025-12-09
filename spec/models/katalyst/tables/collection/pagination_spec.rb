@@ -66,7 +66,7 @@ RSpec.describe Katalyst::Tables::Collection::Pagination do
 
     it "does not mutate class options" do
       collection.apply(items)
-      expect(collection.config.paginate).not_to include(page: anything)
+      expect(collection.class.config.paginate).not_to include(page: anything)
     end
   end
 
