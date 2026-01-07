@@ -48,8 +48,8 @@ module Katalyst
           # Expect to see NoMethodError failures if pagy is not available
           if (pagy_method = "Pagy::Method".safe_constantize)
             include(pagy_method)
-          else
-            "Pagy::Backend".safe_constantize&.tap { |pagy| include(pagy) }
+          elsif (pagy_backend = "Pagy::Backend".safe_constantize)
+            include(pagy_backend)
           end
 
           def initialize(app)
@@ -66,7 +66,7 @@ module Katalyst
 
           # pagy shim
           def params
-            @collection.to_params
+            @collection.to_params.with_indifferent_access
           end
 
           # Pagy 43 expects a request object; provide the minimal hash interface it supports.
