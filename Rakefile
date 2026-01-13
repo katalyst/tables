@@ -7,7 +7,6 @@ require "rspec/core/rake_task"
 APP_RAKEFILE = File.expand_path("spec/dummy/Rakefile", __dir__)
 
 load "rails/tasks/engine.rake"
-load "rails/tasks/statistics.rake"
 
 # prepend test:prepare to run generators, and db:prepare to run migrations
 RSpec::Core::RakeTask.new(spec: %w[app:spec:prepare])
