@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "active_support/configurable"
-
 module Katalyst
   module Tables
     class Config

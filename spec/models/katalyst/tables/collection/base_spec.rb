@@ -156,4 +156,23 @@ RSpec.describe Katalyst::Tables::Collection::Base do
         .to eq(Person.table_search("person").reorder(name: :desc).limit(20).offset(20).to_sql)
     end
   end
+
+  context "with a subclass that overrides config" do
+    let(:superclass) do
+      Class.new(described_class) do
+        config.sorting = %i[col1 col2]
+      end
+    end
+    let!(:subclass) do
+      Class.new(superclass) do
+        config.sorting.push(:col3)
+      end
+    end
+
+    it { expect(subclass.config.sorting).to eq(%i[col1 col2 col3]) }
+
+    it "does not modify superclass config" do
+      expect(superclass.config.sorting).to eq(%i[col1 col2])
+    end
+  end
 end
