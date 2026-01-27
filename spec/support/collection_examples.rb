@@ -83,4 +83,14 @@ module Examples
       self.items = items.search(search) if search.present?
     end
   end
+
+  class PaginatedCollection < Katalyst::Tables::Collection::Base
+    config.paginate = { limit: 10 }
+  end
+
+  class InheritedPaginatedCollection < PaginatedCollection; end
+
+  class OverriddenPaginatedCollection < PaginatedCollection
+    config.paginate = { limit: 20 }
+  end
 end

@@ -11,6 +11,12 @@ RSpec.describe Katalyst::Tables::Collection::Pagination do
 
   it { is_expected.not_to be_filtered }
   it { is_expected.to have_attributes(to_params: {}) }
+  it { expect(Examples::PaginatedCollection.new).to be_paginate }
+  it { expect(Examples::PaginatedCollection.config).to have_attributes(paginate: { limit: 10 }) }
+  it { expect(Examples::InheritedPaginatedCollection.new).to be_paginate }
+  it { expect(Examples::InheritedPaginatedCollection.config).to have_attributes(paginate: { limit: 10 }) }
+  it { expect(Examples::OverriddenPaginatedCollection.new).to be_paginate }
+  it { expect(Examples::OverriddenPaginatedCollection.config).to have_attributes(paginate: { limit: 20 }) }
 
   it "does not paginate by default" do
     expect(collection.apply(items)).to have_attributes(count: 0, pagination: nil)

@@ -5,6 +5,11 @@ module Katalyst
     module Collection
       class Config
         attr_accessor :paginate, :sorting
+
+        def initialize(parent = nil)
+          @paginate = parent&.paginate&.dup
+          @sorting  = parent&.sorting&.dup
+        end
       end
 
       module Core # :nodoc:
@@ -18,8 +23,9 @@ module Katalyst
         include Reducers
 
         class_methods do
-          def config
-            @config ||= Config.new
+          def inherited(subclass)
+            subclass.config = Config.new(config)
+            super
           end
 
           def permitted_params
@@ -53,6 +59,7 @@ module Katalyst
         end
 
         included do
+          class_attribute :config, instance_accessor: false, default: Config.new
           attr_accessor :items, :unscoped_items
 
           delegate :each, :count, :empty?, to: :items, allow_nil: true
