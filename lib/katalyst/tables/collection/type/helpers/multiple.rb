@@ -64,7 +64,7 @@ module Katalyst
             def value_for_multiple(value)
               case value
               when ::Array
-                value.reject { |v| v.is_a?(::Range) }
+                value.grep_v(::Range)
               when ::Range
                 value
               else

@@ -67,7 +67,7 @@ module Examples
     end
 
     def self.permitted_params
-      super + [nested: Nested.attribute_names]
+      super + [{ nested: Nested.attribute_names }]
     end
 
     def filter
