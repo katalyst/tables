@@ -36,19 +36,16 @@
   /* Ordinals */
 
   tr:has(td[data-cell-type="ordinal"]) {
-    transition:
-      top 125ms ease-in-out,
-      transform 125ms ease-in-out;
+    transition: transform var(--animation-duration, 125ms) ease-in-out;
   }
 
   tr:has(td[data-cell-type="ordinal"])[dragging] {
-    transition: transform 125ms ease-in-out;
-    filter: drop-shadow(0 0 0.5rem var(--color-tint, #f0ecf3));
-    transform: scale(1.01);
-
-    td {
-      box-shadow: none;
-    }
+    transition: unset;
+    background-color: white;
+    border-color: transparent;
+    box-shadow:
+      0 -0.5rem 0.5rem -0.5rem var(--color-tint, #f0ecf3),
+      0 0.5rem 0.5rem -0.5rem var(--color-tint, #f0ecf3);
   }
 
   th[data-cell-type="ordinal"] {

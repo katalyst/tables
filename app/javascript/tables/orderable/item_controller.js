@@ -19,7 +19,7 @@ export default class OrderableRowController extends Controller {
   dragUpdate(offset) {
     this.dragOffset = offset;
     this.row.style.position = "relative";
-    this.row.style.top = offset + "px";
+    this.row.style.transform = `scale(1.01) translateY(${offset}px)`;
     this.row.style.zIndex = "1";
     this.row.toggleAttribute("dragging", true);
   }
@@ -31,10 +31,9 @@ export default class OrderableRowController extends Controller {
    * @param index {number} intended index of the item during drag
    */
   updateVisually(index) {
-    this.row.style.position = "relative";
-    this.row.style.top = `${
+    this.row.style.transform = `translateY(${
       this.row.offsetHeight * (index - this.dragIndex)
-    }px`;
+    }px)`;
   }
 
   /**
