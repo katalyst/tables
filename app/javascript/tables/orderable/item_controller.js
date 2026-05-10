@@ -28,12 +28,10 @@ export default class OrderableRowController extends Controller {
    * Called on items that are not the dragged item during drag. Updates the
    * visual position of the item relative to the dragged item.
    *
-   * @param index {number} intended index of the item during drag
+   * @param offset {number} intended offset of the item during drag
    */
-  updateVisually(index) {
-    this.row.style.transform = `translateY(${
-      this.row.offsetHeight * (index - this.dragIndex)
-    }px)`;
+  updateVisually(offset) {
+    this.row.style.transform = `translateY(${offset - this.#offsetTop}px)`;
   }
 
   /**
@@ -108,14 +106,22 @@ export default class OrderableRowController extends Controller {
     return this.element.parentElement;
   }
 
+  get height() {
+    return this.row.offsetHeight;
+  }
+
   get #midpoint() {
-    return this.row.offsetTop + this.row.offsetHeight / 2;
+    return this.#offsetTop + this.height / 2;
   }
 
   get #leadingEdge() {
-    const top = this.row.offsetTop + this.dragOffset;
+    const top = this.#offsetTop + this.dragOffset;
 
-    return this.dragOffset < 0 ? top : top + this.row.offsetHeight;
+    return this.dragOffset < 0 ? top : top + this.height;
+  }
+
+  get #offsetTop() {
+    return this.row.offsetTop;
   }
 }
 
