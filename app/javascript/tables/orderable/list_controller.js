@@ -24,7 +24,7 @@ export default class OrderableListController extends Controller {
     window.removeEventListener("scroll", this.scroll, true);
 
     this.element.removeAttribute("style");
-    this.tablesOrderableItemOutlets.forEach((item) => item.reset());
+    this.items.forEach((item) => item.reset());
 
     return dragState;
   }
@@ -39,7 +39,7 @@ export default class OrderableListController extends Controller {
     if (!dragItem) return;
 
     const newIndex = dragItem.dragIndex;
-    const targetItem = this.tablesOrderableItemOutlets[newIndex];
+    const targetItem = this.items[newIndex];
 
     if (!targetItem) return;
 
@@ -51,9 +51,7 @@ export default class OrderableListController extends Controller {
     }
 
     // reindex all items based on their new positions
-    this.tablesOrderableItemOutlets.forEach((item, index) =>
-      item.updateIndex(index),
-    );
+    this.items.forEach((item, index) => item.updateIndex(index));
 
     // save the changes
     this.commitChanges();
@@ -64,7 +62,7 @@ export default class OrderableListController extends Controller {
     this.tablesOrderableFormOutlet.clear();
 
     // insert any items that have changed position
-    this.tablesOrderableItemOutlets.forEach((item) => {
+    this.items.forEach((item) => {
       if (item.hasChanges) this.tablesOrderableFormOutlet.add(item);
     });
 
@@ -129,7 +127,7 @@ export default class OrderableListController extends Controller {
 
     this.drop();
     this.stopDragging();
-    this.tablesOrderableFormOutlets.forEach((form) => delete form.dragState);
+    this.items.forEach((form) => delete form.dragState);
   };
 
   tablesOrderableFormOutletConnected(form, element) {
@@ -172,10 +170,12 @@ export default class OrderableListController extends Controller {
 
     // Visually updates the position of all items in the list relative to the
     // dragged item. No actual changes to orderings at this stage.
-    this.#currentItems.forEach((item, index) => {
-      if (item === dragItem) return;
-      item.updateVisually(index);
-    });
+    this.items
+      .toSorted((a, b) => a.comparisonIndex - b.comparisonIndex)
+      .forEach((item, index) => {
+        if (item === dragItem) return;
+        item.updateVisually(index);
+      });
   };
 
   get isDragging() {
@@ -185,20 +185,19 @@ export default class OrderableListController extends Controller {
   get dragItem() {
     if (!this.isDragging) return null;
 
-    return this.tablesOrderableItemOutlets.find(
-      (item) => item.id === this.dragState.targetId,
-    );
+    return this.items.find((item) => item.id === this.dragState.targetId);
   }
 
   /**
-   * Returns the current items in the list, sorted by their current index.
-   * Current uses the drag index if the item is being dragged, if set.
+   * Returns the current items in the list in DOM order.
    *
    * @returns {Array[OrderableRowController]}
    */
-  get #currentItems() {
-    return this.tablesOrderableItemOutlets.toSorted(
-      (a, b) => a.comparisonIndex - b.comparisonIndex,
+  get items() {
+    // Note, item outlets may include other items as the outlets do not have a
+    // mechanism to specify an element scope.
+    return this.tablesOrderableItemOutlets.filter((item) =>
+      this.element.contains(item.element),
     );
   }
 
@@ -209,9 +208,7 @@ export default class OrderableListController extends Controller {
    * @returns {OrderableRowController}
    */
   #targetItem(element) {
-    return this.tablesOrderableItemOutlets.find(
-      (item) => item.element === element,
-    );
+    return this.items.find((item) => item.element === element);
   }
 
   //endregion
