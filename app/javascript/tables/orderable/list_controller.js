@@ -171,7 +171,7 @@ export default class OrderableListController extends Controller {
     // Visually updates the position of all items in the list relative to the
     // dragged item. No actual changes to orderings at this stage.
     this.items
-      .toSorted((a, b) => a.comparisonIndex - b.comparisonIndex)
+      .toSorted((a, b) => a.dragPosition - b.dragPosition)
       .forEach((item, index) => {
         if (item === dragItem) return;
         item.updateVisually(index);

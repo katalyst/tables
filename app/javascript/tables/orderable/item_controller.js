@@ -88,19 +88,15 @@ export default class OrderableRowController extends Controller {
   }
 
   /**
-   * Index value for use in comparisons during drag. This is used to determine
-   * whether the dragged item is above or below another item. If this item is
-   * being dragged then we offset the index by 0.5 to ensure that it jumps up
-   * or down when it reaches the midpoint of the item above or below it.
+   * Value for use in comparisons during drag. Used by ListController to
+   * determine whether the dragged item is above or below another item.
    *
    * @returns {number}
    */
-  get comparisonIndex() {
-    if (this.dragOffset) {
-      return this.dragIndex + (this.dragOffset > 0 ? 0.5 : -0.5);
-    } else {
-      return this.index;
-    }
+  get dragPosition() {
+    return this.dragOffset && this.dragOffset !== 0
+      ? this.#leadingEdge
+      : this.#midpoint;
   }
 
   /**
@@ -110,6 +106,16 @@ export default class OrderableRowController extends Controller {
    */
   get row() {
     return this.element.parentElement;
+  }
+
+  get #midpoint() {
+    return this.row.offsetTop + this.row.offsetHeight / 2;
+  }
+
+  get #leadingEdge() {
+    const top = this.row.offsetTop + this.dragOffset;
+
+    return this.dragOffset < 0 ? top : top + this.row.offsetHeight;
   }
 }
 
