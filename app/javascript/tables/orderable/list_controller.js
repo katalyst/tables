@@ -38,17 +38,7 @@ export default class OrderableListController extends Controller {
 
     if (!dragItem) return;
 
-    const newIndex = dragItem.dragIndex;
-    const targetItem = this.items[newIndex];
-
-    if (!targetItem) return;
-
-    // swap the dragged item into the correct position for its current offset
-    if (newIndex < dragItem.index) {
-      targetItem.row.insertAdjacentElement("beforebegin", dragItem.row);
-    } else if (newIndex > dragItem.index) {
-      targetItem.row.insertAdjacentElement("afterend", dragItem.row);
-    }
+    this.#insertDragItem(this.orderedItems, dragItem);
 
     // reindex all items based on their new positions
     this.items.forEach((item, index) => item.updateIndex(index));
@@ -172,12 +162,10 @@ export default class OrderableListController extends Controller {
     // dragged item. No actual changes to orderings at this stage.
     let nextOffset = 0;
 
-    this.items
-      .toSorted((a, b) => a.dragPosition - b.dragPosition)
-      .forEach((item) => {
-        if (item !== dragItem) item.updateVisually(nextOffset);
-        nextOffset += item.height;
-      });
+    this.orderedItems.forEach((item) => {
+      if (item !== dragItem) item.updateVisually(nextOffset);
+      nextOffset += item.height;
+    });
   };
 
   get isDragging() {
@@ -203,6 +191,14 @@ export default class OrderableListController extends Controller {
     );
   }
 
+  get orderedItems() {
+    const dragItem = this.dragItem;
+
+    if (!dragItem) return this.items;
+
+    return this.items.toSorted((a, b) => a.dragPosition - b.dragPosition);
+  }
+
   /**
    * Returns the item outlet that was clicked on, if any.
    *
@@ -211,6 +207,18 @@ export default class OrderableListController extends Controller {
    */
   #targetItem(element) {
     return this.items.find((item) => item.element === element);
+  }
+
+  #insertDragItem(orderedItems, dragItem) {
+    const index = orderedItems.indexOf(dragItem);
+    const previousItem = orderedItems[index - 1];
+    const nextItem = orderedItems[index + 1];
+
+    if (previousItem) {
+      previousItem.row.insertAdjacentElement("afterend", dragItem.row);
+    } else if (nextItem) {
+      nextItem.row.insertAdjacentElement("beforebegin", dragItem.row);
+    }
   }
 
   //endregion

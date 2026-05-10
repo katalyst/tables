@@ -71,21 +71,6 @@ export default class OrderableRowController extends Controller {
   }
 
   /**
-   * Calculate the relative index of the item during drag. This is used to
-   * sort items during drag as it takes into account any uncommitted changes
-   * to index caused by the drag offset.
-   *
-   * @returns {number} index for the purposes of drag and drop ordering
-   */
-  get dragIndex() {
-    if (this.dragOffset && this.dragOffset !== 0) {
-      return this.index + Math.round(this.dragOffset / this.row.offsetHeight);
-    } else {
-      return this.index;
-    }
-  }
-
-  /**
    * Value for use in comparisons during drag. Used by ListController to
    * determine whether the dragged item is above or below another item.
    *
