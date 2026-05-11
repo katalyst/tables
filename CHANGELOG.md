@@ -1,3 +1,7 @@
+## [3.12.0]
+
+* Support for ordering variable height rows
+
 ## [3.11.0]
 
 * Support for Pagy 43
