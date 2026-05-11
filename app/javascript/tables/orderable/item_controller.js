@@ -34,6 +34,23 @@ export default class OrderableRowController extends Controller {
     this.row.style.transform = `translateY(${offset - this.#offsetTop}px)`;
   }
 
+  captureDropPosition() {
+    this.dropTop = this.#viewportTop;
+  }
+
+  invertDropPosition() {
+    delete this.dragOffset;
+    this.row.removeAttribute("dragging");
+    this.row.style.transition = "transform 0s";
+    this.row.style.transform = "";
+    this.row.style.transform = `translateY(${this.dropTop - this.#viewportTop}px)`;
+  }
+
+  playDrop() {
+    this.row.style.transition = "";
+    this.row.style.transform = "";
+  }
+
   /**
    * Set the index value of the item. This is called on all items after a drop
    * event. If the index is different to the params index then this item has
@@ -59,6 +76,7 @@ export default class OrderableRowController extends Controller {
    */
   reset() {
     delete this.dragOffset;
+    delete this.dropTop;
     this.row.removeAttribute("style");
     this.row.removeAttribute("dragging");
   }
@@ -107,6 +125,10 @@ export default class OrderableRowController extends Controller {
 
   get #offsetTop() {
     return this.row.offsetTop;
+  }
+
+  get #viewportTop() {
+    return this.row.getBoundingClientRect().top;
   }
 }
 

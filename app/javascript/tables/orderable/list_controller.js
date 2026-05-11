@@ -15,7 +15,7 @@ export default class OrderableListController extends Controller {
     this.element.style.position = "relative";
   }
 
-  stopDragging() {
+  stopDragging({ reset = true } = {}) {
     const dragState = this.dragState;
     delete this.dragState;
 
@@ -24,7 +24,7 @@ export default class OrderableListController extends Controller {
     window.removeEventListener("scroll", this.scroll, true);
 
     this.element.removeAttribute("style");
-    this.items.forEach((item) => item.reset());
+    if (reset) this.items.forEach((item) => item.reset());
 
     return dragState;
   }
@@ -38,13 +38,30 @@ export default class OrderableListController extends Controller {
 
     if (!dragItem) return;
 
+    const items = this.items;
+    items.forEach((item) => item.captureDropPosition());
+
     this.#insertDragItem(this.orderedItems, dragItem);
+
+    items.forEach((item) => item.invertDropPosition());
+
+    // Commit the inverted transforms before enabling transitions to play out.
+    this.element.offsetHeight;
 
     // reindex all items based on their new positions
     this.items.forEach((item, index) => item.updateIndex(index));
 
     // save the changes
     this.commitChanges();
+
+    window.requestAnimationFrame(() => {
+      items.forEach((item) => item.playDrop());
+      window.setTimeout(() => {
+        items.forEach((item) => item.reset());
+      }, this.#animationDuration);
+    });
+
+    return true;
   }
 
   commitChanges() {
@@ -115,8 +132,8 @@ export default class OrderableListController extends Controller {
   mouseup = (event) => {
     if (!this.isDragging) return;
 
-    this.drop();
-    this.stopDragging();
+    const dropped = this.drop();
+    this.stopDragging({ reset: !dropped });
     this.items.forEach((form) => delete form.dragState);
   };
 
@@ -221,7 +238,25 @@ export default class OrderableListController extends Controller {
     }
   }
 
+  get #animationDuration() {
+    const duration =
+      window
+        .getComputedStyle(this.element)
+        .getPropertyValue("--animation-duration") || "150ms";
+
+    return parseTime(duration);
+  }
+
   //endregion
+}
+
+function parseTime(value) {
+  value = value.trim();
+
+  if (value.endsWith("ms")) return parseFloat(value);
+  if (value.endsWith("s")) return parseFloat(value) * 1000;
+
+  return parseFloat(value) || 0;
 }
 
 /**
