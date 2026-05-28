@@ -38,7 +38,7 @@ RSpec.describe Katalyst::Tables::Orderable do
       <form id="#{form_id}"
             data-controller="tables--orderable--form"
             data-tables--orderable--form-scope-value="order[faqs]"
-            action="/faqs/order" accept-charset="UTF-8" method="post">
+            action="/faqs/order" accept-charset="UTF-8" method="post" hidden="hidden">
         <input type="hidden" name="_method" value="patch">
         <button name="button" type="submit" hidden="hidden">Save </button>
       </form>
