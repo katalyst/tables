@@ -21,9 +21,15 @@ module Katalyst
         end
 
         def call
-          form_with(id:, url:, method: :patch, data: {
+          form_with(id:,
+                    url:,
+                    method: :patch,
+                    data:   {
                       controller:                       FORM_CONTROLLER,
                       "#{FORM_CONTROLLER}-scope-value": @scope,
+                    },
+                    html:   {
+                      hidden: "",
                     }) do |form|
             form.button(hidden: "")
           end
