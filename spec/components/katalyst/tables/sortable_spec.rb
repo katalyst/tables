@@ -5,12 +5,12 @@ require "rails_helper"
 RSpec.describe Katalyst::Tables::Sortable do
   def render_header(collection: nil, url: "/people", &)
     with_request_url(url) do
-      params = Rack::Utils.parse_query(vc_test_request.get_header(Rack::QUERY_STRING))
+      params       = Rack::Utils.parse_query(vc_test_request.get_header(Rack::QUERY_STRING))
       collection ||= Katalyst::Tables::Collection::Base
                        .new(sorting: "name asc")
                        .with_params(params)
                        .apply(Person.all)
-      component = Katalyst::TableComponent.new(collection:)
+      component    = Katalyst::TableComponent.new(collection:)
       render_inline(component, &).at_css("thead > tr > th")
     end
   end

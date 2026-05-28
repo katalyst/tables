@@ -11,7 +11,7 @@ RSpec.describe Katalyst::Tables::Orderable do
 
   it "renders tables with the expected attributes to support selection" do
     component = Katalyst::TableComponent.new(collection:)
-    html = render_inline(component) { |row, _| row.ordinal }
+    html      = render_inline(component) { |row, _| row.ordinal }
     expect(html).to match_html(<<~HTML)
       <table class="katalyst--table">
         <thead><tr><th data-cell-type="ordinal"></th></tr></thead>
@@ -33,7 +33,7 @@ RSpec.describe Katalyst::Tables::Orderable do
 
   it "renders form with the expected attributes to support selection" do
     component = Katalyst::Tables::Orderable::FormComponent.new(collection:, url: vc_test_controller.order_faqs_path)
-    html = render_inline(component)
+    html      = render_inline(component)
     expect(html).to match_html(<<~HTML)
       <form id="#{form_id}"
             data-controller="tables--orderable--form"

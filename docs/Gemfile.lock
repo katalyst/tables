@@ -40,11 +40,11 @@ GEM
       logger
     eventmachine (1.2.7)
     execjs (2.10.1)
-    faraday (2.14.1)
+    faraday (2.14.2)
       faraday-net_http (>= 2.0, < 3.5)
       json
       logger
-    faraday-net_http (3.4.2)
+    faraday-net_http (3.4.3)
       net-http (~> 0.5)
     ffi (1.17.4-aarch64-linux-gnu)
     ffi (1.17.4-aarch64-linux-musl)
@@ -226,7 +226,7 @@ GEM
       gemoji (>= 3, < 5)
       html-pipeline (~> 2.2)
       jekyll (>= 3.0, < 5.0)
-    json (2.19.5)
+    json (2.19.6)
     just-the-docs (0.12.0)
       jekyll (>= 3.8.5)
       jekyll-include-cache
@@ -333,4 +333,4 @@ RUBY VERSION
   ruby 3.4.7
 
 BUNDLED WITH
-  4.0.11
+  4.0.12

@@ -15,7 +15,7 @@ module Katalyst
 
       def before_render
         # move @__vc_render_in_block to @row_proc to avoid slot lookup attempting to call it
-        @row_proc = @__vc_render_in_block
+        @row_proc             = @__vc_render_in_block
         @__vc_render_in_block = nil
       end
 
@@ -26,11 +26,11 @@ module Katalyst
       private
 
       def row_content(row, record)
-        @current_row = row
+        @current_row    = row
         @current_record = record
         row_proc.call(self, record)
       ensure
-        @current_row = nil
+        @current_row    = nil
         @current_record = nil
       end
 

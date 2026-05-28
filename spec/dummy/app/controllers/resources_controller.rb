@@ -33,7 +33,7 @@ class ResourcesController < ApplicationController
     include Katalyst::Tables::Collection::Query
 
     config.paginate = { limit: 5 }
-    config.sorting = :name
+    config.sorting  = :name
 
     attribute :search, :search, scope: :table_search
     attribute :id, :integer, multiple: true

@@ -12,7 +12,7 @@ module Nested
     end
 
     def set_parent
-      @parent = Parent.find(params[:parent_id])
+      @parent = Parent.find(params.expect(:parent_id))
     end
   end
 end

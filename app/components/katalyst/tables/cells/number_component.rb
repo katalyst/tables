@@ -12,7 +12,7 @@ module Katalyst
         def initialize(format:, options:, **)
           super(**)
 
-          @format = format
+          @format  = format
           @options = options
         end
 

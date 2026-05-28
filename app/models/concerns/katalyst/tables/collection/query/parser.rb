@@ -11,8 +11,8 @@ module Katalyst
 
           def initialize(collection)
             @collection = collection
-            @tagged = {}
-            @untagged = []
+            @tagged     = {}
+            @untagged   = []
           end
 
           # @param query [String]

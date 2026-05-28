@@ -5,8 +5,8 @@ module Katalyst
     class Label
       def initialize(collection:, column:, label: nil)
         @collection = collection
-        @column = column
-        @label = label
+        @column     = column
+        @label      = label
       end
 
       def value

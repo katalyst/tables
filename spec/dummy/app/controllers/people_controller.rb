@@ -30,13 +30,13 @@ class PeopleController < ApplicationController
   end
 
   def show
-    @person = Person.find(params[:id])
+    @person = Person.find(params.expect(:id))
   end
 
   # Note: legacy style collection, testing backwards compatibility (vs Query)
   class Collection < Katalyst::Tables::Collection::Base
     config.paginate = { limit: 5 }
-    config.sorting = "name asc"
+    config.sorting  = "name asc"
 
     attribute :search, default: -> { "" }
 

@@ -7,7 +7,7 @@ module Katalyst
         def initialize(params:, form_id:, **)
           super(**)
 
-          @params = params
+          @params  = params
           @form_id = form_id
         end
 

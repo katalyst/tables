@@ -33,7 +33,7 @@ module Katalyst
           super(**)
 
           @collection = collection
-          @cell = cell
+          @cell       = cell
         end
 
         def call
@@ -46,12 +46,12 @@ module Katalyst
           # Implementation inspired by pagy's `pagy_url_for` helper.
           # Preserve any existing GET parameters
           # CAUTION: these parameters are not sanitised
-          sort = column && collection.toggle_sort(column)
-          params = if sort && !sort.eql?(collection.default_sort)
-                     request.GET.merge("sort" => sort).except("page")
-                   else
-                     request.GET.except("page", "sort")
-                   end
+          sort         = column && collection.toggle_sort(column)
+          params       = if sort && !sort.eql?(collection.default_sort)
+                           request.GET.merge("sort" => sort).except("page")
+                         else
+                           request.GET.except("page", "sort")
+                         end
           query_string = params.empty? ? "" : "?#{Rack::Utils.build_nested_query(params)}"
 
           "#{request.path}#{query_string}"

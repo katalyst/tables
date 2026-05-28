@@ -131,7 +131,7 @@ RSpec.describe Katalyst::Tables::Cells::CurrencyComponent do
         delegate :to_d, to: :value
       end)
 
-      klass = Class.new do
+      klass                                         = Class.new do
         include ActiveModel::Model
         include ActiveModel::Attributes
 

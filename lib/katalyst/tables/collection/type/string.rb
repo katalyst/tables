@@ -13,7 +13,7 @@ module Katalyst
           def initialize(exact: false, **)
             super(**)
 
-            @exact = exact
+            @exact    = exact
             @delegate = ActiveModel::Type::String.new
           end
 

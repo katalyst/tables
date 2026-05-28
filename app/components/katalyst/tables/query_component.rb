@@ -63,7 +63,7 @@ module Katalyst
       # Caution: requires config.view_component.capture_compatibility_patch_enabled to be set
       def with_form(model: collection, url: @url, method: :get, **options, &block)
         @form_options = { model:, url:, method:, **options }
-        @form_block = block
+        @form_block   = block
       end
 
       def with_modal(collection: self.collection, **, &)

@@ -12,7 +12,7 @@ module Katalyst
         def initialize(format:, relative:, **)
           super(**)
 
-          @format = format
+          @format   = format
           @relative = relative
         end
 

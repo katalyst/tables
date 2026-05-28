@@ -27,7 +27,7 @@ module Katalyst
           Katalyst::Tables::Sortable
         ]
 
-        self.date_format = :default
+        self.date_format     = :default
         self.datetime_format = :default
       end
     end

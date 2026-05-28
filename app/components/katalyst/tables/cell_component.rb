@@ -11,10 +11,10 @@ module Katalyst
         super(**)
 
         @collection = collection
-        @row = row
-        @column = column
-        @record = record
-        @heading = heading
+        @row        = row
+        @column     = column
+        @record     = record
+        @heading    = heading
 
         if @row.header?
           @label = Label.new(collection:, column:, label:)

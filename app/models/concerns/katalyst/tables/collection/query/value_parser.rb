@@ -8,7 +8,7 @@ module Katalyst
           attr_accessor :query, :key
 
           def initialize(key:, start:)
-            @key = key
+            @key   = key
             @start = start
           end
 

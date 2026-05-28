@@ -9,7 +9,7 @@ module Katalyst
         def initialize(value, name:, type:)
           super(value)
 
-          @name = name
+          @name           = name
           @attribute_type = type
         end
 

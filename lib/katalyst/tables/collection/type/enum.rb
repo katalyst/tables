@@ -16,12 +16,12 @@ module Katalyst
           end
 
           def suggestions(scope, attribute)
-            model = scope.model
+            model  = scope.model
             column = attribute.name
 
             if attribute.name.include?(".")
               table_name, column = attribute.name.split(".")
-              model = scope.model.reflections[table_name].klass
+              model              = scope.model.reflections[table_name].klass
 
               raise(ArgumentError, "Unknown association '#{table_name}' for #{scope.model}") unless model
             end

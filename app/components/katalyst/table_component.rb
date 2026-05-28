@@ -61,10 +61,10 @@ module Katalyst
       # caption: true means render the caption, caption: false means no caption, if a hash, passes as options
       @caption_options = caption
 
-      @header_row_callbacks = []
-      @body_row_callbacks = []
+      @header_row_callbacks      = []
+      @body_row_callbacks        = []
       @header_row_cell_callbacks = []
-      @body_row_cell_callbacks = []
+      @body_row_cell_callbacks   = []
 
       super(generate_ids:, object_name:, partial:, as:, **)
     end

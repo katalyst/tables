@@ -12,7 +12,7 @@ module Katalyst
           def initialize(scope: nil, filter: true)
             super()
 
-            @scope = scope
+            @scope      = scope
             @filterable = filter
           end
 
@@ -52,12 +52,12 @@ module Katalyst
           end
 
           def suggestions(scope, attribute, limit: 10, order: :asc)
-            model = scope.model
+            model  = scope.model
             column = attribute.name
 
             if attribute.name.include?(".")
               table_name, column = attribute.name.split(".")
-              model = scope.model.reflections[table_name].klass
+              model              = scope.model.reflections[table_name].klass
 
               raise(ArgumentError, "Unknown association '#{table_name}' for #{scope.model}") unless model
 

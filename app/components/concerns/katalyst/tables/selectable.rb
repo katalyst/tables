@@ -7,9 +7,9 @@ module Katalyst
     module Selectable
       extend ActiveSupport::Concern
 
-      FORM_CONTROLLER = "tables--selection--form"
+      FORM_CONTROLLER  = "tables--selection--form"
       TABLE_CONTROLLER = "tables--selection--table"
-      ITEM_CONTROLLER = "tables--selection--item"
+      ITEM_CONTROLLER  = "tables--selection--item"
 
       # Returns the default dom id for the selection form, uses the table's
       # default id with '_selection' appended.

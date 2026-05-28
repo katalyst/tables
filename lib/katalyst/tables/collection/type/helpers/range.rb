@@ -86,7 +86,7 @@ module Katalyst
               # when a value that accepts multiple is given a range, it double-packs the value so we get ..[0]
               # unpack the array value
               from = from.first if from.is_a?(::Array) && from.length == 1
-              to = to.first if to.is_a?(::Array) && to.length == 1
+              to   = to.first if to.is_a?(::Array) && to.length == 1
               (from..to)
             end
           end

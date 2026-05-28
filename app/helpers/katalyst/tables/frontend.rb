@@ -35,7 +35,7 @@ module Katalyst
                      **,
                      &)
         component ||= default_table_component_class
-        component = component.new(collection:, header:, caption:, generate_ids:, object_name:, partial:, as:, **)
+        component   = component.new(collection:, header:, caption:, generate_ids:, object_name:, partial:, as:, **)
 
         render(component, &)
       end
@@ -81,7 +81,7 @@ module Katalyst
       # @yieldparam [nil, Object] nil for the header column, or the given model for the value column
       def summary_table_with(model:, **, &)
         component ||= default_summary_table_component_class
-        component = component.new(model:, **)
+        component   = component.new(model:, **)
 
         render(component, &)
       end

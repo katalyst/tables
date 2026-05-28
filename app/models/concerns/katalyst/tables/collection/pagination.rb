@@ -46,7 +46,7 @@ module Katalyst
         class Paginate # :nodoc:
           # Pagy is not a required gem unless you're using pagination
           # Expect to see NoMethodError failures if pagy is not available
-          if (pagy_method = "Pagy::Method".safe_constantize)
+          if (pagy_method     = "Pagy::Method".safe_constantize)
             include(pagy_method)
           elsif (pagy_backend = "Pagy::Backend".safe_constantize)
             include(pagy_backend)

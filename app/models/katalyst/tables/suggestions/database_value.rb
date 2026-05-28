@@ -10,7 +10,7 @@ module Katalyst
           super(value)
 
           @attribute_type = type
-          @name = name
+          @name           = name
         end
 
         def type

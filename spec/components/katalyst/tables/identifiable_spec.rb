@@ -10,7 +10,7 @@ RSpec.describe Katalyst::Tables::Identifiable do
 
   it "renders tables with the expected id and data attributes" do
     component = Katalyst::TableComponent.new(collection:, generate_ids: true)
-    html = render_inline(component) { |row| row.text(:name) }
+    html      = render_inline(component) { |row| row.text(:name) }
     expect(html).to match_html(<<~HTML)
       <table id="people" class="katalyst--table">
         <thead><tr><th>Name</th></tr></thead>
@@ -23,7 +23,7 @@ RSpec.describe Katalyst::Tables::Identifiable do
 
   it "supports minimal tables without header or caption" do
     component = Katalyst::TableComponent.new(collection:, caption: false, header: false, generate_ids: true)
-    html = render_inline(component) { |row| row.text(:name) }
+    html      = render_inline(component) { |row| row.text(:name) }
     expect(html).to match_html(<<~HTML)
       <table id="people" class="katalyst--table">
         <tbody>
@@ -35,7 +35,7 @@ RSpec.describe Katalyst::Tables::Identifiable do
 
   it "accepts html_attributes with higher precedence than the provided ids" do # rubocop:disable RSpec/ExampleLength
     component = Katalyst::TableComponent.new(collection:, **Test::HTML_ATTRIBUTES, generate_ids: true)
-    html = render_inline(component) do |row, person|
+    html      = render_inline(component) do |row, person|
       row.html_attributes = { id: "test_#{person.id}" } if person
       row.text(:name)
     end

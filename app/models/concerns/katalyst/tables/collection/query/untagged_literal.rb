@@ -10,7 +10,7 @@ module Katalyst
           def initialize(value:, start:)
             @value = value
             @start = start
-            @end = start + value.length
+            @end   = start + value.length
           end
 
           def literal?
