@@ -1,17 +1,42 @@
 .katalyst--summary-table {
-  width: unset;
-  border-top: 1px solid var(--row-border-color);
+  --table-min-width: min(60ch, 100cqi);
+  --table-max-width: 100%;
+  --label-min-width: min(20ch, 33cqi);
+  --label-width: clamp(12ch, 33cqi, 30ch);
 
-  th {
-    min-width: 12rem;
+  display: grid;
+  grid-template-columns: fit-content(var(--label-width)) 1fr;
+  align-items: stretch;
+
+  width: fit-content;
+  min-width: var(--table-min-width);
+  max-width: var(--table-max-width);
+
+  tbody,
+  tr {
+    display: contents;
   }
 
   th,
   td {
-    vertical-align: baseline;
-    text-align: left;
+    overflow-wrap: anywhere;
+    hyphens: auto;
   }
 
+  th {
+    min-width: var(--label-min-width);
+  }
+}
+
+@container (width < 60ch) {
+  .katalyst--summary-table {
+    grid-template-columns: 1fr;
+    min-width: unset;
+    width: 100%;
+  }
+}
+
+.katalyst--summary-table {
   :where([data-cell-type="enum"]) {
     [data-enum] {
       background: var(--tag-background-color, var(--color-tint, #f0ecf3));
