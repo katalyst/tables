@@ -1,3 +1,10 @@
+## [3.13.0]
+
+Default style overhaul for .katalyst--summary-table (BREAKING CHANGE)
+* Use grid instead of table layout to support more complex alignment
+* Respond to stacked layout on mobile
+* Users will likely want to make spacing and layout tweaks depending on table style
+
 ## [3.12.0]
 
 * Support for ordering variable height rows
