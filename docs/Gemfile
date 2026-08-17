@@ -2,9 +2,5 @@
 
 source "https://rubygems.org"
 
-# Temporary pin, see https://github.com/jekyll/jekyll-commonmark/issues/61
-ruby "< 4.0"
-
-gem "github-pages", ">= 232"
+gem "jekyll"
 gem "just-the-docs"
-gem "webrick"
