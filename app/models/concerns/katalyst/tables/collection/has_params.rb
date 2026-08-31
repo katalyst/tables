@@ -32,11 +32,10 @@ module Katalyst
 
         # Returns a hash of the current attributes that have changed from defaults.
         # This uses Refinements internally so it needs to be exposed publicly with this super call.
-        # rubocop:disable Lint/UselessMethodDefinition
+        # rubocop:disable-next Lint/UselessMethodDefinition
         def to_params
           super
         end
-        # rubocop:enable Lint/UselessMethodDefinition
       end
     end
   end

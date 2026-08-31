@@ -6,11 +6,10 @@ module Katalyst
       module Type
         class Search < Value
           # @overwrite Value.initialize() to require scope
-          # rubocop:disable Lint/UselessMethodDefinition
+          # rubocop:disable-next Lint/UselessMethodDefinition
           def initialize(scope:, **)
             super
           end
-          # rubocop:enable Lint/UselessMethodDefinition
 
           def type
             :search

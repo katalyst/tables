@@ -2,7 +2,7 @@
 
 require "rails_helper"
 
-# rubocop:disable RSpec/InstanceVariable, RSpec/ExampleLength
+# rubocop:disable-next RSpec/InstanceVariable, RSpec/ExampleLength
 RSpec.describe Katalyst::Tables::QueryComponent do
   subject(:component) { described_class.new(collection: @collection, url: "/resources") }
 
@@ -92,4 +92,3 @@ RSpec.describe Katalyst::Tables::QueryComponent do
     HTML
   end
 end
-# rubocop:enable RSpec/InstanceVariable, RSpec/ExampleLength
