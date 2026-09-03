@@ -98,28 +98,29 @@
     aspect-ratio: 1;
     height: 1.5ex;
     line-height: 1;
-    background: none;
-    background-size: contain;
+    background: currentColor;
     transform: translateY(0.1ex);
     margin-inline-start: var(--space-2xs, 0.5rem);
+    opacity: 0;
+    -webkit-mask: url("icons/sort-asc.svg") no-repeat center;
+    mask: url("icons/sort-asc.svg") no-repeat center;
+    transition: opacity var(--animation-duration, 125ms);
   }
 
+  /* Unsorted + hover/focus: ghost arrow */
   a:is(.sortable):hover::after,
-  a:is(.sortable):focus-visible::after,
-  [data-sort="asc"] a:is(.sortable)::after,
-  [data-sort="desc"] a:is(.sortable):hover::after,
-  [data-sort="desc"] a:is(.sortable):focus-visible::after {
-    background: currentColor;
-    -webkit-mask: url("/katalyst/tables/icons/sort-asc.svg") no-repeat center;
-    mask: url("/katalyst/tables/icons/sort-asc.svg") no-repeat center;
+  a:is(.sortable):focus-visible::after {
+    opacity: 0.3;
   }
 
-  [data-sort="desc"] a:is(.sortable)::after,
-  [data-sort="asc"] a:is(.sortable):hover::after,
-  [data-sort="asc"] a:is(.sortable):focus-visible::after {
-    background: currentColor;
-    -webkit-mask: url("/katalyst/tables/icons/sort-desc.svg") no-repeat center;
-    mask: url("/katalyst/tables/icons/sort-desc.svg") no-repeat center;
+  /* Sorted: solid state arrow */
+  [data-sort] a:is(.sortable)::after {
+    opacity: 1;
+  }
+
+  [data-sort="desc"] a:is(.sortable)::after {
+    -webkit-mask: url("icons/sort-desc.svg") no-repeat center;
+    mask: url("icons/sort-desc.svg") no-repeat center;
   }
 
   /* Width and wrapping */
