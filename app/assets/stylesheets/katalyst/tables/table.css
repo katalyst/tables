@@ -78,7 +78,7 @@
   /* Select */
 
   :where([data-cell-type="selection"]) {
-    --cell-width: 2rem;
+    width: 2rem;
 
     label {
       display: block;
