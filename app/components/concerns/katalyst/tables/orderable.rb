@@ -39,7 +39,7 @@ module Katalyst
       # @example Render a column with a drag-and-drop handle for users to reorder rows
       #   <% row.ordinal %> # label => <th></th>, data => <td ...>⠿</td>
       def ordinal(column = :ordinal, primary_key: :id, **, &)
-        initialize_orderable if row.header?
+        initialize_orderable(column) if row.header?
 
         with_cell(Cells::OrdinalComponent.new(
                     collection:, row:, column:, record:, label: "", heading: false, primary_key:, **,
@@ -48,7 +48,7 @@ module Katalyst
 
       private
 
-      def initialize_orderable
+      def initialize_orderable(column)
         update_tbody_attributes(
           data: {
             controller: LIST_CONTROLLER,
@@ -56,8 +56,15 @@ module Katalyst
                        turbo:before-morph-element->#{LIST_CONTROLLER}#beforeMorphElement:self],
             "#{LIST_CONTROLLER}-#{FORM_CONTROLLER}-outlet" => "##{Orderable.default_form_id(collection)}",
             "#{LIST_CONTROLLER}-#{ITEM_CONTROLLER}-outlet" => "td[data-cell-type=ordinal]",
+            "#{LIST_CONTROLLER}-direction-value" => orderable_direction(column),
           },
         )
+      end
+
+      def orderable_direction(column)
+        return "asc" unless collection.respond_to?(:sort_status)
+
+        collection.sort_status(column) || "asc"
       end
     end
   end

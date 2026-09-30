@@ -18,7 +18,8 @@ RSpec.describe Katalyst::Tables::Orderable do
         <tbody data-controller="tables--orderable--list"
                 data-action="mousedown->tables--orderable--list#mousedown turbo:before-morph-element->tables--orderable--list#beforeMorphElement:self"
                 data-tables--orderable--list-tables--orderable--form-outlet="##{form_id}"
-                data-tables--orderable--list-tables--orderable--item-outlet="td[data-cell-type=ordinal]">
+                data-tables--orderable--list-tables--orderable--item-outlet="td[data-cell-type=ordinal]"
+                data-tables--orderable--list-direction-value="asc">
           <tr>
             <td data-cell-type="ordinal"
                 data-controller="tables--orderable--item"
@@ -29,6 +30,20 @@ RSpec.describe Katalyst::Tables::Orderable do
         </tbody>
       </table>
     HTML
+  end
+
+  it "renders the asc direction when the collection has no sort configured" do
+    component = Katalyst::TableComponent.new(collection:)
+    html      = render_inline(component) { |row, _| row.ordinal }
+    expect(html).to have_css(%(tbody[data-tables--orderable--list-direction-value="asc"]))
+  end
+
+  it "renders the desc direction when the collection is sorted ordinal desc" do
+    create_list(:faq, 1)
+    collection = build(:collection, items: Faq.all, sorting: "ordinal desc")
+    component  = Katalyst::TableComponent.new(collection:)
+    html       = render_inline(component) { |row, _| row.ordinal }
+    expect(html).to have_css(%(tbody[data-tables--orderable--list-direction-value="desc"]))
   end
 
   it "renders form with the expected attributes to support selection" do

@@ -2,6 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class OrderableListController extends Controller {
   static outlets = ["tables--orderable--item", "tables--orderable--form"];
+  static values = { direction: { type: String, default: "asc" } };
 
   //region State transitions
 
@@ -49,7 +50,12 @@ export default class OrderableListController extends Controller {
     this.element.offsetHeight;
 
     // reindex all items based on their new positions
-    this.items.forEach((item, index) => item.updateIndex(index));
+    const count = this.items.length;
+    this.items.forEach((item, index) => {
+      item.updateIndex(
+        this.directionValue === "desc" ? count - 1 - index : index,
+      );
+    });
 
     // save the changes
     this.commitChanges();

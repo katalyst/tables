@@ -1,3 +1,7 @@
+## [3.14.0]
+
+* Support for ordering collections sorted `ordinal desc`
+
 ## [3.13.0]
 
 Default style overhaul for .katalyst--summary-table (BREAKING CHANGE)
