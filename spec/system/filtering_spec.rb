@@ -25,7 +25,7 @@ RSpec.describe "index/filtering" do
     expect(page).to have_css("td", text: "Person 1")
     expect(page).to have_no_css("td", text: "Person 3")
 
-    find("input[type=search]").click
+    find_field(type: "search").click
     page.driver.browser.keyboard.type(:escape)
     page.driver.browser.keyboard.type(:enter)
 
