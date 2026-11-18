@@ -1,3 +1,7 @@
+## [3.15.0]
+
+* Date filters on datetime columns now match whole days in `Time.zone`, including the last day of a range (#169)
+
 ## [3.14.0]
 
 * Support for ordering collections sorted `ordinal desc`

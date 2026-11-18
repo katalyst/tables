@@ -36,6 +36,26 @@ module Katalyst
 
           private
 
+          # Dates filtering a datetime column are interpreted as whole days in Time.zone.
+          def apply_filter(scope, model, attribute, value)
+            return super unless value && datetime_column?(model, attribute.name.split(".").last)
+
+            scope.where(attribute.name => to_time_range(value))
+          end
+
+          def datetime_column?(model, column)
+            %i[datetime timestamptz].include?(model.type_for_attribute(column).type)
+          end
+
+          # Converts a date or range of dates to an exclusive range of times that
+          # covers each day in full, from the start of the first day to the start
+          # of the day after the last.
+          def to_time_range(value)
+            from, to = value.is_a?(::Range) ? [value.begin, value.end] : [value, value]
+
+            from&.in_time_zone...to&.next_day&.in_time_zone
+          end
+
           def cast_value(value)
             return value unless value.is_a?(::String)
 

@@ -99,6 +99,21 @@ collection.with_params(q: "created_at:2024-01-01..2025-01-01")
 # => { "created_at" => 2024-01-01..2025-01-01 }
 ```
 
+### Date inputs
+
+When a `:date` attribute filters a `datetime` (or `timestamptz`) column, each date means the whole day in `Time.zone`,
+and ranges include both their first and last days:
+
+```ruby
+# Time.zone = "Australia/Adelaide"
+collection.with_params(q: "created_at:2024-01-01")
+# => where(created_at: Time.zone.parse("2024-01-01")...Time.zone.parse("2024-01-02"))
+collection.with_params(q: "created_at:2024-01-01..2024-01-31")
+# => where(created_at: Time.zone.parse("2024-01-01")...Time.zone.parse("2024-02-01"))
+```
+
+Filters on `date` columns compare dates directly.
+
 ### String inputs
 
 String inputs are automatically matched using `Arel::Predicates#matches` (substring matching).

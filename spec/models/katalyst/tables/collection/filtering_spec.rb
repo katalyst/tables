@@ -13,6 +13,7 @@ RSpec.describe Katalyst::Tables::Collection::Filtering do
       attribute :active, :boolean
       attribute :updated, :boolean, scope: :updated
       attribute :created_at, :date
+      attribute :published_on, :date
       attribute :category, :enum
       attribute :"parent.name", :string
       attribute :"parent.active", :boolean
@@ -33,9 +34,15 @@ RSpec.describe Katalyst::Tables::Collection::Filtering do
   end
 
   it "supports dates" do
+    scope = collection.with_params(q: "published_on:1970-01-01..2200-01-01").apply(Resource.all)
+    expect(scope.items.to_sql)
+      .to eq(Resource.where(published_on: Date.parse("1970-01-01")..Date.parse("2200-01-01")).to_sql)
+  end
+
+  it "supports datetimes" do
     scope = collection.with_params(q: "created_at:1970-01-01..2200-01-01").apply(Resource.all)
     expect(scope.items.to_sql)
-      .to eq(Resource.where(created_at: Date.parse("1970-01-01")..Date.parse("2200-01-01")).to_sql)
+      .to eq(Resource.where(created_at: Time.zone.parse("1970-01-01")...Time.zone.parse("2200-01-02")).to_sql)
   end
 
   it "supports strings" do
