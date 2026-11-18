@@ -5,3 +5,6 @@ en:
         article: "Article"
         documentation: "Documentation"
         report: "Report"
+  resources:
+    index:
+      download_html: "Download %{selection}"

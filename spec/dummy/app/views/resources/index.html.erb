@@ -5,8 +5,8 @@
 
 <%= table_query_with(collection:) %>
 
-<%= table_selection_with(collection:) do %>
-  <%= tag.button "Download", formaction: resources_path(format: :csv), formmethod: :get %>
+<%= table_selection_with(collection:) do |selection| %>
+  <%= tag.button t(".download_html", selection: selection.selection_tag), formaction: resources_path(format: :csv), formmethod: :get %>
   <%= tag.button "Activate", formaction: activate_resources_path, formmethod: :put %>
 <% end %>
 
