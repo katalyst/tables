@@ -59,6 +59,24 @@ RSpec.describe "Selection" do
     expect(page).to have_button(text: "Download")
   end
 
+  it "updates selection counts in custom content" do
+    create_list(:resource, 2)
+
+    visit resources_path
+
+    within("tbody") do
+      first("input[type=checkbox]").click
+    end
+
+    expect(page).to have_button(text: "Download 1 resource")
+
+    within("tbody") do
+      all("input[type=checkbox]").last.click
+    end
+
+    expect(page).to have_button(text: "Download 2 resources")
+  end
+
   it "hides the download link when a selection has been cleared" do
     create(:resource)
 

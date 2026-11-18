@@ -55,14 +55,61 @@ RSpec.describe Katalyst::Tables::Selectable do
             accept-charset="UTF-8"
             method="post">
         <input type="hidden" name="_method" value="patch">
-        <p class="tables--selection--summary">
-          <span data-tables--selection--form-target="count">0</span>
-          <span data-tables--selection--form-target="singular" hidden>person</span>
-          <span data-tables--selection--form-target="plural">people</span>
-          selected
-        </p>
+        <p class="tables--selection--summary"><span><span data-tables--selection--form-target="count">0</span> <span data-tables--selection--form-target="singular" hidden="hidden">person</span><span data-tables--selection--form-target="plural">people</span></span> selected</p>
         <button formaction="/people.csv" formmethod="get">Download</button>
       </form>
     HTML
+  end
+
+  it "renders selection count tags from the form block" do
+    component = Katalyst::Tables::Selectable::FormComponent.new(collection:)
+    html      = render_inline(component) do |form|
+      form.tag.button(formaction: "/people", formmethod: :get) do
+        form.safe_join([form.count_tag(class: "count"), form.singular_tag, form.plural_tag])
+      end
+    end
+    expect(html.at_css("button")).to match_html(<<~HTML)
+      <button formaction="/people" formmethod="get"><span data-tables--selection--form-target="count" class="count">0</span><span data-tables--selection--form-target="singular" hidden="hidden">person</span><span data-tables--selection--form-target="plural">people</span></button>
+    HTML
+  end
+
+  it "merges data attributes into selection count tags" do
+    component = Katalyst::Tables::Selectable::FormComponent.new(collection:)
+    html      = render_inline(component) do |form|
+      form.count_tag(data: { testid: "selected" })
+    end
+    expect(html.at_css("[data-testid=selected]")["data-tables--selection--form-target"]).to eq("count")
+  end
+
+  describe "#selection_tag" do
+    let(:component) { Katalyst::Tables::Selectable::FormComponent.new(collection:) }
+    let(:selection) do
+      '<span data-tables--selection--form-target="count">0</span> ' \
+        '<span data-tables--selection--form-target="singular" hidden="hidden">person</span>' \
+        '<span data-tables--selection--form-target="plural">people</span>'
+    end
+
+    def selection_tag(...)
+      render_inline(component) { |form| form.selection_tag(...) }.at_css("form > span")
+    end
+
+    it "renders the count and model name" do
+      expect(selection_tag).to match_html("<span>#{selection}</span>")
+    end
+
+    it "accepts html attributes" do
+      expect(selection_tag(class: "selection", html: { title: "Selection" })).to match_html(<<~HTML)
+        <span class="selection" title="Selection">#{selection}</span>
+      HTML
+    end
+
+    it "can be interpolated into html translations" do
+      html = render_inline(component) do |form|
+        form.tag.button(form.t("resources.index.download_html", selection: form.selection_tag))
+      end
+      expect(html.at_css("button")).to match_html(<<~HTML)
+        <button>Download <span>#{selection}</span></button>
+      HTML
+    end
   end
 end

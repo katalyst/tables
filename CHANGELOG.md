@@ -1,3 +1,10 @@
+## [3.16.0]
+
+* Selections can be described in action buttons, e.g. "Download 2 people" (#130)
+  * The form component is passed to the `table_selection_with` block and provides `selection_tag`, which renders the live selection count and model name for interpolation into `_html` translations
+  * `count_tag`, `singular_tag` and `plural_tag` render the individual parts, and can be used more than once
+  * The selection summary is translated with `katalyst.tables.selectable.form_component.summary_html`
+
 ## [3.15.0]
 
 * Date filters on datetime columns now match whole days in `Time.zone`, including the last day of a range (#169)

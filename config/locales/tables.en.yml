@@ -6,6 +6,9 @@ en:
           placeholder: "Filter %{name}"
         modal_component:
           suggestions_title: "Search options"
+      selectable:
+        form_component:
+          summary_html: "%{selection} selected"
       orderable:
         value:
           "⠿"

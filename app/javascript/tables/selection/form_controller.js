@@ -73,8 +73,12 @@ export default class SelectionFormController extends Controller {
 
   countValueChanged(count) {
     this.element.toggleAttribute("hidden", count === 0);
-    this.countTarget.textContent = count;
-    this.singularTarget.toggleAttribute("hidden", count !== 1);
-    this.pluralTarget.toggleAttribute("hidden", count === 1);
+    this.countTargets.forEach((el) => (el.textContent = count));
+    this.singularTargets.forEach((el) =>
+      el.toggleAttribute("hidden", count !== 1),
+    );
+    this.pluralTargets.forEach((el) =>
+      el.toggleAttribute("hidden", count === 1),
+    );
   }
 }
