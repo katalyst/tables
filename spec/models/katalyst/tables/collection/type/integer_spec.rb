@@ -98,6 +98,76 @@ RSpec.describe Katalyst::Tables::Collection::Type::Integer do
     end
   end
 
+  # Active Record checks values against the column's range when filtering.
+  describe "#filter with out of range values" do
+    let(:huge) { "9" * 30 }
+    let!(:resource) { create(:resource, index: 1) }
+
+    it "filters values beyond 4 bytes on bigint columns" do
+      collection = new_collection(id: "5000000000") do
+        attribute :id, :integer
+      end
+
+      expect(filter(collection, key: "id").to_sql).to eq(Resource.where(id: 5_000_000_000).to_sql)
+    end
+
+    it "does not truncate values beyond 16 digits" do
+      collection = new_collection(id: "1000000000000000000") do
+        attribute :id, :integer
+      end
+
+      expect(collection.id).to eq(1_000_000_000_000_000_000)
+    end
+
+    it "matches nothing for values beyond 8 bytes" do
+      collection = new_collection(index: huge) do
+        attribute :index, :integer
+      end
+
+      expect(filter(collection, key: "index").to_a).to be_empty
+    end
+
+    it "matches nothing for ranges starting beyond 8 bytes" do
+      collection = new_collection(index: "#{huge}..") do
+        attribute :index, :integer
+      end
+
+      expect(filter(collection, key: "index").to_a).to be_empty
+    end
+
+    it "treats upper bounds beyond 8 bytes as unbounded" do
+      collection = new_collection(index: "1..#{huge}") do
+        attribute :index, :integer
+      end
+
+      expect(filter(collection, key: "index").to_a).to contain_exactly(resource)
+    end
+
+    it "ignores out of range multiple values" do
+      collection = new_collection(index: ["1", huge]) do
+        attribute :index, :integer, multiple: true
+      end
+
+      expect(filter(collection, key: "index").to_a).to contain_exactly(resource)
+    end
+
+    it "matches nothing for out of range query values" do
+      collection = new_collection(q: "index:#{huge}") do
+        attribute :index, :integer
+      end
+
+      expect(filter(collection, key: "index").to_a).to be_empty
+    end
+
+    it "serializes out of range values to params" do
+      collection = new_collection(index: huge) do
+        attribute :index, :integer
+      end
+
+      expect(collection.to_params).to eq("index" => huge.to_i)
+    end
+  end
+
   describe "#cast" do
     subject(:type) { described_class.new }
 
@@ -161,6 +231,52 @@ RSpec.describe Katalyst::Tables::Collection::Type::Integer do
       it { expect(type.to_param(0)).to eq 0 }
       it { expect(type.to_param([])).to eq "[]" }
       it { expect(type.to_param([0])).to eq "[0]" }
+    end
+  end
+
+  # Params are strings, so values must survive to_param, to_s and cast.
+  describe "round trip" do
+    subject(:type) { described_class.new }
+
+    def round_trip(value)
+      type.cast(type.to_param(value).to_s)
+    end
+
+    [
+      0, -1, 2**31, (2**63) - 1, -(2**63), 2**64, (10**32) - 1, -((10**31) - 1),
+      1..(2**64), -(2**64)..1, (2**64).., ..(2**64)
+    ].each do |value|
+      it "round trips #{value.inspect}" do
+        expect(round_trip(value)).to eq(value)
+      end
+    end
+
+    # Strings beyond 32 bytes are truncated by ActiveModel to avoid parsing very
+    # large numbers. They remain far beyond the range of any integer column.
+    it { expect(round_trip(10**40)).to eq(10**31) }
+    it { expect(round_trip(-(10**40))).to eq(-(10**30)) }
+
+    context "with a collection" do
+      def new_collection(params)
+        Class.new(Katalyst::Tables::Collection::Base) do
+          include Katalyst::Tables::Collection::Query
+
+          attribute :id, :integer
+          attribute :index, :integer, multiple: true
+        end.with_params(params)
+      end
+
+      let(:collection) { new_collection(id: (2**63).to_s, index: ["1", (2**63).to_s]) }
+
+      it "round trips through params" do
+        expect(new_collection(collection.to_params).to_params).to eq(collection.to_params)
+      end
+
+      it "round trips through the query" do
+        query = new_collection(q: "id:#{2**63} index:[1, #{2**63}]")
+
+        expect(query.attributes.slice("id", "index")).to eq("id" => 2**63, "index" => [1, 2**63])
+      end
     end
   end
 

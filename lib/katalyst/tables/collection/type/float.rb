@@ -14,6 +14,15 @@ module Katalyst
           def initialize(**)
             super(**, delegate: ActiveModel::Type::Float)
           end
+
+          private
+
+          # ActiveModel accepts "NaN", but NaN is not equal to anything, so
+          # treat it as invalid input.
+          def cast_value(value)
+            result = super
+            result unless result.is_a?(::Float) && result.nan?
+          end
         end
       end
     end

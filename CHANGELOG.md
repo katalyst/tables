@@ -4,6 +4,10 @@
 * Collection inputs containing NUL bytes are treated as invalid and match nothing, instead of raising database errors (#171)
   * Applies to all collection types; values in `multiple` attributes are ignored individually
   * Invalid input now matches nothing for attributes with a custom `scope:`, instead of calling the scope with `nil`
+* Integer filters accept bigint values and leave range checks to the database column, instead of raising `ActiveModel::RangeError` for values beyond 4 bytes
+  * Out of range values match nothing, out of range upper bounds are unbounded, and out of range `multiple` values are ignored
+  * Values longer than 16 digits are no longer truncated when cast
+* Float filters treat `NaN` as invalid input and match nothing
 
 ## [3.14.0]
 

@@ -262,6 +262,18 @@ RSpec.describe Katalyst::Tables::Collection::Type::Date do
     end
   end
 
+  describe "#filter with reversed ranges" do
+    it "matches nothing" do
+      create(:resource, created_at: "2023-06-01")
+
+      collection = new_collection(created_at: "2024-02-01..2023-01-01") do
+        attribute :created_at, :date
+      end
+
+      expect(filter(collection).to_a).to be_empty
+    end
+  end
+
   describe "#suggestions" do
     let(:collection) { new_collection(params) { attribute :created_at, :date }.apply(Resource) }
     let(:params) { { q: "created_at:", p: 11 } }

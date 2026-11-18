@@ -98,8 +98,39 @@ RSpec.describe Katalyst::Tables::Collection::Type::Float do
     end
   end
 
+  # NaN is not equal to anything, including itself.
+  describe "#filter with NaN" do
+    it "matches nothing" do
+      collection = new_collection(value: "NaN") do
+        attribute :value, :float
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.none.to_sql)
+    end
+
+    it "ignores NaN multiple values" do
+      collection = new_collection(value: %w[1.5 NaN]) do
+        attribute :value, :float, multiple: true
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.where(value: [1.5]).to_sql)
+    end
+
+    it "matches nothing for NaN query values" do
+      collection = new_collection(q: "value:NaN") do
+        attribute :value, :float
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.none.to_sql)
+    end
+  end
+
   describe "#cast" do
     subject(:type) { described_class.new }
+
+    it { expect(type.cast("NaN")).to be_nil }
+    it { expect(type.cast(Float::NAN)).to be_nil }
+    it { expect(type.cast("Infinity")).to eq Float::INFINITY }
 
     it { expect(type.cast(nil)).to be_nil }
     it { expect(type.cast(0.0)).to eq 0.0 }
