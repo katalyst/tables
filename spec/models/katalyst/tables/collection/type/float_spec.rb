@@ -116,6 +116,14 @@ RSpec.describe Katalyst::Tables::Collection::Type::Float do
       expect(filter(collection).to_sql).to eq(Resource.where(value: [1.5]).to_sql)
     end
 
+    it "ignores blank multiple values" do
+      collection = new_collection(value: ["", "1.5"]) do
+        attribute :value, :float, multiple: true
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.where(value: [1.5]).to_sql)
+    end
+
     it "matches nothing for NaN query values" do
       collection = new_collection(q: "value:NaN") do
         attribute :value, :float
@@ -151,6 +159,9 @@ RSpec.describe Katalyst::Tables::Collection::Type::Float do
       it { expect(type.cast(["0.0"])).to eq [0.0] }
       it { expect(type.cast("..0.0")).to eq(..0.0) }
       it { expect(type.cast(["..0.0"])).to eq([]) }
+      it { expect(type.cast("")).to eq [] }
+      it { expect(type.cast(["", "0.0"])).to eq [0.0] }
+      it { expect(type.cast(["NaN", "0.0"])).to eq [0.0] }
     end
   end
 

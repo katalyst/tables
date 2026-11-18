@@ -114,12 +114,37 @@ RSpec.describe Katalyst::Tables::Collection::Type::Enum do
       expect(filter(collection).to_a).to contain_exactly(article)
     end
 
-    it "matches nothing for blank values" do
+    # Rails multiple selects submit a hidden blank value
+    it "does not filter only blank values" do
       collection = new_collection(category: [""]) do
         attribute :category, :enum
       end
 
-      expect(filter(collection).to_sql).to eq(Resource.none.to_sql)
+      expect(filter(collection).to_sql).to eq(Resource.all.to_sql)
+    end
+
+    it "does not report only blank values as filters" do
+      collection = new_collection(category: [""]) do
+        attribute :category, :enum
+      end
+
+      expect(collection).not_to be_filtered
+    end
+
+    it "ignores blank values alongside known values" do
+      collection = new_collection(category: ["", "article"]) do
+        attribute :category, :enum
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.where(category: %w[article]).to_sql)
+    end
+
+    it "does not filter empty query arrays" do
+      collection = new_collection(q: "category:[]") do
+        attribute :category, :enum
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.all.to_sql)
     end
 
     it "matches nothing for unknown values on associations" do
@@ -167,6 +192,9 @@ RSpec.describe Katalyst::Tables::Collection::Type::Enum do
     it { expect(type.cast([])).to eq [] }
     it { expect(type.cast(["article"])).to eq ["article"] }
     it { expect(type.cast([:article])).to eq ["article"] }
+    it { expect(type.cast("")).to eq [] }
+    it { expect(type.cast([""])).to eq [] }
+    it { expect(type.cast(["", "article"])).to eq ["article"] }
   end
 
   describe "#serialize" do

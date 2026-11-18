@@ -16,7 +16,7 @@ module Katalyst
             return false unless filterable?
 
             if attribute.came_from_user?
-              attribute.value_before_type_cast.present? || value === false
+              !blank_input?(attribute.value_before_type_cast)
             else
               !value.nil? && !value.eql?([])
             end

@@ -99,6 +99,33 @@ RSpec.describe Katalyst::Tables::Collection::Type::Integer do
   end
 
   # Active Record checks values against the column's range when filtering.
+  # Rails multiple selects submit a hidden blank value
+  describe "#filter with blank multiple values" do
+    it "ignores blank values" do
+      collection = new_collection(value: ["", "1"]) do
+        attribute :value, :integer, multiple: true
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.where(value: [1]).to_sql)
+    end
+
+    it "does not filter only blank values" do
+      collection = new_collection(value: [""]) do
+        attribute :value, :integer, multiple: true
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.all.to_sql)
+    end
+
+    it "does not report only blank values as filters" do
+      collection = new_collection(value: [""]) do
+        attribute :value, :integer, multiple: true
+      end
+
+      expect(collection).not_to be_filtered
+    end
+  end
+
   describe "#filter with out of range values" do
     let(:huge) { "9" * 30 }
     let!(:resource) { create(:resource, index: 1) }
@@ -191,6 +218,9 @@ RSpec.describe Katalyst::Tables::Collection::Type::Integer do
       it { expect(type.cast(["0"])).to eq [0] }
       it { expect(type.cast("..0")).to eq(..0) }
       it { expect(type.cast(["..0"])).to eq [] }
+      it { expect(type.cast("")).to eq [] }
+      it { expect(type.cast([""])).to eq [] }
+      it { expect(type.cast(["", "0"])).to eq [0] }
     end
   end
 

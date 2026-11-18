@@ -8,6 +8,9 @@
   * Out of range values match nothing, out of range upper bounds are unbounded, and out of range `multiple` values are ignored
   * Values longer than 16 digits are no longer truncated when cast
 * Float filters treat `NaN` as invalid input and match nothing
+* Blank and invalid values in `multiple` integer, float, boolean and enum filters are ignored, instead of also matching rows where the column is `NULL`
+  * e.g. the hidden blank value submitted by Rails multiple selects
+  * Only blank values (e.g. `[""]`, or `category:[]` in a query) do not filter, and are not reported as filters
 * Enum filters match nothing for unknown values, instead of matching rows where the column is `NULL`
   * Labels and database values are both accepted, as in Active Record
   * Unknown values alongside known values are ignored

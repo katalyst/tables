@@ -67,6 +67,8 @@ module Katalyst
                 value.grep_v(::Range)
               when ::Range
                 value
+              when nil
+                []
               else
                 [value]
               end

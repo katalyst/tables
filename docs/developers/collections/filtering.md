@@ -78,6 +78,31 @@ scope = collection.with_params(category: ["article", "report"]).apply(Resource)
  # => Resource.where(category: %w[article report])
  ```
 
+Blank values are ignored, so the hidden blank value submitted by Rails multiple selects has no effect:
+
+```ruby
+scope = collection.with_params(category: ["", "report"]).apply(Resource)
+# => Resource.where(category: %w[report])
+
+scope = collection.with_params(category: [""]).apply(Resource)
+# => Resource.all
+```
+
+### Invalid input
+
+Values that are supplied but can't match any row filter to an empty result rather than raising or being ignored, e.g.
+unknown enum values, invalid dates, integers beyond the column's range, `NaN`, and strings containing NUL bytes:
+
+```ruby
+scope = collection.with_params(category: ["bogus"]).apply(Resource)
+# => Resource.none
+
+scope = collection.with_params(category: ["bogus", "report"]).apply(Resource)
+# => Resource.where(category: %w[report])
+```
+
+Invalid values in multi-value attributes are ignored when there are valid values alongside them.
+
 ### String search
 
 String attributes use `like` matching:

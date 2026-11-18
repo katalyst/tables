@@ -39,8 +39,9 @@ module Katalyst
 
           private
 
+          # Blank values are removed, as for other multiple value types.
           def cast_value(value)
-            value.to_s
+            value.to_s.presence
           end
 
           # Active Record filters unknown enum values on IS NULL. Unknown values

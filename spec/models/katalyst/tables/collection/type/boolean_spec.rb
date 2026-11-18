@@ -73,6 +73,39 @@ RSpec.describe Katalyst::Tables::Collection::Type::Boolean do
       expect(filter(collection).to_sql).to eq(Resource.where(active: [true, false]).to_sql)
     end
 
+    # Rails multiple selects submit a hidden blank value
+    it "ignores blank multiple values" do
+      collection = new_collection(active: ["", "true"]) do
+        attribute :active, :boolean, multiple: true
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.where(active: [true]).to_sql)
+    end
+
+    it "does not filter only blank multiple values" do
+      collection = new_collection(active: [""]) do
+        attribute :active, :boolean, multiple: true
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.all.to_sql)
+    end
+
+    it "does not report only blank multiple values as filters" do
+      collection = new_collection(active: [""]) do
+        attribute :active, :boolean, multiple: true
+      end
+
+      expect(collection).not_to be_filtered
+    end
+
+    it "supports false multiple values" do
+      collection = new_collection(active: [false]) do
+        attribute :active, :boolean, multiple: true
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.where(active: [false]).to_sql)
+    end
+
     it "supports scopes" do
       collection = new_collection(updated: true) do
         attribute :updated, :boolean, scope: :updated
@@ -124,6 +157,9 @@ RSpec.describe Katalyst::Tables::Collection::Type::Boolean do
       it { expect(type.cast("0")).to eq [false] }
       it { expect(type.cast([])).to eq [] }
       it { expect(type.cast(["1"])).to eq [true] }
+      it { expect(type.cast("")).to eq [] }
+      it { expect(type.cast([""])).to eq [] }
+      it { expect(type.cast(["", "1"])).to eq [true] }
     end
   end
 

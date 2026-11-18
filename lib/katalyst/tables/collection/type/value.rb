@@ -24,7 +24,7 @@ module Katalyst
             return false unless filterable?
 
             if attribute.came_from_user?
-              attribute.value_before_type_cast.present?
+              !blank_input?(attribute.value_before_type_cast)
             else
               value.present?
             end
@@ -105,6 +105,19 @@ module Katalyst
               kept unless kept.empty? && value.any?
             else
               value
+            end
+          end
+
+          # Blank input means nothing was chosen, e.g. the hidden blank value that
+          # Rails multiple selects submit. False is input for boolean filters.
+          def blank_input?(value)
+            case value
+            when ::Array
+              value.all? { |v| blank_input?(v) }
+            when ::String
+              value.blank?
+            else
+              value.nil?
             end
           end
 
