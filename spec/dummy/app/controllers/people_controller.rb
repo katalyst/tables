@@ -4,13 +4,17 @@ class PeopleController < ApplicationController
   def index
     collection = Collection.with_params(params).apply(Person.active)
 
-    render locals: { collection: }
+    respond_to do |format|
+      format.html { render locals: { collection: } }
+    end
   end
 
   def archived
     collection = Collection.with_params(params).apply(Person.archived)
 
-    render locals: { collection: }
+    respond_to do |format|
+      format.html { render locals: { collection: } }
+    end
   end
 
   def archive

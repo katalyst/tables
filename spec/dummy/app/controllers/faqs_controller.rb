@@ -4,11 +4,15 @@ class FaqsController < ApplicationController
   before_action :set_faq, only: :show
 
   def index
-    render locals: { collection: Faq.all }
+    respond_to do |format|
+      format.html { render locals: { collection: Faq.all } }
+    end
   end
 
   def show
-    render locals: { faq: @faq }
+    respond_to do |format|
+      format.html { render locals: { faq: @faq } }
+    end
   end
 
   def order
