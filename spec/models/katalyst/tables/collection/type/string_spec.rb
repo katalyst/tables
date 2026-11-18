@@ -64,6 +64,38 @@ RSpec.describe Katalyst::Tables::Collection::Type::String do
       )
     end
 
+    it "matches nothing for values containing NUL bytes" do
+      collection = new_collection(name: "\0x") do
+        attribute :name, :string
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.none.to_sql)
+    end
+
+    it "reports values containing NUL bytes as filters" do
+      collection = new_collection(name: "\0x") do
+        attribute :name, :string
+      end
+
+      expect(collection.filters).to eq("name" => "\0x")
+    end
+
+    it "matches nothing for exact values containing NUL bytes" do
+      collection = new_collection(name: "\0x") do
+        attribute :name, :string, exact: true
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.none.to_sql)
+    end
+
+    it "matches nothing for query values containing NUL bytes" do
+      collection = new_collection(q: "name:\"\0x\"") do
+        attribute :name, :string
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.none.to_sql)
+    end
+
     it "supports complex key matching on strings" do
       collection = new_collection("parent.name": "test") do
         attribute :"parent.name", :string
@@ -98,6 +130,7 @@ RSpec.describe Katalyst::Tables::Collection::Type::String do
     it { expect(type.cast(nil)).to be_nil }
     it { expect(type.cast("test")).to eq "test" }
     it { expect(type.cast([])).to eq "[]" }
+    it { expect(type.cast("a\0b")).to eq "a\0b" }
   end
 
   describe "#serialize" do

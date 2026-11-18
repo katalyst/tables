@@ -26,4 +26,18 @@ RSpec.describe Katalyst::Tables::Collection::Type::Search do
       expect(filter(new_collection(search: "aaron")).to_sql).to eq(Resource.where(custom: "aaron").to_sql)
     end
   end
+
+  describe "#filter with NUL bytes" do
+    it "matches nothing without calling the scope" do
+      collection = new_collection(search: "a\0b")
+
+      expect(filter(collection).to_sql).to eq(Resource.none.to_sql)
+    end
+
+    it "matches nothing for untagged query values" do
+      collection = new_collection(q: "a\0b")
+
+      expect(filter(collection).to_sql).to eq(Resource.none.to_sql)
+    end
+  end
 end

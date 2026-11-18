@@ -33,6 +33,11 @@ module Katalyst
           def filter(scope, attribute, value: filter_value(attribute))
             return scope unless filter?(attribute, value)
 
+            value = without_null_bytes(value)
+
+            # user input was supplied but it can't match anything
+            return scope.none if value.nil?
+
             if self.scope.present?
               scope.public_send(self.scope, value)
             elsif attribute.name.include?(".")
@@ -86,6 +91,21 @@ module Katalyst
 
           def database_suggestion(attribute:, value:)
             Tables::Suggestions::DatabaseValue.new(name: attribute.name, type: attribute.type, value:)
+          end
+
+          # Strings containing NUL bytes can't be sent to the database: Postgres
+          # raises ArgumentError when quoting and SQLite truncates the literal.
+          # No row can match them, so they are removed before filtering.
+          def without_null_bytes(value)
+            case value
+            when ::String
+              value unless value.include?("\0")
+            when ::Array
+              kept = value.reject { |v| v.is_a?(::String) && v.include?("\0") }
+              kept unless kept.empty? && value.any?
+            else
+              value
+            end
           end
 
           def filter_value(attribute)

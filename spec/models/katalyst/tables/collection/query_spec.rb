@@ -29,6 +29,18 @@ RSpec.describe Katalyst::Tables::Collection::Query do
     expect(collection.filters).to eq({})
   end
 
+  describe "malformed queries" do
+    it "supports unterminated quotes" do
+      collection.with_params(q: 'name:"aaron')
+      expect(collection.filters).to eq("name" => "aaron")
+    end
+
+    it "supports unbalanced brackets" do
+      collection.with_params(q: "category:[[article]")
+      expect(collection.filters).to eq("category" => ["[article"])
+    end
+  end
+
   describe "search" do
     it "supports untagged query" do
       collection.with_params(q: "test")

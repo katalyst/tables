@@ -1,6 +1,9 @@
 ## [3.15.0]
 
 * Date filters on datetime columns now match whole days in `Time.zone`, including the last day of a range (#169)
+* Collection inputs containing NUL bytes are treated as invalid and match nothing, instead of raising database errors (#171)
+  * Applies to all collection types; values in `multiple` attributes are ignored individually
+  * Invalid input now matches nothing for attributes with a custom `scope:`, instead of calling the scope with `nil`
 
 ## [3.14.0]
 

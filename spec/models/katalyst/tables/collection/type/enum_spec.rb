@@ -66,6 +66,55 @@ RSpec.describe Katalyst::Tables::Collection::Type::Enum do
     end
   end
 
+  # Unknown values cast to nil in the enum mapping, which filters on IS NULL.
+  # A value that cannot exist should match nothing.
+  describe "#filter with NUL bytes" do
+    it "matches nothing for values containing NUL bytes" do
+      collection = new_collection(category: ["\0"]) do
+        attribute :category, :enum
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.none.to_sql)
+    end
+
+    it "ignores values containing NUL bytes alongside valid values" do
+      collection = new_collection(category: ["article", "\0"]) do
+        attribute :category, :enum
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.where(category: %w[article]).to_sql)
+    end
+  end
+
+  describe "#filter with unknown values" do
+    it "matches nothing for unknown values", pending: "unknown values filter on category IS NULL" do
+      collection = new_collection(category: ["bogus"]) do
+        attribute :category, :enum
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.none.to_sql)
+    end
+
+    it "matches nothing for unknown query values", pending: "unknown values filter on category IS NULL" do
+      collection = new_collection(q: "category:bogus") do
+        attribute :category, :enum
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.none.to_sql)
+    end
+
+    it "matches known values alongside unknown values" do
+      article = create(:resource, category: :article)
+      create(:resource, category: :report)
+
+      collection = new_collection(category: %w[article bogus]) do
+        attribute :category, :enum
+      end
+
+      expect(filter(collection).to_a).to contain_exactly(article)
+    end
+  end
+
   describe "#cast" do
     subject(:type) { described_class.new }
 
