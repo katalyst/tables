@@ -46,7 +46,7 @@ module Katalyst
         end
 
         def model_name
-          @model_name ||= items.model_name.tap do |name|
+          @model_name ||= items.model_name.dup.tap do |name|
             name.param_key = param_key
           end
         end

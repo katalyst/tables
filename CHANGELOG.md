@@ -15,6 +15,8 @@
   * Labels and database values are both accepted, as in Active Record
   * Unknown values alongside known values are ignored
   * Attributes with a custom `scope:`, or on columns without a Rails enum, are unchanged
+* `Collection::Filter` no longer changes the `param_key` of the collection's model (e.g. `Person.model_name.param_key`) when its `model_name` is read, e.g. by table components or `form_with(model: collection)`
+  * Previously, forms for that model would be rendered with the collection's param key (e.g. `filters[name]`) until the process restarted
 
 ## [3.14.0]
 
