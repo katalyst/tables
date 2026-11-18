@@ -87,7 +87,7 @@ RSpec.describe Katalyst::Tables::Collection::Type::Enum do
   end
 
   describe "#filter with unknown values" do
-    it "matches nothing for unknown values", pending: "unknown values filter on category IS NULL" do
+    it "matches nothing for unknown values" do
       collection = new_collection(category: ["bogus"]) do
         attribute :category, :enum
       end
@@ -95,7 +95,7 @@ RSpec.describe Katalyst::Tables::Collection::Type::Enum do
       expect(filter(collection).to_sql).to eq(Resource.none.to_sql)
     end
 
-    it "matches nothing for unknown query values", pending: "unknown values filter on category IS NULL" do
+    it "matches nothing for unknown query values" do
       collection = new_collection(q: "category:bogus") do
         attribute :category, :enum
       end
@@ -112,6 +112,50 @@ RSpec.describe Katalyst::Tables::Collection::Type::Enum do
       end
 
       expect(filter(collection).to_a).to contain_exactly(article)
+    end
+
+    it "matches nothing for blank values" do
+      collection = new_collection(category: [""]) do
+        attribute :category, :enum
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.none.to_sql)
+    end
+
+    it "matches nothing for unknown values on associations" do
+      create(:child)
+
+      collection = new_collection("parent.role": ["bogus"]) do
+        attribute :"parent.role", :enum
+      end
+
+      expect(filter(collection, Nested::Child.all, key: "parent.role").to_a).to be_empty
+    end
+
+    it "supports database values" do
+      collection = new_collection(category: ["1"]) do
+        attribute :category, :enum
+      end
+
+      expect(filter(collection).to_sql).to eq(Resource.where(category: :documentation).to_sql)
+    end
+
+    it "leaves values for columns without a Rails enum to the database" do
+      collection = new_collection(name: ["bogus"]) do
+        attribute :name, :enum
+      end
+
+      expect(filter(collection, key: "name").to_sql).to eq(Resource.where(name: "bogus").to_sql)
+    end
+
+    it "passes unknown values to scopes" do
+      collection = new_collection(category: ["bogus"]) do
+        attribute :category, :enum, scope: :custom
+      end
+
+      allow(Resource).to receive(:custom) { |v| Resource.where(custom: v) }
+
+      expect(filter(collection).to_sql).to eq(Resource.where(custom: "bogus").to_sql)
     end
   end
 

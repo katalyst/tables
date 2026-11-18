@@ -64,9 +64,9 @@ RSpec.describe Katalyst::Tables::Collection::Filtering do
       expect(scope.items.to_sql).to eq(Resource.where(category: %i[article report]).to_sql)
     end
 
-    it "supports invalid enum values" do
+    it "matches nothing for invalid enum values" do
       scope = collection.with_params(q: "category: [bad]").apply(Resource.all)
-      expect(scope.items.to_sql).to eq(Resource.where(category: nil).to_sql)
+      expect(scope.items.to_sql).to eq(Resource.none.to_sql)
     end
 
     it "supports complex key matching on enums" do

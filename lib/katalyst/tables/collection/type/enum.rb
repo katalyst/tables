@@ -42,6 +42,26 @@ module Katalyst
           def cast_value(value)
             value.to_s
           end
+
+          # Active Record filters unknown enum values on IS NULL. Unknown values
+          # can't match any row, so remove them, and match nothing if none remain.
+          def apply_filter(scope, model, attribute, value)
+            mapping = model.defined_enums[attribute.name.split(".").last]
+
+            # not a Rails enum, leave it to the database
+            return super if mapping.nil?
+
+            known = known_values(mapping, Array(value))
+
+            known.any? ? super(scope, model, attribute, known) : scope.none
+          end
+
+          # Accepts labels and database values, matching Active Record.
+          def known_values(mapping, values)
+            database_values = mapping.values.map(&:to_s)
+
+            values.select { |v| mapping.key?(v) || database_values.include?(v) }
+          end
         end
       end
     end

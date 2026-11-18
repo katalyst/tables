@@ -8,6 +8,10 @@
   * Out of range values match nothing, out of range upper bounds are unbounded, and out of range `multiple` values are ignored
   * Values longer than 16 digits are no longer truncated when cast
 * Float filters treat `NaN` as invalid input and match nothing
+* Enum filters match nothing for unknown values, instead of matching rows where the column is `NULL`
+  * Labels and database values are both accepted, as in Active Record
+  * Unknown values alongside known values are ignored
+  * Attributes with a custom `scope:`, or on columns without a Rails enum, are unchanged
 
 ## [3.14.0]
 
